@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="91ffedf0-8d1c-4b56-83e1-04eef686f810" name="ibm">
+        <fileTransfer rootFolder="/home/licongjian/OrthoBenchmark/" accessType="SFTP" host="202.203.40.134" port="22" sshConfigId="bb0bc6f1-80e4-4372-b393-0dd02b8489e2" sshConfig="licongjian@202.203.40.134:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="1cd40ff2-8219-4ec0-9b67-d81cce408130" name="Inspur">
+        <fileTransfer rootFolder="/home/licongjian" accessType="SFTP" host="222.19.192.38" port="22" sshConfigId="a8806329-b17c-4c3d-921c-48b4f6703005" sshConfig="licongjian@222.19.192.38:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="9224fe06-d300-4d3c-92f9-73d28ae03128" name="DELL">
+        <fileTransfer rootFolder="/home/licongjian/" accessType="SFTP" host="202.203.40.167" port="22" sshConfigId="5a40a75b-d0aa-4f8a-a507-1b418669a7f4" sshConfig="licongjian@202.203.40.167:22:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
