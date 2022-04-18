@@ -82,6 +82,7 @@ def get_parameters():
 
 
 # prepare genomes sequences file methods
+#-----------------------------------------------------------------------------------------------------------
 def OutputFile(fileName, content):
     with open(fileName, 'w') as f:
         f.writelines(content)
@@ -150,6 +151,7 @@ def RecodeGenomeSeq(GenomesFiles, GenomePath, WorkDir):
 
 
 # homologous searching methods
+#-----------------------------------------------------------------------------------------------------------
 def makeBlastDB(referGenomes, referGenomesPath, methods, WorkingDirectory):
     DBPath = os.path.join(WorkingDirectory, 'localDB')
     try:
@@ -244,6 +246,7 @@ def SequencesSearchBlast(InputGenomePath, searchingMethod, WorkingDirectory, EVa
 
 
 # Get original matrices between genomes pair
+#-----------------------------------------------------------------------------------------------------------
 def ReadBlastResults(BlastFileName, SeqInformation):
     """
     queryID: query sequences id
@@ -349,6 +352,7 @@ class BSN:
 
 
 # Get connected matrices
+#-----------------------------------------------------------------------------------------------------------
 class MatrixHandle:
     def __init__(self, MatrixDirectory, SpeciesInf, iGenome):
         self.MatrixDirectory = MatrixDirectory
@@ -405,7 +409,7 @@ class MatrixHandle:
                         colIndex for colIndex, bitValue in zip(bitSoresObject.rows[0], bitSoresObject.data[0])
                         if bitValue > MaxValues - accepted]
                     BestHitIndexList.extend(BestHitsColIndex)
-                    BestHitRowList.extend(np.full(len(BestHitsColIndex), rowNum, dtype=np.dtype(int)))
+                    BestHitRowList.extend(np.full(len(BestHitsColIndex), rowNum, dtype=np.int))
             BestHitMatrixForDump = sparse.csr_matrix(
                 (np.ones(len(BestHitRowList)), (BestHitRowList, BestHitIndexList)),
                 shape=rowMatrix.get_shape())
@@ -421,7 +425,7 @@ class MatrixHandle:
                     colIndex for colIndex, bitValue in zip(bitSoresObject.rows[0], bitSoresObject.data[0])
                     if bitValue > BestHitI[rowNum] - accepted]
                 BestHitIndexList.extend(BestHitsColIndex)
-                BestHitRowList.extend(np.full(len(BestHitsColIndex), rowNum, dtype=np.dtype(int)))
+                BestHitRowList.extend(np.full(len(BestHitsColIndex), rowNum, dtype=np.int))
         BestHitMatrixForDump = sparse.csr_matrix(
             (np.ones(len(BestHitRowList)), (BestHitRowList, BestHitIndexList)),
             shape=rowMatrix.get_shape())
@@ -771,6 +775,7 @@ def MappingGammaForCC(coefficientG, lengthCC):
 
 
 # HHN build Methods
+# -----------------------------------------------------------------------------------------------------------
 class HHN(igraph.Graph):
     def __init__(self, ssn=None, hhn=None, **attr):
         super(HHN, self).__init__(**attr)
@@ -1245,6 +1250,8 @@ def GetSeqs(SeqIDs, SeqInformation):
     return fastaFormat
 
 
+# output orthologous groups file
+# -----------------------------------------------------------------------------------------------------------
 def WriteOGFiles(seqInf, hhn, ogInf, wd):
     num = 0
     ogStatic = ''
@@ -1309,6 +1316,24 @@ class EstimateOrthologs:
         return OGGroups
 
 
+def output_final_graph(seqInfDic, final_graph, output_graph_name, og_node_recode_dic):
+    for index in final_graph.vs.indices:
+        final_graph_node = final_graph.vs[index]
+        node_name = final_graph_node['name']
+        if node_name in og_node_recode_dic.keys():
+            final_graph_node['name'] = node_recode_dic[node_name]
+        else:
+            final_graph_node['name'] = 'None'
+        recode_ids = ' '.join([seqInfDic['GenesRecode'][ids] for ids in final_graph_node['geneIDs'].split(' ')])
+        recode_genome_ids = ' '.join(
+            [seqInfDic['GenomeRecodeInf'][genome_ids] for genome_ids in final_graph_node['genomeIDs'].split(' ')])
+        final_graph_node['geneIDs'] = recode_ids
+        final_graph_node['genomeIDs'] = recode_genome_ids
+    final_graph.write_gml(output_graph_name)
+
+
+# generator pairwise orthologous genes
+# -----------------------------------------------------------------------------------------------------------
 def SelectedOGFromOneNode(OGList):
     OGPairList = []
     for OG in OGList:
@@ -1406,22 +1431,6 @@ def splitTaskForOG(OGSubList):
         random.shuffle(TimeUsedU)
         [OGGroups.append(TimeUsedU[i:i + 1000]) for i in range(0, len(TimeUsedU), 1000)]
     return OGGroups
-
-
-def output_final_graph(seqInfDic, final_graph, output_graph_name, og_node_recode_dic):
-    for index in final_graph.vs.indices:
-        final_graph_node = final_graph.vs[index]
-        node_name = final_graph_node['name']
-        if node_name in og_node_recode_dic.keys():
-            final_graph_node['name'] = node_recode_dic[node_name]
-        else:
-            final_graph_node['name'] = 'None'
-        recode_ids = ' '.join([seqInfDic['GenesRecode'][ids] for ids in final_graph_node['geneIDs'].split(' ')])
-        recode_genome_ids = ' '.join(
-            [seqInfDic['GenomeRecodeInf'][genome_ids] for genome_ids in final_graph_node['genomeIDs'].split(' ')])
-        final_graph_node['geneIDs'] = recode_ids
-        final_graph_node['genomeIDs'] = recode_genome_ids
-    final_graph.write_gml(output_graph_name)
 
 
 if __name__ == '__main__':
