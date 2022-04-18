@@ -405,7 +405,7 @@ class MatrixHandle:
                         colIndex for colIndex, bitValue in zip(bitSoresObject.rows[0], bitSoresObject.data[0])
                         if bitValue > MaxValues - accepted]
                     BestHitIndexList.extend(BestHitsColIndex)
-                    BestHitRowList.extend(np.full(len(BestHitsColIndex), rowNum, dtype=np.dtype(int)))
+                    BestHitRowList.extend(np.full(len(BestHitsColIndex), rowNum, dtype=np.int))
             BestHitMatrixForDump = sparse.csr_matrix(
                 (np.ones(len(BestHitRowList)), (BestHitRowList, BestHitIndexList)),
                 shape=rowMatrix.get_shape())
@@ -421,7 +421,7 @@ class MatrixHandle:
                     colIndex for colIndex, bitValue in zip(bitSoresObject.rows[0], bitSoresObject.data[0])
                     if bitValue > BestHitI[rowNum] - accepted]
                 BestHitIndexList.extend(BestHitsColIndex)
-                BestHitRowList.extend(np.full(len(BestHitsColIndex), rowNum, dtype=np.dtype(int)))
+                BestHitRowList.extend(np.full(len(BestHitsColIndex), rowNum, dtype=np.int))
         BestHitMatrixForDump = sparse.csr_matrix(
             (np.ones(len(BestHitRowList)), (BestHitRowList, BestHitIndexList)),
             shape=rowMatrix.get_shape())
