@@ -1250,8 +1250,21 @@ def GetSeqs(SeqIDs, SeqInformation):
 
 # refined nodes event by building trees
 # --------------------------------------------------------------------------------------------------------------------
+def iqtrees(queue, alignments_files, genes_trees_out_dir):
+    prefix = os.path.join(genes_trees_out_dir, alignments_files.split('.')[0])
+    build_tree_command = ' '.join(['iqtree2', alignments_files, '--prefix', prefix, '-T', 'AUTO', '-bb','1000', '-m', 'TEST','-quiet'])
+    pro = subprocess.Popen(build_tree_command)
+    pro.wait()
+    queue.put(pro.returncode)
 
 
+def construction_genes_trees(orthologs_list, trees_path, tree_parallel_threads):
+    trees_build_pool = mp.Pool(int(tree_parallel_threads))
+    myQueue = mp.Manager().Queue()
+    for orthologs in orthologs_list:
+        trees_build_pool.apply_async(iqtrees, args=(myQueue, orthologs, trees_path))
+    trees_build_pool.close()
+    trees_build_pool.join()
 
 
 # output orthologous groups and hhm graph file
