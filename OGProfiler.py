@@ -82,6 +82,7 @@ def get_parameters():
 
 
 # prepare genomes sequences file methods
+# ------------------------------------------------------------------------------------------------------------------
 def OutputFile(fileName, content):
     with open(fileName, 'w') as f:
         f.writelines(content)
@@ -150,6 +151,7 @@ def RecodeGenomeSeq(GenomesFiles, GenomePath, WorkDir):
 
 
 # homologous searching methods
+# ------------------------------------------------------------------------------------------------------------------
 def makeBlastDB(referGenomes, referGenomesPath, methods, WorkingDirectory):
     DBPath = os.path.join(WorkingDirectory, 'localDB')
     try:
@@ -244,6 +246,7 @@ def SequencesSearchBlast(InputGenomePath, searchingMethod, WorkingDirectory, EVa
 
 
 # Get original matrices between genomes pair
+# ------------------------------------------------------------------------------------------------------------------
 def ReadBlastResults(BlastFileName, SeqInformation):
     """
     queryID: query sequences id
@@ -771,6 +774,7 @@ def MappingGammaForCC(coefficientG, lengthCC):
 
 
 # HHN build Methods
+# ------------------------------------------------------------------------------------------------------------------
 class HHN(igraph.Graph):
     def __init__(self, ssn=None, hhn=None, **attr):
         super(HHN, self).__init__(**attr)
@@ -1245,6 +1249,8 @@ def GetSeqs(SeqIDs, SeqInformation):
     return fastaFormat
 
 
+# output orthologous groups and hhm graph file
+# ----------------------------------------------------------------------------------------------------------------
 def WriteOGFiles(seqInf, hhn, ogInf, wd):
     num = 0
     ogStatic = ''
@@ -1280,6 +1286,23 @@ def WriteOGFiles(seqInf, hhn, ogInf, wd):
     return recode_node_dic, handle_og
 
 
+def output_final_graph(seqInfDic, final_graph, output_graph_name, og_node_recode_dic):
+    for index in final_graph.vs.indices:
+        final_graph_node = final_graph.vs[index]
+        node_name = final_graph_node['name']
+        if node_name in og_node_recode_dic.keys():
+            final_graph_node['name'] = node_recode_dic[node_name]
+        else:
+            final_graph_node['name'] = 'None'
+        recode_ids = ' '.join([seqInfDic['GenesRecode'][ids] for ids in final_graph_node['geneIDs'].split(' ')])
+        recode_genome_ids = ' '.join(
+            [seqInfDic['GenomeRecodeInf'][genome_ids] for genome_ids in final_graph_node['genomeIDs'].split(' ')])
+        final_graph_node['geneIDs'] = recode_ids
+        final_graph_node['genomeIDs'] = recode_genome_ids
+    final_graph.write_gml(output_graph_name)
+
+# estimated for pairwise genes
+# ----------------------------------------------------------------------------------------------------------------
 class EstimateOrthologs:
     @staticmethod
     def WriteOGPairwise(seqInf, ogPairs, wd):
@@ -1406,22 +1429,6 @@ def splitTaskForOG(OGSubList):
         random.shuffle(TimeUsedU)
         [OGGroups.append(TimeUsedU[i:i + 1000]) for i in range(0, len(TimeUsedU), 1000)]
     return OGGroups
-
-
-def output_final_graph(seqInfDic, final_graph, output_graph_name, og_node_recode_dic):
-    for index in final_graph.vs.indices:
-        final_graph_node = final_graph.vs[index]
-        node_name = final_graph_node['name']
-        if node_name in og_node_recode_dic.keys():
-            final_graph_node['name'] = node_recode_dic[node_name]
-        else:
-            final_graph_node['name'] = 'None'
-        recode_ids = ' '.join([seqInfDic['GenesRecode'][ids] for ids in final_graph_node['geneIDs'].split(' ')])
-        recode_genome_ids = ' '.join(
-            [seqInfDic['GenomeRecodeInf'][genome_ids] for genome_ids in final_graph_node['genomeIDs'].split(' ')])
-        final_graph_node['geneIDs'] = recode_ids
-        final_graph_node['genomeIDs'] = recode_genome_ids
-    final_graph.write_gml(output_graph_name)
 
 
 if __name__ == '__main__':
