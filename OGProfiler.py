@@ -1248,6 +1248,10 @@ def GetSeqs(SeqIDs, SeqInformation):
         fastaFormat += '>%s\n%s\n' % (seqID, seq)
     return fastaFormat
 
+# refined nodes event by building trees
+
+
+
 
 # output orthologous groups and hhm graph file
 # ----------------------------------------------------------------------------------------------------------------
@@ -1300,6 +1304,7 @@ def output_final_graph(seqInfDic, final_graph, output_graph_name, og_node_recode
         final_graph_node['geneIDs'] = recode_ids
         final_graph_node['genomeIDs'] = recode_genome_ids
     final_graph.write_gml(output_graph_name)
+
 
 # estimated for pairwise genes
 # ----------------------------------------------------------------------------------------------------------------
