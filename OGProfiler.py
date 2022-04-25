@@ -1249,6 +1249,7 @@ def GetSeqs(SeqIDs, SeqInformation):
     return fastaFormat
 
 # refined nodes event by building trees
+# --------------------------------------------------------------------------------------------------------------------
 
 
 
