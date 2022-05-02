@@ -15,6 +15,7 @@ from scipy.optimize import curve_fit
 from scipy.special import comb
 import random
 from itertools import combinations
+import ete3
 
 
 def get_parameters():
@@ -1248,11 +1249,13 @@ def GetSeqs(SeqIDs, SeqInformation):
         fastaFormat += '>%s\n%s\n' % (seqID, seq)
     return fastaFormat
 
+
 # refined nodes event by building trees
 # --------------------------------------------------------------------------------------------------------------------
-def iqtrees(queue, alignments_files, genes_trees_out_dir):
+def fastTree(queue, alignments_files, genes_trees_out_dir):
     prefix = os.path.join(genes_trees_out_dir, alignments_files.split('.')[0])
-    build_tree_command = ' '.join(['iqtree2', alignments_files, '--prefix', prefix, '-T', 'AUTO', '-bb','1000', '-m', 'TEST','-quiet'])
+    treefile = '%s.nwk' % prefix
+    build_tree_command = ' '.join(['FastTree', '-lg', alignments_files, '>', treefile]) # fasttree
     pro = subprocess.Popen(build_tree_command)
     pro.wait()
     queue.put(pro.returncode)
@@ -1262,9 +1265,113 @@ def construction_genes_trees(orthologs_list, trees_path, tree_parallel_threads):
     trees_build_pool = mp.Pool(int(tree_parallel_threads))
     myQueue = mp.Manager().Queue()
     for orthologs in orthologs_list:
-        trees_build_pool.apply_async(iqtrees, args=(myQueue, orthologs, trees_path))
+        trees_build_pool.apply_async(fastTree, args=(myQueue, orthologs, trees_path))
     trees_build_pool.close()
     trees_build_pool.join()
+
+
+def get_processing(queue, taskNum):
+    progressbar_widgets_set = [
+        'Building Trees:', progressbar.Percentage(), progressbar.Bar('#'), progressbar.Timer(), ' | ',
+        progressbar.ETA()]
+    bar = progressbar.ProgressBar(widgets=progressbar_widgets_set, maxval=taskNum)
+    bar.start()
+    DoneTask = 0
+    while True:
+        graph = queue.get()
+        DoneTask += 1
+        bar.update(DoneTask)
+        if DoneTask >= taskNum:
+            break
+    bar.finish()
+
+
+def decipher_tree_structure(queue, newick_tree_file):
+    tree = ete3.Tree(newick_tree_file)
+    attributions = []
+    for num, node in enumerate(tree.traverse("postorder")):
+        genesIDs = node.get_leaf_names() if len(node.get_leaf_names()) > 0 else [node.name]
+        nodeName = ' '.join(genesIDs)
+        genomes_parent_set = set([gene.split('|') for gene in genesIDs])
+        genomes = ' '.join(list(genomes_parent_set))
+        genomeNum = len(genomes_parent_set)
+        genesNum = len(genesIDs)
+        child = node.children
+        if child:
+            child1 = child[0]
+            child2 = child[1]
+            leaf_1 = child1.get_leaf_names() if len(child1.get_leaf_names()) > 0 else [child1.name]
+            leaf_2 = child2.get_leaf_names() if len(child2.get_leaf_names()) > 0 else [child2.name]
+            leaf_1_genome_set = set([gene.split('|')[0] for gene in leaf_1])
+            leaf_2_genome_set = set([gene.split('|')[0] for gene in leaf_2])
+            if leaf_1_genome_set & leaf_2_genome_set == genomes_parent_set:
+                event = 'II'
+            elif leaf_1_genome_set & leaf_2_genome_set == set():
+                event = 'I'
+            else:
+                if leaf_1_genome_set == genomes_parent_set or leaf_2_genome_set == genomes_parent_set:
+                    event = 'III-1'
+                else:
+                    event = 'III-2'
+            edge1 = '-'.join([nodeName, ' '.join(leaf_1)])
+            edge2 = '-'.join([nodeName, ' '.join(leaf_2)])
+            edges = ';'.join([edge1, edge2])
+        else:
+            edges = 'None'
+            event = 'None'
+        attr = ','.join([nodeName, edges, nodeName, genomes, str(genesNum), str(genomeNum), event])
+        attributions.append(attr)
+    queue.put(attributions)
+
+
+def GetTreesStructurePP(NodesRefined, treePath, cpus):
+    trees = mp.Pool(int(cpus))
+    myQueue = mp.Manager().Queue()
+    for node in NodesRefined:
+        treeName = os.path.join(treePath, '%s.nwk' % node)
+        trees.apply_async(func=decipher_tree_structure, args=(myQueue, treeName,))
+    trees.close()
+    trees.join()
+
+
+def BuildGraph(queue, original_graph, taskNum):
+    NodeListALl = []
+    EdgeListAll = []
+    genesIDsListAll = []
+    genomeIDsListAll = []
+    genesNumListAll = []
+    genomeNumListAll = []
+    Events = []
+    progressbar_widgets_set = [
+        'Decipher trees:', progressbar.Percentage(), progressbar.Bar('#'), progressbar.Timer(), ' | ',
+        progressbar.ETA()]
+    bar = progressbar.ProgressBar(widgets=progressbar_widgets_set, maxval=taskNum)
+    bar.start()
+    DoneTask = 0
+    while True:
+        attribute = queue.get()
+        for attr in attribute:
+            nodeName, edges, genesID, genomeID, genesNum, genomeNum, events = attr.split(',')
+            NodeListALl.append(nodeName)
+            if edges == 'None':
+                pass
+            else:
+                EdgeListAll.append(edges)
+            genesIDsListAll.append(genesID)
+            genomeIDsListAll.append(genomeID)
+            genesNumListAll.append(int(genesNum))
+            genomeNumListAll.append(int(genomeNum))
+            Events.append(events)
+        DoneTask += 1
+        bar.update(DoneTask)
+        if DoneTask >= taskNum:
+            break
+    bar.finish()
+    attributesDic = dict(
+        geneIDs=genesIDsListAll, genomeIDs=genomeIDsListAll, genesNum=genesNumListAll, genomesNum=genomeNumListAll,
+        event=Events)
+    original_graph.add_vertices(NodeListALl, attributes=attributesDic)
+    original_graph.add_edges(EdgeListAll)
 
 
 # output orthologous groups and hhm graph file
