@@ -941,14 +941,17 @@ class HHN(igraph.Graph):
                 pass
         return self.hhn
 
-    def ExtractOG(self, GenomeNum):
+    def ExtractOG(self, GenomeNum, event, max_num):
         adLists = []
         if GenomeNum == 1:
             ogNodes = self.hhn.vs.select(Event=None)
         elif GenomeNum == 0:
             ogNodes = self.ssn.vs.select(_degree=0)
         else:
-            ogNodes = self.hhn.vs.select(Event='I', genomesNum=GenomeNum)
+            if max_num > 0:
+                ogNodes = self.hhn.vs.select(Event=event, genomesNum=GenomeNum, genesNum_lt=max_num)
+            else:
+                ogNodes = self.hhn.vs.select(Event=event, genomesNum=GenomeNum)
         nodesDeleted = []
         OGInf = {}
         for num, ogNode in enumerate(ogNodes):
@@ -962,14 +965,14 @@ class HHN(igraph.Graph):
                 genesIDList, deletedVertex = GetGenesIDs(ogNode)
                 nodeCC = [n['name'] for n in deletedVertex]
                 nodeCC.append(ogNode['name'])
-                if OneNodeCoalescence(ogNode):
-                    parent, adjacent = OneNodeCoalescence(ogNode)[0]
-                    genesIDList.extend(adjacent['geneIDs'].strip().split(' '))
-                    deletedVertex.extend([ogNode, adjacent])
-                    nodeCC.extend([parent['name'], adjacent['name']])
-                    ogNode = parent
-                else:
-                    ogNode = ogNode
+                # if OneNodeCoalescence(ogNode):
+                #     parent, adjacent = OneNodeCoalescence(ogNode)[0]
+                #     genesIDList.extend(adjacent['geneIDs'].strip().split(' '))
+                #     deletedVertex.extend([ogNode, adjacent])
+                #     nodeCC.extend([parent['name'], adjacent['name']])
+                #     ogNode = parent
+                # else:
+                #     ogNode = ogNode
                 nodesDeleted.extend(deletedVertex)
             genesIDs = ' '.join([i for i in set(genesIDList)])
             OGInf[ogNode['name']] = (GenomeNum, len(genesIDList), genesIDs, nodeCC)
@@ -1186,7 +1189,7 @@ def ConstructedHnCC(ssnGraph, detectedM, modularWeight, parallelNum, gc):
     return hhm
 
 
-def ExtractOGSorted(hhn, ssn, seqInf):
+def ExtractOGSorted(hhn, ssn, seqInf, evolution_event, stop_at, max_numbers):
     inputGenomeNum = len(seqInf['GenomeToUsed'])
     genomeNum = inputGenomeNum
     ogsAll = {}
@@ -1201,8 +1204,8 @@ def ExtractOGSorted(hhn, ssn, seqInf):
     bar = progressbar.ProgressBar(widgets=progressbar_widgets_set, maxval=inputGenomeNum + 1)
     bar.start()
     num = 0
-    while genomeNum >= 0:
-        ogsInf, hhn, adLists = hhnO.ExtractOG(genomeNum)
+    while genomeNum >= stop_at:
+        ogsInf, hhn, adLists = hhnO.ExtractOG(genomeNum, evolution_event, max_numbers)
         adListsAll.extend(adLists)
         hhnO = HHN(ssn, hhn)
         genomeNum -= 1
@@ -1252,41 +1255,62 @@ def GetSeqs(SeqIDs, SeqInformation):
 
 # refined nodes event by building trees
 # --------------------------------------------------------------------------------------------------------------------
+def FindFixingNodes(ssn, hmm, sequences_inf, Orthogroups_Sequences_dir):
+    max_genome = len(sequences_inf['GenomeToUsed']) * 10
+    hhn, nodes_dic = ExtractOGSorted(hmm, ssn, sequences_inf, 'III-1', 2, max_genome)
+    og_name = []
+    num = 0
+    for og, og_inf in nodes_dic.items():
+        genes = og_inf[2].split(' ')
+        og_seq = ''.join(['>%s\n%s\n' % (gene, sequences_inf['SequencesRecode'][sequences_inf['GenesRecode'][gene]]) for gene in genes])
+        output_og_name = '{}{:0>6d}'.format('Nodes', num + 1)
+        hhn.vs.select(name=og)[0]['name'] = og_inf[2]
+        og_file_name = os.path.join(Orthogroups_Sequences_dir, '%s.fasta' % output_og_name)
+        OutputFile(og_file_name, og_seq)
+        og_name.append(output_og_name)
+    return hhn, og_name
+
+
+def alignments(queue, og_file, alignments_path):
+    og_aln = os.path.join(alignments_path, '%s.aln.fasta' % os.path.basename(og_file).split('.')[0])
+    aln_cmd = ' '.join(['mafft', og_file, '>', og_aln])
+    aln_pro = subprocess.Popen(aln_cmd, shell=True)
+    aln_pro.wait()
+    queue.put((aln_cmd, aln_pro.returncode))
+
+
 def fastTree(queue, alignments_files, genes_trees_out_dir):
-    prefix = os.path.join(genes_trees_out_dir, alignments_files.split('.')[0])
+    prefix = os.path.join(genes_trees_out_dir, os.path.basename(alignments_files).split('.')[0])
     treefile = '%s.nwk' % prefix
-    build_tree_command = ' '.join(['FastTree', '-lg', alignments_files, '>', treefile]) # fasttree
-    pro = subprocess.Popen(build_tree_command)
+    build_tree_command = ' '.join(['FastTree', '-lg', alignments_files, '>', treefile])# fasttree
+    pro = subprocess.Popen(build_tree_command, shell=True)
     pro.wait()
-    queue.put(pro.returncode)
+    queue.put((build_tree_command, pro.returncode))
 
 
-def construction_genes_trees(orthologs_list, trees_path, tree_parallel_threads):
+def alignmentsPP(nodes_fasta_list, seq_path, align_path, align_threads):
+    aln_build_pool = mp.Pool(int(align_threads))
+    myQueue = mp.Manager().Queue()
+    for orthologs in nodes_fasta_list:
+        orthologs_file = os.path.join(seq_path, '%s.fasta' % orthologs)
+        aln_build_pool.apply_async(alignments, args=(myQueue, orthologs_file, align_path))
+    PrintParallelBar(myQueue, 'Aligning ogs', len(nodes_fasta_list))
+    aln_build_pool.close()
+    aln_build_pool.join()
+
+
+def ConstructionTrees(aln_list, aln_path, trees_path, tree_parallel_threads):
     trees_build_pool = mp.Pool(int(tree_parallel_threads))
     myQueue = mp.Manager().Queue()
-    for orthologs in orthologs_list:
-        trees_build_pool.apply_async(fastTree, args=(myQueue, orthologs, trees_path))
+    for aln in aln_list:
+        aln_file = os.path.join(aln_path, '%s.aln.fasta' % aln)
+        trees_build_pool.apply_async(fastTree, args=(myQueue, aln_file, trees_path))
+    PrintParallelBar(myQueue, 'Building Trees', len(aln_list))
     trees_build_pool.close()
     trees_build_pool.join()
 
 
-def get_processing(queue, taskNum):
-    progressbar_widgets_set = [
-        'Building Trees:', progressbar.Percentage(), progressbar.Bar('#'), progressbar.Timer(), ' | ',
-        progressbar.ETA()]
-    bar = progressbar.ProgressBar(widgets=progressbar_widgets_set, maxval=taskNum)
-    bar.start()
-    DoneTask = 0
-    while True:
-        graph = queue.get()
-        DoneTask += 1
-        bar.update(DoneTask)
-        if DoneTask >= taskNum:
-            break
-    bar.finish()
-
-
-def decipher_tree_structure(queue, newick_tree_file):
+def DecipherTrees(queue, newick_tree_file):
     tree = ete3.Tree(newick_tree_file)
     attributions = []
     for num, node in enumerate(tree.traverse("postorder")):
@@ -1324,12 +1348,13 @@ def decipher_tree_structure(queue, newick_tree_file):
     queue.put(attributions)
 
 
-def GetTreesStructurePP(NodesRefined, treePath, cpus):
+def GetTreesStructurePP(NodesRefined, g, treePath, cpus):
     trees = mp.Pool(int(cpus))
     myQueue = mp.Manager().Queue()
     for node in NodesRefined:
         treeName = os.path.join(treePath, '%s.nwk' % node)
-        trees.apply_async(func=decipher_tree_structure, args=(myQueue, treeName,))
+        trees.apply_async(func=DecipherTrees, args=(myQueue, treeName,))
+    BuildGraph(myQueue, g, len(NodesRefined))
     trees.close()
     trees.join()
 
@@ -1372,6 +1397,22 @@ def BuildGraph(queue, original_graph, taskNum):
         event=Events)
     original_graph.add_vertices(NodeListALl, attributes=attributesDic)
     original_graph.add_edges(EdgeListAll)
+
+
+def RefinedNodesEvents(ssn, hmm, sequences_inf, refined_dir, refined_threads):
+    hhn, og_name = FindFixingNodes(ssn, hmm, sequences_inf, refined_dir)
+    seq_dir = os.path.join(refined_dir, 'seq')
+    aln_dir = os.path.join(refined_dir, 'aln')
+    tree_dir = os.path.join(refined_dir, 'tree')
+    for dir_ in [seq_dir, aln_dir, tree_dir]:
+        try:
+            os.mkdir(dir_)
+        except FileExistsError:
+            pass
+    alignmentsPP(og_name, seq_dir, aln_dir, refined_threads)
+    ConstructionTrees(og_name, aln_dir, tree_dir, refined_threads)
+    GetTreesStructurePP(og_name, hhn, tree_dir, refined_threads)
+    return hhn
 
 
 # output orthologous groups and hhm graph file
@@ -1735,9 +1776,11 @@ if __name__ == '__main__':
     print('[%s]Mark the evolution events on HHNC and output final file' % MarkStartTime)
     hm = HHN(ssnR, hg)
     hhng = hm.GetEvolutionEvents(Overlaps)
+    hhnR = RefinedNodesEvents(ssnR, hhng, SeqInf, os.path.join(WorkingDir, 'refined'), NetworkThreads)
+    hhnR.write_gml(os.path.join(WorkingDir, 'hmmR.gml'))
     hhng.write_gml(os.path.join(WorkingDir, 'hmm.gml'))
     hhngO = hhng.copy()
-    hhngF, OGDic = ExtractOGSorted(hhng, ssnR, SeqInf)
+    hhngF, OGDic = ExtractOGSorted(hhng, ssnR, SeqInf, 'I', 0, 0)
     MarkDone = time.time()
     MarkEndTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(MarkDone))
     MarkTimeStr = TimeUsedComputation(MarkSince, MarkDone)
