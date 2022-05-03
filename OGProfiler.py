@@ -198,6 +198,7 @@ def mmseqs(queue, queryGenome, queryGenomePath, BlastResultDir, DB, e_value):
         'mmseqs', 'easy-search', BlastQuery, DB, BlastFilePath, tempPath, '--threads', '1', '-v', '1', '--format-mode',
         '0', '--remove-tmp-files', '-s', '7.5', '-e', str(e_value)])
     pro = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    pro.wait()
     queue.put((command, pro.returncode))
 
 
@@ -225,8 +226,8 @@ def RunBlastSearchParallel(queryGenomes, queryPath, searchMethod, DBList, BlastR
                 pros.apply_async(func=mmseqs, args=(Queue, query, queryPath, BlastResultsPath, DB, E_Values))
             else:
                 pass
-    PrintParallelBar(Queue, 'Homologs Searching:', len(queryGenomes))
     pros.close()
+    PrintParallelBar(Queue, 'Homologs Searching:', len(queryGenomes))
     pros.join()
 
 
@@ -568,8 +569,8 @@ def GetBHMatrixParallel(ResultPath, mostDistances, reInf, matDirectory, matrixTh
     P = mp.Pool(processes=int(matrixThreads))
     for iSpecies in reInf['GenomeToUsed']:
         P.apply_async(func=GetBHMatrixAll, args=(MyQueue, iSpecies, mostDistances, ResultPath, reInf, matDirectory))
-    PrintParallelBar(MyQueue, 'Get Matrices', len(reInf['GenomeToUsed']))
     P.close()
+    PrintParallelBar(MyQueue, 'Get Matrices', len(reInf['GenomeToUsed']))
     P.join()
 
 
@@ -612,9 +613,10 @@ def GetConnectedMatrixParallel(inf, mostDistance, matDir, nt):
     Queue = mp.Manager().Queue()
     pro = mp.Pool(processes=int(nt))
     for iGenome in inf['GenomeToUsed']:
-        pro.apply_async(func=GetConnectedMatrixSpeciesI, args=(Queue, iGenome, mostDistance, inf, matDir))
-    PrintParallelBar(Queue, 'Construction of Connected Matrices:', len(inf['GenomeToUsed']))
+        # pro.apply_async(func=GetConnectedMatrixSpeciesI, args=(Queue, iGenome, mostDistance, inf, matDir))
+        GetConnectedMatrixSpeciesI(Queue, iGenome, mostDistance, inf, matDir)
     pro.close()
+    PrintParallelBar(Queue, 'Construction of Connected Matrices:', len(inf['GenomeToUsed']))
     pro.join()
 
 
@@ -626,9 +628,9 @@ def BuildSSN_parallel(MatrixDirectory, speciesInf, buildThreads):
             iSpecies, jSpecies = speciesInf['GenomeToUsed'][i], speciesInf['GenomeToUsed'][j]
             pro.apply_async(
                 func=GetConnections, args=(MyQueue, iSpecies, jSpecies, MatrixDirectory, speciesInf))
+    pro.close()
     pairNum = comb(len(speciesInf['GenomeToUsed']), 2) + len(speciesInf['GenomeToUsed'])
     ssn = UnionGraphs(MyQueue, pairNum)
-    pro.close()
     pro.join()
     return ssn
 
@@ -942,7 +944,6 @@ class HHN(igraph.Graph):
         return self.hhn
 
     def ExtractOG(self, GenomeNum, event, max_num):
-        adLists = []
         if GenomeNum == 1:
             ogNodes = self.hhn.vs.select(Event=None)
         elif GenomeNum == 0:
@@ -978,7 +979,7 @@ class HHN(igraph.Graph):
             OGInf[ogNode['name']] = (GenomeNum, len(genesIDList), genesIDs, nodeCC)
         if GenomeNum > 1:
             self.hhn.delete_vertices(nodesDeleted)
-        return OGInf, self.hhn, adLists
+        return OGInf, self.hhn
 
 
 def OneNodeCoalescence(NodeObject):
@@ -1193,7 +1194,6 @@ def ExtractOGSorted(hhn, ssn, seqInf, evolution_event, stop_at, max_numbers):
     inputGenomeNum = len(seqInf['GenomeToUsed'])
     genomeNum = inputGenomeNum
     ogsAll = {}
-    adListsAll = []
     hhnO = HHN(ssn, hhn)
     Since = time.time()
     Ts = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Since))
@@ -1205,8 +1205,7 @@ def ExtractOGSorted(hhn, ssn, seqInf, evolution_event, stop_at, max_numbers):
     bar.start()
     num = 0
     while genomeNum >= stop_at:
-        ogsInf, hhn, adLists = hhnO.ExtractOG(genomeNum, evolution_event, max_numbers)
-        adListsAll.extend(adLists)
+        ogsInf, hhn = hhnO.ExtractOG(genomeNum, evolution_event, max_numbers)
         hhnO = HHN(ssn, hhn)
         genomeNum -= 1
         num += 1
@@ -1216,9 +1215,6 @@ def ExtractOGSorted(hhn, ssn, seqInf, evolution_event, stop_at, max_numbers):
     bar.finish()
     done = time.time()
     print('Extract OGs %s' % TimeUsedComputation(Since, done))
-    for AD in adListsAll:
-        if AD['name'] in ogsAll.keys():
-            del ogsAll[AD['name']]
     return hhn, ogsAll
 
 
@@ -1260,6 +1256,7 @@ def FindFixingNodes(ssn, hmm, sequences_inf, Orthogroups_Sequences_dir):
     hhn, nodes_dic = ExtractOGSorted(hmm, ssn, sequences_inf, 'III-1', 2, max_genome)
     og_name = []
     num = 0
+    print(hhn.vs['name'])
     for og, og_inf in nodes_dic.items():
         genes = og_inf[2].split(' ')
         og_seq = ''.join(['>%s\n%s\n' % (gene, sequences_inf['SequencesRecode'][sequences_inf['GenesRecode'][gene]]) for gene in genes])
@@ -1400,15 +1397,15 @@ def BuildGraph(queue, original_graph, taskNum):
 
 
 def RefinedNodesEvents(ssn, hmm, sequences_inf, refined_dir, refined_threads):
-    hhn, og_name = FindFixingNodes(ssn, hmm, sequences_inf, refined_dir)
     seq_dir = os.path.join(refined_dir, 'seq')
     aln_dir = os.path.join(refined_dir, 'aln')
     tree_dir = os.path.join(refined_dir, 'tree')
-    for dir_ in [seq_dir, aln_dir, tree_dir]:
+    for dir_ in [refined_dir, seq_dir, aln_dir, tree_dir]:
         try:
             os.mkdir(dir_)
         except FileExistsError:
             pass
+    hhn, og_name = FindFixingNodes(ssn, hmm, sequences_inf, seq_dir)
     alignmentsPP(og_name, seq_dir, aln_dir, refined_threads)
     ConstructionTrees(og_name, aln_dir, tree_dir, refined_threads)
     GetTreesStructurePP(og_name, hhn, tree_dir, refined_threads)
