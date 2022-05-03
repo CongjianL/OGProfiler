@@ -227,7 +227,7 @@ def RunBlastSearchParallel(queryGenomes, queryPath, searchMethod, DBList, BlastR
             else:
                 pass
     pros.close()
-    PrintParallelBar(Queue, 'Homologs Searching:', len(queryGenomes))
+    PrintParallelBar(Queue, 'Homologs Searching:', len(queryGenomes) * len(DBList))
     pros.join()
 
 
