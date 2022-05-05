@@ -59,6 +59,8 @@ def get_parameters():
     group1.add_option(
         '--so', '--species_overlap', type=int, dest='species_overlap', default=0,
         help='Species overlap threads for inference of speciation events in homologs hierarchical networks')
+    group1.add_option(
+        '-r', '--refined', action='store_true', dest='refined', default=True, help='refined network structure based on the trees')
     opt.add_option_group(group0)
     opt.add_option_group(group1)
     options, args = opt.parse_args()
@@ -74,11 +76,12 @@ def get_parameters():
     GraphThreads = options.network_threads
     gammaCoefficient = options.gamma_coefficient
     speciesOverlap = options.species_overlap
+    refined = options.refined
     parametersDict = dict(
         inputDir=inputDir, outputFile=outputFile, searchMethod=searchMethod, e_values=e_values,
         searchThreads=searchThreads, distance=distance, weightTypes=weightTypes,
         communityDetectMethod=communityDetectMethod, GraphThreads=GraphThreads, continued=continued,
-        gammaCoefficient=gammaCoefficient, speciesOverlap=speciesOverlap)
+        gammaCoefficient=gammaCoefficient, speciesOverlap=speciesOverlap, refined=refined)
     return parametersDict
 
 
@@ -958,7 +961,8 @@ class HHN(igraph.Graph):
                 ogNodes = self.hhn.vs.select(Event=event, genomesNum=GenomeNum)
         nodesDeleted = []
         OGInf = {}
-        ogNodes = sorted(ogNodes, key=lambda X: X['genesNum'], reverse=True)
+        if GenomeNum > 0:
+            ogNodes = sorted(ogNodes, key=lambda X: X['genesNum'], reverse=True)
         for ogNode in ogNodes:
             if ogNode['name'] not in [n['name'] for n in nodesDeleted]:
                 if GenomeNum == 1:
@@ -1260,6 +1264,7 @@ def FindFixingNodes(ssn, hmm, sequences_inf, Orthogroups_Sequences_dir):
     max_genome = len(sequences_inf['GenomeToUsed']) * 10
     hhn, nodes_dic = ExtractOGSorted(hmm, ssn, sequences_inf, 'III-1', 2, max_genome)
     og_name = []
+    node_species_num = {}
     num = 0
     for og, og_inf in nodes_dic.items():
         genes = og_inf[2].split(' ')
@@ -1267,12 +1272,14 @@ def FindFixingNodes(ssn, hmm, sequences_inf, Orthogroups_Sequences_dir):
             ['>%s\n%s\n' % (gene, sequences_inf['SequencesRecode'][sequences_inf['GenesRecode'][gene]]) for gene in
              genes])
         output_og_name = '{}{:0>6d}'.format('Nodes', num + 1)
-        hhn.vs.select(name=og)[0]['name'] = og_inf[2]
+        node_species_num[output_og_name] = hhn.vs.select(name=og)[0]['genesNum']
+        hhn.vs.select(name=og)[0]['name'] = output_og_name
         og_file_name = os.path.join(Orthogroups_Sequences_dir, '%s.fasta' % output_og_name)
         OutputFile(og_file_name, og_seq)
         og_name.append(output_og_name)
         num += 1
-    return hhn, og_name
+    hhn.write_gml('hhn.gml')
+    return hhn, og_name, node_species_num
 
 
 def alignments(queue, og_file, alignments_path):
@@ -1314,7 +1321,8 @@ def ConstructionTrees(aln_list, aln_path, trees_path, tree_parallel_threads):
     trees_build_pool.join()
 
 
-def DecipherTrees(queue, newick_tree_file):
+def DecipherTrees(queue, newick_tree_file, max_num_pair):
+    file_max_genes_num = max_num_pair[os.path.basename(newick_tree_file).split('.')[0]]
     tree = ete3.Tree(newick_tree_file)
     Root = tree.get_midpoint_outgroup()
     tree.set_outgroup(Root)
@@ -1322,7 +1330,10 @@ def DecipherTrees(queue, newick_tree_file):
     multi_branch = []
     for num, node in enumerate(tree.traverse("postorder")):
         genesIDs = node.get_leaf_names() if len(node.get_leaf_names()) > 0 else [node.name]
-        nodeName = ' '.join(genesIDs)
+        if len(genesIDs) == file_max_genes_num:
+            nodeName = os.path.basename(newick_tree_file).split('.')[0]
+        else:
+            nodeName = ' '.join(genesIDs)
         genomes_parent_set = set([gene.split('|')[0] for gene in genesIDs])
         genomes = ' '.join(list(genomes_parent_set))
         genomeNum = len(genomes_parent_set)
@@ -1354,20 +1365,19 @@ def DecipherTrees(queue, newick_tree_file):
         else:
             edges = 'None'
             event = 'None'
-        attr = ','.join([nodeName, edges, nodeName, genomes, str(genesNum), str(genomeNum), event])
+        genes = ' '.join(genesIDs)
+        attr = ','.join([nodeName, edges, genes, genomes, str(genesNum), str(genomeNum), event])
         attributions.append(attr)
-    if newick_tree_file == './WorkingDirectory/refined/tree/Nodes000236.nwk':
-        OutputFile('000236.txt', '\n'.join(attributions))
     queue.put(attributions)
 
 
-def GetTreesStructurePP(NodesRefined, g, treePath, cpus):
+def GetTreesStructurePP(NodesRefined, g, max_num_dic, treePath, cpus):
     # trees = mp.Pool(int(cpus))
     myQueue = mp.Manager().Queue()
     for node in NodesRefined:
         treeName = os.path.join(treePath, '%s.nwk' % node)
-        # trees.apply_async(func=DecipherTrees, args=(myQueue, treeName,))
-        DecipherTrees(myQueue, treeName)
+        # trees.apply_async(func=DecipherTrees, args=(myQueue, treeName, max_num_dic, ))
+        DecipherTrees(myQueue, treeName, max_num_dic)
     BuildGraph(myQueue, g, len(NodesRefined))
     # trees.close()
     # trees.join()
@@ -1391,7 +1401,6 @@ def BuildGraph(queue, original_graph, taskNum):
         attribute = queue.get()
         for attr in attribute:
             nodeName, edges, genesID, genomeID, genesNum, genomeNum, events = attr.split(',')
-            NodeListALl.append(nodeName)
             if edges == 'None':
                 pass
             else:
@@ -1399,11 +1408,15 @@ def BuildGraph(queue, original_graph, taskNum):
                 edge2 = [edges.split(';')[1].split('-')[0], edges.split(';')[1].split('-')[1]]
                 EdgeListAll.append(edge1)
                 EdgeListAll.append(edge2)
-            genesIDsListAll.append(genesID)
-            genomeIDsListAll.append(genomeID)
-            genesNumListAll.append(int(genesNum))
-            genomeNumListAll.append(int(genomeNum))
-            Events.append(events)
+            if 'Node' in nodeName:
+                original_graph.vs.select(name=nodeName)[0]['Event'] = events
+            else:
+                NodeListALl.append(nodeName)
+                genesIDsListAll.append(genesID)
+                genomeIDsListAll.append(genomeID)
+                genesNumListAll.append(int(genesNum))
+                genomeNumListAll.append(int(genomeNum))
+                Events.append(events)
         DoneTask += 1
         bar.update(DoneTask)
         if DoneTask >= taskNum:
@@ -1439,16 +1452,17 @@ def RefinedNodesEvents(ssn, hmm, sequences_inf, refined_dir, refined_threads):
             os.mkdir(dir_)
         except FileExistsError:
             pass
-    hhn, og_name = FindFixingNodes(ssn, hmm, sequences_inf, seq_dir)
+    hhn, og_name, og_max_genesNum = FindFixingNodes(ssn, hmm, sequences_inf, seq_dir)
     re_og_name = check_point(og_name, tree_dir)
     if re_og_name:
         alignmentsPP(re_og_name, seq_dir, aln_dir, refined_threads)
         ConstructionTrees(re_og_name, aln_dir, tree_dir, refined_threads)
-    GetTreesStructurePP(og_name, hhn, tree_dir, refined_threads)
+    GetTreesStructurePP(og_name, hhn, og_max_genesNum, tree_dir, refined_threads)
     hhn.vs['id'] = list(map(str, hhn.vs['id']))
     hhn.vs['genesNum'] = list(map(int, hhn.vs['genesNum']))
     hhn.vs['genomesNum'] = list(map(int, hhn.vs['genomesNum']))
     # print(hhn.vs.select(name='G2|g1213 G4|g3145 G4|g639')[0])
+    hhn.write_gml('hhn.gml')
     return hhn
 
 
@@ -1654,6 +1668,7 @@ if __name__ == '__main__':
     WorkingDir = os.path.join(InputDir, 'WorkingDirectory')
     gc = parameters['gammaCoefficient']
     parameter = ' '.join(sys.argv)
+    refined = parameters['refined']
     print('Current parameter %s' % parameter)
     print('Whole process PID%d' % os.getpid())
     try:
@@ -1813,11 +1828,13 @@ if __name__ == '__main__':
     print('[%s]Mark the evolution events on HHNC and output final file' % MarkStartTime)
     hm = HHN(ssnR, hg)
     hhng = hm.GetEvolutionEvents(Overlaps)
-    hhnR = RefinedNodesEvents(ssnR, hhng, SeqInf, os.path.join(WorkingDir, 'refined'), NetworkThreads)
-    hhnR.write_gml(os.path.join(WorkingDir, 'hmmR.gml'), ids="no-such-attribute")
-    hhng.write_gml(os.path.join(WorkingDir, 'hmm.gml'))
-    hhngO = hhnR.copy()
-    hhngF, OGDic = ExtractOGSorted(hhnR, ssnR, SeqInf, 'I', 0, 0)
+    if refined:
+        hhnR = RefinedNodesEvents(ssnR, hhng, SeqInf, os.path.join(WorkingDir, 'refined'), NetworkThreads)
+        hhnR.write_gml(os.path.join(WorkingDir, 'hmmR.gml'), ids="no-such-attribute")
+        hhng.write_gml(os.path.join(WorkingDir, 'hmm.gml'))
+        hhngO = hhnR.copy()
+        hhng = hhnR
+    hhngF, OGDic = ExtractOGSorted(hhng, ssnR, SeqInf, 'I', 0, 0)
     MarkDone = time.time()
     MarkEndTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(MarkDone))
     MarkTimeStr = TimeUsedComputation(MarkSince, MarkDone)
