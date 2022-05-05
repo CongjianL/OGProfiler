@@ -60,7 +60,7 @@ def get_parameters():
         '--so', '--species_overlap', type=int, dest='species_overlap', default=0,
         help='Species overlap threads for inference of speciation events in homologs hierarchical networks')
     group1.add_option(
-        '-r', '--refined', action='store_true', dest='refined', default=True, help='refined network structure based on the trees')
+        '-r', '--refined', action='store_true', dest='refined', default=False, help='refined network structure based on the trees')
     opt.add_option_group(group0)
     opt.add_option_group(group1)
     options, args = opt.parse_args()
@@ -1462,9 +1462,10 @@ def RefinedNodesEvents(ssn, hmm, sequences_inf, refined_dir, refined_threads):
         alignmentsPP(re_og_name, seq_dir, aln_dir, refined_threads)
         ConstructionTrees(re_og_name, aln_dir, tree_dir, refined_threads)
     GetTreesStructurePP(og_name, hhn, og_max_genesNum, tree_dir, refined_threads)
-    hhn.vs['id'] = list(map(str, hhn.vs['id']))
-    hhn.vs['genesNum'] = list(map(int, hhn.vs['genesNum']))
-    hhn.vs['genomesNum'] = list(map(int, hhn.vs['genomesNum']))
+    try:
+       hhn.vs['id'] = list(map(str, hhn.vs['id']))
+    except KeyError:
+        pass
     # print(hhn.vs.select(name='G2|g1213 G4|g3145 G4|g639')[0])
     hhn.write_gml('hhn.gml')
     return hhn
@@ -1838,6 +1839,9 @@ if __name__ == '__main__':
         hhng.write_gml(os.path.join(WorkingDir, 'hmm.gml'))
         hhngO = hhnR.copy()
         hhng = hhnR
+    else:
+        hhng = hhng
+        hhngO = hhng.copy()
     hhngF, OGDic = ExtractOGSorted(hhng, ssnR, SeqInf, 'I', 0, 0)
     MarkDone = time.time()
     MarkEndTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(MarkDone))
