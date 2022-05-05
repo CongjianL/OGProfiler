@@ -1284,14 +1284,14 @@ def FindFixingNodes(ssn, hmm, sequences_inf, Orthogroups_Sequences_dir):
 
 def alignments(queue, og_file, alignments_path):
     og_aln = os.path.join(alignments_path, '%s.aln.fasta' % os.path.basename(og_file).split('.')[0])
-    og_trimal = os.path.join(alignments_path, '%s.trimal.fasta' % os.path.basename(og_file).split('.')[0])
-    aln_cmd = ' '.join(['mafft', '--auto', '--anysymbol', og_file, '>', og_aln])
+    #og_trimal = os.path.join(alignments_path, '%s.trimal.fasta' % os.path.basename(og_file).split('.')[0])
+    aln_cmd = ' '.join(['mafft', '--anysymbol', og_file, '>', og_aln])
     aln_pro = subprocess.Popen(aln_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     aln_pro.wait()
-    trimal_cmd = ' '.join(['trimal', '-in', og_aln, '-out', og_trimal, '--automated1'])
-    trimal_pro = subprocess.Popen(trimal_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    trimal_pro.wait()
-    queue.put((aln_cmd, trimal_pro.returncode))
+    # trimal_cmd = ' '.join(['trimal', '-in', og_aln, '-out', og_trimal, '-automated1'])
+    # trimal_pro = subprocess.Popen(trimal_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+    # trimal_pro.wait()
+    queue.put((aln_cmd, aln_pro.returncode))
 
 
 def fastTree(queue, alignments_files, genes_trees_out_dir):
