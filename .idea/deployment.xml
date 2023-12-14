@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="Inspur" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" serverName="Inspur" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+    <option name="confirmBeforeUploading" value="false" />
     <serverData>
       <paths name="DELL">
         <serverdata>
@@ -12,8 +13,7 @@
       <paths name="Inspur">
         <serverdata>
           <mappings>
-            <mapping deploy="/OGProfiler_script" local="$PROJECT_DIR$" web="/" />
-            <mapping deploy="/endophtyes_clostridium/comparative_genome/script" local="$PROJECT_DIR$/../ComparativeGenome" />
+            <mapping deploy="/OGProfiler/scripts" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
