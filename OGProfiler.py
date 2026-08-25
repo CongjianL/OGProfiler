@@ -6,14 +6,13 @@ import random
 import subprocess
 import sys
 import time
-from itertools import combinations
+from itertools import combinations, groupby
 from optparse import OptionParser, OptionGroup
 import ete3
 import igraph
 import leidenalg as la
 import numpy as np
 import progressbar
-import pyfasta as pyf
 import scipy.sparse as sparse
 from scipy.optimize import curve_fit
 from scipy.special import comb
@@ -38,7 +37,7 @@ def get_parameters():
         help='Homologs searching methods: blastp, mmseqs, diamond. Both mmseqs and diamond are sensitive mode ('
              'default: diamond)')
     group0.add_option(
-        '-e', '--evalue', type=float, dest='e_values', default=1e-5,
+        '-e', '--evalue', type=float, dest='e_values', default=0.001,
         help="cut-off of E value")
     group0.add_option(
         '-t', '--threads', type=int, dest='search_threads', default=8,
@@ -104,6 +103,20 @@ def output_file(fileName, content):
         f.writelines(content)
 
 
+def parse_fasta(fasta_name):
+    seqDict = {}
+    with open(fasta_name) as fh:
+        faiter = (x[1] for x in groupby(fh, lambda line: line[0] == ">"))
+        for header in faiter:
+            header = header.__next__()[1:].strip().split(' ')[0]
+            seq = "".join(s.strip() for s in faiter.__next__())
+            if header in seqDict:
+                sys.exit('FASTA contains multiple entries with the same name')
+            else:
+                seqDict[header] = seq
+    return seqDict
+
+
 def time_used(info=''):
     def timer(function):
         @functools.wraps(function)
@@ -113,7 +126,7 @@ def time_used(info=''):
             end = time.perf_counter() if sys.version[0] == '3' else time.clock()
             time_use = end - start
             print(
-                f'[{info}]: {time_use // 3600:.0f}h {(time_use % 3600) // 60:.0f}m {((time_use % 3600) % 60) % 60:.0f}s')
+                f'[{info}]: {time_use // 3600:.0f}h {(time_use % 3600) // 60:.0f}m {((time_use % 3600) % 60) % 60:.4f}s')
             return results
 
         return wrapper
@@ -142,7 +155,11 @@ def get_input_genome_inf(genome_path, suffix):
     input_genomes = [
         genome_file for genome_file in os.listdir(genome_path) if
         genome_file.split('.')[-1] == suffix]
-    return input_genomes
+    if len(input_genomes) < 4:
+        print("Error! the number of genomes were less than 4!\n Please check your datasets or suffix of genome file")
+        sys.exit(0)
+    else:
+        return input_genomes
 
 
 # homologous searching methods
@@ -180,7 +197,7 @@ def diamond(queue, queryGenome, queryGenomePath, BlastResultDir, DB, e_value):
         '--evalue', str(e_value), '-f', '6', '--out', blast_file_path, '--quiet'])
     pro = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     pro.wait()
-    queue.put((command, pro.returncode))
+    queue.put((blast_file_path, pro.returncode))
 
 
 def mmseqs(queue, queryGenome, queryGenomePath, BlastResultDir, DB, e_value):
@@ -193,7 +210,7 @@ def mmseqs(queue, queryGenome, queryGenomePath, BlastResultDir, DB, e_value):
         '--format-mode', '0', '--remove-tmp-files', '-s', '7.5', '-e', str(e_value)])
     pro = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     pro.wait()
-    queue.put((command, pro.returncode))
+    queue.put((blast_file_path, pro.returncode))
 
 
 def blastp(queue, queryGenome, queryGenomePath, BlastResultDir, DB, e_value):
@@ -204,7 +221,7 @@ def blastp(queue, queryGenome, queryGenomePath, BlastResultDir, DB, e_value):
         ['blastp', '-outfmt', '6', '-query', blast_query, '-db', DB, '-evalue', str(e_value), '-out', blast_file_path])
     pro = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     pro.wait()
-    queue.put((command, pro.returncode))
+    queue.put((blast_file_path, pro.returncode))
 
 
 def run_blast_search_parallel(queryGenomes, queryPath, searchMethod, DBList, BlastResultsPath, E_Values, thread):
@@ -383,7 +400,7 @@ class MatrixHandle:
                         colIndex for colIndex, bitValue in zip(bit_sores_object.rows[0], bit_sores_object.data[0])
                         if bitValue > max_values - accepted]
                     best_hit_index_list.extend(best_hits_col_index)
-                    best_hit_row_list.extend(np.full(len(best_hits_col_index), row_num, dtype=np.int))
+                    best_hit_row_list.extend(np.full(len(best_hits_col_index), row_num, dtype=int))
             best_hit_matrix_for_dump = sparse.csr_matrix(
                 (np.ones(len(best_hit_row_list)), (best_hit_row_list, best_hit_index_list)),
                 shape=row_matrix.get_shape())
@@ -399,7 +416,7 @@ class MatrixHandle:
                     colIndex for colIndex, bitValue in zip(bit_sores_object.rows[0], bit_sores_object.data[0])
                     if bitValue > best_hit_i[rowNum] - accepted]
                 best_hit_index_list.extend(best_hits_col_index)
-                best_hit_row_list.extend(np.full(len(best_hits_col_index), rowNum, dtype=np.int))
+                best_hit_row_list.extend(np.full(len(best_hits_col_index), rowNum, dtype=int))
         best_hit_matrix_for_dump = sparse.csr_matrix(
             (np.ones(len(best_hit_row_list)), (best_hit_row_list, best_hit_index_list)),
             shape=row_matrix.get_shape())
@@ -541,8 +558,8 @@ def get_bh_matrix_parallel(ResultPath, mostDistances, reInf, matDirectory, matri
     p = mp.Pool(processes=int(matrixThreads))
     for iSpecies in reInf['GenomeToUsed']:
         p.apply_async(func=get_bh_matrix_all, args=(my_queue, iSpecies, mostDistances, ResultPath, reInf, matDirectory))
-    p.close()
     print_parallel_bar(my_queue, 'Get Matrices', len(reInf['GenomeToUsed']))
+    p.close()
     p.join()
 
 
@@ -1178,7 +1195,6 @@ def find_fixing_nodes(ssn, hmm, sequences_inf, Orthogroups_Sequences_dir):
         output_file(og_file_name, og_seq)
         og_name.append(output_og_name)
         num += 1
-    hhn.write_gml('hhn.gml')
     return hhn, og_name
 
 
@@ -1357,7 +1373,7 @@ def RefinedNodesEvents(ssn, hmm, sequences_inf, refined_dir, refined_threads):
     for dir_ in [refined_dir, seq_dir, aln_dir, tree_dir]:
         os.makedirs(dir_, exist_ok=True)
     hhn, og_name = find_fixing_nodes(ssn, hmm, sequences_inf, seq_dir)
-    hhn.write_gml('hnn.gml')
+    hhn.write_gml(os.path.join(refined_dir, 'hnn.gml'))
     re_aln_og = check_point(og_name, aln_dir, 'aln.fasta')
     re_tree_og = check_point(og_name, tree_dir, 'nwk')
     if re_aln_og:
@@ -1369,8 +1385,7 @@ def RefinedNodesEvents(ssn, hmm, sequences_inf, refined_dir, refined_threads):
         hhn.vs['id'] = list(map(str, hhn.vs['id']))
     except KeyError:
         pass
-    # print(hhn.vs.select(name='G2|g1213 G4|g3145 G4|g639')[0])
-    hhn.write_gml('hhn.gml')
+    hhn.write_gml(os.path.join(refined_dir, 'hhn.gml'))
     return hhn
 
 
@@ -1577,7 +1592,7 @@ class Call:
         for GenomeNum, Genome in enumerate(genome_files):
             seq_inf_pair['GenomeRecodeInf']['G%d' % GenomeNum] = Genome
             fasta_genome = os.path.join(genome_path, Genome)
-            fasta_file = pyf.Fasta(fasta_genome)
+            fasta_file = parse_fasta(fasta_genome)
             seq_numbers = len(list(fasta_file.keys()))
             seq_inf_pair['GenomeToUsed'].append('G%d' % GenomeNum)
             seq_inf_pair['SpeciesGeneNum']['G%d' % GenomeNum] = seq_numbers
@@ -1589,7 +1604,7 @@ class Call:
                 seq_inf_pair['SeqLengthInf']['G%d|g%d' % (GenomeNum, GeneNum)] = len(fasta_file[SeqID][:])
                 seq_inf_pair['SequencesRecode'][SeqID.split(' ')[0]] = fasta_file[SeqID][:]
             output_file(os.path.join(genome_recode_path, 'G%d.fa' % GenomeNum), new_seq)
-        output_file('SequenceIDs.txt', seq_recode)
+        output_file(os.path.join(work_dir, 'SequenceIDs.txt'), seq_recode)
         [os.remove(os.path.join(genome_path, file)) for file in os.listdir(genome_path) if
          file.split('.')[-1] in ['flat', 'gdx']]
         matrices_dumpy(seq_inf_pair, 'SeqInf', 'Information', work_dir)
