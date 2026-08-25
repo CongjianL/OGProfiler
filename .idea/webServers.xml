@@ -10,7 +10,7 @@
         </fileTransfer>
       </webServer>
       <webServer id="1cd40ff2-8219-4ec0-9b67-d81cce408130" name="Inspur">
-        <fileTransfer rootFolder="/home/licongjian" accessType="SFTP" host="222.19.192.38" port="22" sshConfigId="a8806329-b17c-4c3d-921c-48b4f6703005" sshConfig="licongjian@222.19.192.38:22 password">
+        <fileTransfer rootFolder="/media/disk3/licongjian" accessType="SFTP" host="10.50.0.198" port="22" sshConfigId="b85c8a85-b5d1-4e29-81f5-4e85149ee094" sshConfig="licongjian@10.50.0.198:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
