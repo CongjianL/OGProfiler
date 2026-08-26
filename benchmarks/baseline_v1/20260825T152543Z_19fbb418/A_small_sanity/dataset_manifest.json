@@ -1,0 +1,19 @@
+{
+  "expected": {
+    "one_to_one_families": 10,
+    "proteins_per_species": 12
+  },
+  "files": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "proteomes/species_01.faa": "32b93444ef1dbb5396954bd23bed153237e77b1eb7ef56730693832b16fa0dca",
+    "proteomes/species_02.faa": "49d0f39a19e46d6ebb80acdbf050e0a5e5c0364c291b4ca6a1b3f10fbb518dbe",
+    "proteomes/species_03.faa": "382c90eb9e6a653f792d068c5fa1d95b1df4e2cd405581af2ea5c13180926d87",
+    "proteomes/species_04.faa": "6085c6aa6eeed2a9077bcd2b1d91c1df6094ec46980f7778286bf57abad95a6b",
+    "reference_ssn.gml": "9d1652b201d57a9282891ee4d8a26693f41bf6cc5c08701f16104fd40a18e4bd"
+  },
+  "generator_seed": 20260825,
+  "n_proteins": 48,
+  "n_species": 4,
+  "name": "A_small_sanity",
+  "purpose": "Complete-pipeline smoke test with ten one-to-one families and species-specific proteins."
+}

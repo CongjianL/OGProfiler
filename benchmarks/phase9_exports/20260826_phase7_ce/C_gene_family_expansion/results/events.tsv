@@ -1,0 +1,10 @@
+component_id	cluster_id	network_event	overlap_score	confidence
+0	0	DUPLICATION_LIKE	1.0	1.0
+0	1	AMBIGUOUS	0.0	1.0
+0	2	AMBIGUOUS	0.0	1.0
+0	3	AMBIGUOUS	0.0	1.0
+1	0	AMBIGUOUS	0.0	1.0
+2	0	AMBIGUOUS	0.0	1.0
+3	0	AMBIGUOUS	0.0	1.0
+4	0	AMBIGUOUS	0.0	1.0
+5	0	AMBIGUOUS	0.0	1.0

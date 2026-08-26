@@ -1,0 +1,17 @@
+run_id	axis	value	overrides	config_sha256
+baseline	baseline	'default'		16b6a084f2f61c45fa30cef8d5142bfdc10df09e0c0fa6682f5a37b0621c6770
+normalization-6224a14ed4a7	normalization	{'similarity.normalization': 'raw_bitscore'}	similarity.normalization=raw_bitscore	6679e4ba4fe2fb8509e3e77651b040323fb0300c034cf9bb8d2009252e55141c
+normalization-91f8f1e31e7a	normalization	{'similarity.normalization': 'length_scaled_bitscore'}	similarity.normalization=length_scaled_bitscore	94d4b80cded8ccf88563618700b79e2c9c0e28f80e299c8745d63b3d44408245
+coverage-494cfc50ca24	coverage	{'edges.min_query_coverage': 0.0, 'edges.min_target_coverage': 0.0}	edges.min_query_coverage=0.0;edges.min_target_coverage=0.0	5171815aa8576c0929b9e1d481ee1b4faa0777db9a19ef4f822a30ae969df628
+coverage-c6bc14bf24d3	coverage	{'edges.min_query_coverage': 70.0, 'edges.min_target_coverage': 70.0}	edges.min_query_coverage=70.0;edges.min_target_coverage=70.0	c9bd735f00e3ce2ec2ab6f7121290ffa16a8e51da28157354a5dd6149d5d4c1e
+symmetrization-6a9c009391c5	symmetrization	{'edges.symmetrization': 'min'}	edges.symmetrization=min	680f6d064d5c642ef7e4464c4170bc54fd4ca5080e86eb0d78c4384ead8d0a01
+symmetrization-6793579552db	symmetrization	{'edges.symmetrization': 'mean'}	edges.symmetrization=mean	7b7620f4e0027427f583315ea467ee52aafc952ea7f7166f1e89ac2b4e160375
+symmetrization-999f7f024c2a	symmetrization	{'edges.symmetrization': 'geometric_mean'}	edges.symmetrization=geometric_mean	c320d7aa6ef53f8955850e11c529c18c322cf1f085f55030445470540d6eacec
+leiden_method-f947bb8fe9ad	leiden_method	{'hierarchy.method': 'rbcv'}	hierarchy.method=rbcv	325b8ccd76c13e115f15448b6789eaae5a0d2475242d991efb7259b65882f4de
+leiden_method-5429c1b59d6a	leiden_method	{'hierarchy.method': 'cpm'}	hierarchy.method=cpm	04e00f1b85157457344cab2d1758a6ad6109adb989d3537f9b2dcf2e1ea35766
+leiden_method-13befdd6539f	leiden_method	{'hierarchy.method': 'modularity'}	hierarchy.method=modularity	ab4463fb25119cc01f353dc35af6445f36f785e4c45a60a46ffd18eea3da8c39
+gamma_strategy-d24cc1f499bd	gamma_strategy	{'hierarchy.resolution_strategy': 'log_grid'}	hierarchy.resolution_strategy=log_grid	2f0dbe7c42e2e10d8e27222984abc31608c6ab479b8a730d8db8a325f413ad39
+split_acceptance-9597c7e8c72b	split_acceptance	{'hierarchy.min_family_size': 3, 'hierarchy.max_child_fraction': 0.9}	hierarchy.max_child_fraction=0.9;hierarchy.min_family_size=3	214463a43aeb0eec3684490b41ced3391c3d1fae20918091b2b2a324b3652a8a
+split_acceptance-0665b625b286	split_acceptance	{'hierarchy.min_family_size': 5, 'hierarchy.max_child_fraction': 0.8}	hierarchy.max_child_fraction=0.8;hierarchy.min_family_size=5	b8a81eef65fc4da12b9fe19152de38791e9513dd496f6e8136fae3b476e3191c
+seed-0e81dc884def	seed	{'hierarchy.seed': 7}	hierarchy.seed=7	246cfe05d74367d1a2281333452b4d1af6c8437dbb2fc7b7bfe37e939dd465a7
+seed-2531ae09ced1	seed	{'hierarchy.seed': 104729}	hierarchy.seed=104729	2456729f7271f824bde28309cb72354a48823f9e9ec07a795582f27cc3683bc0

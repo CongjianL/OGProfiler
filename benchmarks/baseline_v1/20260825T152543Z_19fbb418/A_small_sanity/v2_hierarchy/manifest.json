@@ -1,0 +1,218 @@
+{
+  "algorithm_version": "hierarchy-prototype-v1",
+  "command": [
+    "ogprofiler",
+    "prototype-hierarchy",
+    "--ssn",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260825T152543Z_e46af3ed522d_19fbb418_53770/results/A_small_sanity/v1_full/WorkingDirectory/ssn.gml",
+    "--out",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260825T152543Z_e46af3ed522d_19fbb418_53770/results/A_small_sanity/v2_hierarchy",
+    "--weight-attribute",
+    "NBS"
+  ],
+  "component_count": 18,
+  "components": [
+    {
+      "component_id": 0,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.003441659966483712,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 1,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.003117899177595973,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 2,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.003103686962276697,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 3,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.00308177899569273,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 4,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.003123959992080927,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 5,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.003105164971202612,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 6,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.003094380022957921,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 7,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.0030297408811748028,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 8,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.003099936991930008,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 9,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.0030500611755996943,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 10,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.00016742898151278496,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 11,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.00017796899192035198,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 12,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.00016155606135725975,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 13,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.00018543493933975697,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 14,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.00016640196554362774,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 15,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.0001624920405447483,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 16,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.00015824800357222557,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 17,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 60948480,
+      "runtime_seconds": 0.00016267807222902775,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    }
+  ],
+  "ogprofiler_version": "2.0.0a1",
+  "resolved_config_sha256": "6057885ae861330c8ef5b397123fe3d887930ce668084db487810ddd08cbdaef",
+  "ssn_sha256": "1f9236aae5039d25ea1c3a9a078a22c59052980247d0a3936272b5b5c2024a4d",
+  "weight_attribute": "NBS"
+}

@@ -1,0 +1,20 @@
+{
+  "connected_component_count": 64,
+  "hierarchy_depth": 2,
+  "hierarchy_edges": 32,
+  "hierarchy_nodes": 40,
+  "largest_component_size": 3,
+  "membership_count": 24,
+  "peak_rss_bytes": 118296576,
+  "runtime_seconds": 12.1,
+  "ssn_edges": 23,
+  "ssn_nodes": 80,
+  "stage_runtime_seconds": {
+    "Genomes Loading": 0.0645,
+    "HNN Construction": 0.1693,
+    "HNN analysis and OGs generation": 1.4817,
+    "Homology Searching": 7.5634,
+    "SSN Building": 1.2911
+  },
+  "terminal_family_count": 24
+}

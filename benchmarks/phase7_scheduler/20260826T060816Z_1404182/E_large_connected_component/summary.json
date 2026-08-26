@@ -1,0 +1,33 @@
+{
+  "component_start_order": [
+    0
+  ],
+  "component_task_count": 1,
+  "hierarchy_nodes": 7,
+  "initial_counts": {
+    "completed": 1,
+    "failed": 0,
+    "scheduled": 1,
+    "singleton_components": 0,
+    "skipped": 0
+  },
+  "initial_peak_rss_kib": 78252,
+  "initial_wall_seconds": 2.29,
+  "resume_counts": {
+    "completed": 0,
+    "failed": 0,
+    "scheduled": 0,
+    "singleton_components": 0,
+    "skipped": 1
+  },
+  "resume_peak_rss_kib": 71480,
+  "resume_wall_seconds": 0.72,
+  "task_statuses": [
+    [
+      "0",
+      "DONE",
+      1
+    ]
+  ],
+  "terminal_members": 240
+}

@@ -1,0 +1,17 @@
+run_id	axis	value	family_pair_f1	exact_family_recovery	single_copy_recovery	species_overlap_consistency	scientific_score	total_seconds
+baseline	baseline	default	1.0	1.0	1.0		1.0	8.62940306100063
+coverage-494cfc50ca24	coverage	{'edges.min_query_coverage': 0.0, 'edges.min_target_coverage': 0.0}	1.0	1.0	1.0		1.0	7.079710416030139
+coverage-c6bc14bf24d3	coverage	{'edges.min_query_coverage': 70.0, 'edges.min_target_coverage': 70.0}	1.0	1.0	1.0		1.0	7.2821045715827495
+gamma_strategy-d24cc1f499bd	gamma_strategy	{'hierarchy.resolution_strategy': 'log_grid'}	1.0	1.0	1.0		1.0	7.2739313072524965
+leiden_method-13befdd6539f	leiden_method	{'hierarchy.method': 'modularity'}	1.0	1.0	1.0		1.0	7.0613598332274705
+leiden_method-5429c1b59d6a	leiden_method	{'hierarchy.method': 'cpm'}	1.0	1.0	1.0		1.0	6.816972000990063
+leiden_method-f947bb8fe9ad	leiden_method	{'hierarchy.method': 'rbcv'}	1.0	1.0	1.0		1.0	6.886488189687952
+normalization-6224a14ed4a7	normalization	{'similarity.normalization': 'raw_bitscore'}	1.0	1.0	1.0		1.0	8.608210934093222
+normalization-91f8f1e31e7a	normalization	{'similarity.normalization': 'length_scaled_bitscore'}	1.0	1.0	1.0		1.0	6.412079916568473
+seed-0e81dc884def	seed	{'hierarchy.seed': 7}	1.0	1.0	1.0		1.0	6.184135095216334
+seed-2531ae09ced1	seed	{'hierarchy.seed': 104729}	1.0	1.0	1.0		1.0	6.73571609868668
+split_acceptance-0665b625b286	split_acceptance	{'hierarchy.max_child_fraction': 0.8, 'hierarchy.min_family_size': 5}	1.0	1.0	1.0		1.0	6.6005482617765665
+split_acceptance-9597c7e8c72b	split_acceptance	{'hierarchy.max_child_fraction': 0.9, 'hierarchy.min_family_size': 3}	1.0	1.0	1.0		1.0	5.995362432440743
+symmetrization-6793579552db	symmetrization	{'edges.symmetrization': 'mean'}	1.0	1.0	1.0		1.0	7.040331384865567
+symmetrization-6a9c009391c5	symmetrization	{'edges.symmetrization': 'min'}	1.0	1.0	1.0		1.0	7.126190645387396
+symmetrization-999f7f024c2a	symmetrization	{'edges.symmetrization': 'geometric_mean'}	1.0	1.0	1.0		1.0	6.7778680911287665

@@ -1,0 +1,238 @@
+{
+  "baseline": {
+    "axis": "baseline",
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "run_id": "baseline",
+    "scientific_score": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null,
+    "total_seconds": 8.62940306100063,
+    "value": "default"
+  },
+  "completed_runs": 16,
+  "recommended": {
+    "axis": "baseline",
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "run_id": "baseline",
+    "scientific_score": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null,
+    "total_seconds": 8.62940306100063,
+    "value": "default"
+  },
+  "rows": [
+    {
+      "axis": "baseline",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "baseline",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 8.62940306100063,
+      "value": "default"
+    },
+    {
+      "axis": "coverage",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "coverage-494cfc50ca24",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 7.079710416030139,
+      "value": {
+        "edges.min_query_coverage": 0.0,
+        "edges.min_target_coverage": 0.0
+      }
+    },
+    {
+      "axis": "coverage",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "coverage-c6bc14bf24d3",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 7.2821045715827495,
+      "value": {
+        "edges.min_query_coverage": 70.0,
+        "edges.min_target_coverage": 70.0
+      }
+    },
+    {
+      "axis": "gamma_strategy",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "gamma_strategy-d24cc1f499bd",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 7.2739313072524965,
+      "value": {
+        "hierarchy.resolution_strategy": "log_grid"
+      }
+    },
+    {
+      "axis": "leiden_method",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "leiden_method-13befdd6539f",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 7.0613598332274705,
+      "value": {
+        "hierarchy.method": "modularity"
+      }
+    },
+    {
+      "axis": "leiden_method",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "leiden_method-5429c1b59d6a",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 6.816972000990063,
+      "value": {
+        "hierarchy.method": "cpm"
+      }
+    },
+    {
+      "axis": "leiden_method",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "leiden_method-f947bb8fe9ad",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 6.886488189687952,
+      "value": {
+        "hierarchy.method": "rbcv"
+      }
+    },
+    {
+      "axis": "normalization",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "normalization-6224a14ed4a7",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 8.608210934093222,
+      "value": {
+        "similarity.normalization": "raw_bitscore"
+      }
+    },
+    {
+      "axis": "normalization",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "normalization-91f8f1e31e7a",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 6.412079916568473,
+      "value": {
+        "similarity.normalization": "length_scaled_bitscore"
+      }
+    },
+    {
+      "axis": "seed",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "seed-0e81dc884def",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 6.184135095216334,
+      "value": {
+        "hierarchy.seed": 7
+      }
+    },
+    {
+      "axis": "seed",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "seed-2531ae09ced1",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 6.73571609868668,
+      "value": {
+        "hierarchy.seed": 104729
+      }
+    },
+    {
+      "axis": "split_acceptance",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "split_acceptance-0665b625b286",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 6.6005482617765665,
+      "value": {
+        "hierarchy.max_child_fraction": 0.8,
+        "hierarchy.min_family_size": 5
+      }
+    },
+    {
+      "axis": "split_acceptance",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "split_acceptance-9597c7e8c72b",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 5.995362432440743,
+      "value": {
+        "hierarchy.max_child_fraction": 0.9,
+        "hierarchy.min_family_size": 3
+      }
+    },
+    {
+      "axis": "symmetrization",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "symmetrization-6793579552db",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 7.040331384865567,
+      "value": {
+        "edges.symmetrization": "mean"
+      }
+    },
+    {
+      "axis": "symmetrization",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "symmetrization-6a9c009391c5",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 7.126190645387396,
+      "value": {
+        "edges.symmetrization": "min"
+      }
+    },
+    {
+      "axis": "symmetrization",
+      "exact_family_recovery": 1.0,
+      "family_pair_f1": 1.0,
+      "run_id": "symmetrization-999f7f024c2a",
+      "scientific_score": 1.0,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": null,
+      "total_seconds": 6.7778680911287665,
+      "value": {
+        "edges.symmetrization": "geometric_mean"
+      }
+    }
+  ],
+  "schema_version": "phase12-matrix-summary-v1"
+}

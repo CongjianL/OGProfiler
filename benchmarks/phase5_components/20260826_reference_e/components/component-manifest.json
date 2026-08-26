@@ -1,0 +1,70 @@
+{
+  "algorithm_version": "union-find-partition-v1",
+  "command": [
+    "ogprofiler",
+    "components",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase5-reference-e-20260826",
+    "--set",
+    "components.edge_batch_size=128"
+  ],
+  "counts": {
+    "components": 1,
+    "partition_files": 37,
+    "proteins": 240,
+    "retained_edges": 4685,
+    "singletons": 0
+  },
+  "input_checksums": {
+    "proteins.parquet": "ae1ec635f406e897e18d34e2812240efaafae57d1fd5a8303382166c6a340bc5",
+    "retained_edges.parquet": "2a17ff0c98421c6f124aed4947eebdd6196f2362ba5610c8c6d49cd364da66ae"
+  },
+  "output_checksums": {
+    "edges/component=00000000/part-00000000-0.parquet": "cb1c13973893f3c910b3c629b8844e16f299d2ea7f2e86777a296f35727c0aea",
+    "edges/component=00000000/part-00000001-0.parquet": "418106f1f6db6b6f50721c2bbce4cbc23dda6f8cb74fb9ec79ee5ff7a5a5ef84",
+    "edges/component=00000000/part-00000002-0.parquet": "0e908be898f4c518d6746cd2c28ce0a2c3e2c3bdbf908a51a25eeeafa50af40f",
+    "edges/component=00000000/part-00000003-0.parquet": "3b4f7d8574ea7a1ea3de139b2bcb8eb4ecdf0ba6e45d8a587641ad52c6153635",
+    "edges/component=00000000/part-00000004-0.parquet": "9c261e696d2d745158b8f9d5ec7033ba07d82bd8f805281675274b3169ad556e",
+    "edges/component=00000000/part-00000005-0.parquet": "8e87860b4e74350bb3498c7cd3584b274addabeb8f91384b48dc7a6a10dd8192",
+    "edges/component=00000000/part-00000006-0.parquet": "88d20518e25d98717dd8289721107002c5977e453f956bd737a73627b34d6b16",
+    "edges/component=00000000/part-00000007-0.parquet": "25032a46d517bb12a3a0aba06c4ce6144ffc685b3186a4c0fe09bef325e7442d",
+    "edges/component=00000000/part-00000008-0.parquet": "efd6ccb741bd27b79389de3219c08836f82cd7b7f58dce4f992eef5c9002509d",
+    "edges/component=00000000/part-00000009-0.parquet": "39d8aa7a5ac44386a2c84fd2b3c9e581f656348615b9f648070221b2377e8f01",
+    "edges/component=00000000/part-00000010-0.parquet": "7cc749d8ad0d3e941f29df748d01291248ff538e0ddc462ea5ab011c48cbb57d",
+    "edges/component=00000000/part-00000011-0.parquet": "2a455a5a0bf747dbcdff406706716bac467e7eedc4b6f9181a327972f79273f5",
+    "edges/component=00000000/part-00000012-0.parquet": "425a5270a0a19dfb5653e0341a009fe8a0e7260080d613470769e5dbaf6c16ba",
+    "edges/component=00000000/part-00000013-0.parquet": "3503e286d2501e3814a2fb6b37b8a77385f460026d2d87e68e974e1e1599945b",
+    "edges/component=00000000/part-00000014-0.parquet": "cddfb197bbc17e7c861062bcf97eee72bf8a252857aa79aec73863273e4d9594",
+    "edges/component=00000000/part-00000015-0.parquet": "c4a185416e617e555e150deb9bd69a27898edd007e686086cad7e680248a5852",
+    "edges/component=00000000/part-00000016-0.parquet": "0269c6bd2e221708821235a582428f59b329c3869052734ff23bf4530cd00f93",
+    "edges/component=00000000/part-00000017-0.parquet": "3d6eb42fc875b563238029edb9073a320e1fb98346e0df3e8983439c73eb142d",
+    "edges/component=00000000/part-00000018-0.parquet": "1bdf70635b7fe104be9d42d92786f1d8a12ed8f8a95b1f45de54754c17dd6fa2",
+    "edges/component=00000000/part-00000019-0.parquet": "077d8dec3dc913cf8ab1dff25f689df7578b651c0e52b1458ceff9d802f61e04",
+    "edges/component=00000000/part-00000020-0.parquet": "a7e86d67efb1239bf9ee77223508b4fd4ac0486f6076194c53357fbcb6ca3aa1",
+    "edges/component=00000000/part-00000021-0.parquet": "8948b0f50a32c8dbe19aed1ee0e72d391941b1baafab8f87998cd205ae877583",
+    "edges/component=00000000/part-00000022-0.parquet": "5097628076273d619a85283703adbf7b5b33bc2bbf2c3070200e526761e4f4d5",
+    "edges/component=00000000/part-00000023-0.parquet": "74bcd31494af8b90a4056271f2864f569327654bab5fb57f7eec93cfecf47a99",
+    "edges/component=00000000/part-00000024-0.parquet": "6b1f3514846db75d9e4e1e72a01d9bfed087994784f8441c300fd2cb15b66764",
+    "edges/component=00000000/part-00000025-0.parquet": "e819b483902dc445fde7194f6413670c2992dea11979ca359d6c81cdb86a30de",
+    "edges/component=00000000/part-00000026-0.parquet": "f23b46fe5bf9b1d59fa36071a113e94b394b72d6a9dd4c977b3c9fbd705e47a6",
+    "edges/component=00000000/part-00000027-0.parquet": "3c6411cbb352e1c3722b489bb43ab0ecab8e2705d976e6be994bed9fdee30a30",
+    "edges/component=00000000/part-00000028-0.parquet": "3fe85889734c51d776a405c49a6a53e10a6a9940323a10cfd4b830b58880cbac",
+    "edges/component=00000000/part-00000029-0.parquet": "dde74966ec946b1bfd52784fd6d503eefe95c236b261373c7492b858ea4cd9e4",
+    "edges/component=00000000/part-00000030-0.parquet": "50b882166c228926ad9aeee21ed96081317d53b4a9329332bdc592dcb08b705d",
+    "edges/component=00000000/part-00000031-0.parquet": "a820f61a33418cd5f294e1e99d5267980432b13d5a24107c6ebf12d202788935",
+    "edges/component=00000000/part-00000032-0.parquet": "dc3d4ba06d4f88739565c2e25e743d3cc7c98d29349776787cb8685425dab3df",
+    "edges/component=00000000/part-00000033-0.parquet": "d97bdf92a5ae8e6aaa1a4c69f40e2d9d8f57b0bf05928713ab1e6e2f1f2ed3a1",
+    "edges/component=00000000/part-00000034-0.parquet": "5ae57bd7b1fa196b8b863825ee711f945b923e7dc6b674b80db3b2221616d4e1",
+    "edges/component=00000000/part-00000035-0.parquet": "7978e80035eebf9961f48c466f7a3800064c42c552da7aa41e10d47cf3ba05b9",
+    "edges/component=00000000/part-00000036-0.parquet": "d7dc8fc8931fd02fd97eb819b54d206633c653d0d7585786d3469176de3799fb",
+    "index.parquet": "26aaadd67b120d214c8a69aab62a5cdf7f917cc5f1693ea6586535d5aa8f7187",
+    "singleton_terminal_families.parquet": "9d9c182f2c36d2000c6988cb6e59937b45be4619e49d7a90036d8a3f1f30330a",
+    "statistics.parquet": "ed33758bf5d15a7410b1a5932f8484878c4c0571692ceda9d84219d3dcaebf7a"
+  },
+  "parameters": {
+    "component_order": "n_vertices_desc_then_min_protein_id",
+    "edge_batch_size": 128,
+    "max_open_files": 64
+  },
+  "parameters_sha256": "0090461d34b0e1bf242ad0c80e25c3cbcd33ad35923cef8d36eb1c1e0ce36539"
+}

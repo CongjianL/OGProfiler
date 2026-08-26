@@ -1,0 +1,31 @@
+{
+  "axis": "normalization",
+  "config_sha256": "94d4b80cded8ccf88563618700b79e2c9c0e28f80e299c8745d63b3d44408245",
+  "headline_metrics": {
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066"
+  },
+  "overrides": [
+    "similarity.normalization=length_scaled_bitscore"
+  ],
+  "run_id": "normalization-91f8f1e31e7a",
+  "stage_seconds": {
+    "components": 0.6442826518323272,
+    "edges": 0.4423396720085293,
+    "evolution": 0.6894925199449062,
+    "export": 0.6088477259036154,
+    "hierarchy": 3.0511372769251466,
+    "metrics": 0.3125813340302557,
+    "prepare": 0.6633987359236926
+  },
+  "total_seconds": 6.412079916568473,
+  "value": {
+    "similarity.normalization": "length_scaled_bitscore"
+  }
+}

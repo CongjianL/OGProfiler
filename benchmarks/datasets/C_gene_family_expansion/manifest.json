@@ -1,0 +1,20 @@
+{
+  "expected": {
+    "expanded_family_size": 60,
+    "planted_subclades": 3,
+    "proteins_per_species": 20
+  },
+  "files": {
+    "ground_truth.tsv": "4052438d025330f345a11a32908ff1da480ed72d1b7aa5e3edeb07943b790e84",
+    "proteomes/species_01.faa": "486190244fdf8710f932959f62034760e2e5a5489308a2270fde19e03ffc6059",
+    "proteomes/species_02.faa": "7ecc75783da57c40fe303c1346f0446eaa940da3cf9df35bac701bfbd32d0b82",
+    "proteomes/species_03.faa": "8c3aa40be0385f5866d3d0c3b716ddb8b52971d5e1059ef487c4ff09e1e8c8f0",
+    "proteomes/species_04.faa": "bd72ff61bd0ef9ec7b05e4f1c21277441fbeb70764c627869c0c062eb39cf92d",
+    "reference_ssn.gml": "504b7a26cb565b3c63b7558093e7404b63ed79df37d8f4a7e4d45c086ec8b699"
+  },
+  "generator_seed": 20260825,
+  "n_proteins": 80,
+  "n_species": 4,
+  "name": "C_gene_family_expansion",
+  "purpose": "A 60-member expanded family with three planted sequence clades."
+}

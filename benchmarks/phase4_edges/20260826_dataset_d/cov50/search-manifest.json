@@ -1,0 +1,83 @@
+{
+  "algorithm_version": "directional-search-v1",
+  "backend": "diamond",
+  "backend_version": "diamond version 2.2.5",
+  "command": [
+    "ogprofiler",
+    "search",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase4-dataset-d-20260826-cov50",
+    "--backend",
+    "diamond",
+    "--set",
+    "search.threads=2",
+    "--set",
+    "search.max_target_seqs=0"
+  ],
+  "database_command": [
+    "diamond",
+    "makedb",
+    "--in",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase4-dataset-d-20260826-cov50/input/proteins.faa",
+    "--db",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase4-dataset-d-20260826-cov50/search/diamond/proteins"
+  ],
+  "directional": true,
+  "hit_count": 244,
+  "hit_schema": [
+    "query_id",
+    "target_id",
+    "query_species",
+    "target_species",
+    "bitscore",
+    "identity",
+    "query_coverage",
+    "target_coverage",
+    "evalue"
+  ],
+  "input_checksums": {
+    "proteins.faa": "8616b7df14c7b63c53ee7ac15498bb850ccfb4000ef9d81f0fe21cf788d09185",
+    "proteins.parquet": "542fcdfceb16a75a6f3c2727804fde1d633dcffa0da975500efaf88930be3a9a"
+  },
+  "output_checksums": {
+    "database.dmnd": "9d94f426e64b23d22c97762d43c16cbe93a18c2fcdcf22737b4f6307fa9b7a75",
+    "hits.parquet": "4aa2e3c89459e643842b7e081d384317de4dff594a356981f4b8fd5b65c49535",
+    "hits.tsv": "6554568cf4c5125c1a18233e84ed7727b455a2393a89647f26d20bb3df200d76"
+  },
+  "parameters": {
+    "evalue": 0.001,
+    "max_target_seqs": 0,
+    "sensitivity": "sensitive",
+    "threads": 2
+  },
+  "parameters_sha256": "d3aaee1a9e500df9311bcbbab2339deca4c491fa8a0227f07f5ed48369385d3f",
+  "search_command": [
+    "diamond",
+    "blastp",
+    "--query",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase4-dataset-d-20260826-cov50/input/proteins.faa",
+    "--db",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase4-dataset-d-20260826-cov50/search/diamond/proteins",
+    "--out",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase4-dataset-d-20260826-cov50/search/diamond/hits.tsv",
+    "--outfmt",
+    "6",
+    "qseqid",
+    "sseqid",
+    "pident",
+    "length",
+    "qlen",
+    "slen",
+    "evalue",
+    "bitscore",
+    "--evalue",
+    "0.001",
+    "--threads",
+    "2",
+    "--sensitive",
+    "--max-target-seqs",
+    "0",
+    "--max-hsps",
+    "1"
+  ]
+}

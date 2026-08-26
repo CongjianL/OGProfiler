@@ -1,0 +1,187 @@
+{
+  "design": "one-factor-at-a-time",
+  "run_count": 16,
+  "runs": [
+    {
+      "axis": "baseline",
+      "config_sha256": "16b6a084f2f61c45fa30cef8d5142bfdc10df09e0c0fa6682f5a37b0621c6770",
+      "overrides": [],
+      "run_id": "baseline",
+      "value": "default"
+    },
+    {
+      "axis": "normalization",
+      "config_sha256": "6679e4ba4fe2fb8509e3e77651b040323fb0300c034cf9bb8d2009252e55141c",
+      "overrides": [
+        "similarity.normalization=raw_bitscore"
+      ],
+      "run_id": "normalization-6224a14ed4a7",
+      "value": {
+        "similarity.normalization": "raw_bitscore"
+      }
+    },
+    {
+      "axis": "normalization",
+      "config_sha256": "94d4b80cded8ccf88563618700b79e2c9c0e28f80e299c8745d63b3d44408245",
+      "overrides": [
+        "similarity.normalization=length_scaled_bitscore"
+      ],
+      "run_id": "normalization-91f8f1e31e7a",
+      "value": {
+        "similarity.normalization": "length_scaled_bitscore"
+      }
+    },
+    {
+      "axis": "coverage",
+      "config_sha256": "5171815aa8576c0929b9e1d481ee1b4faa0777db9a19ef4f822a30ae969df628",
+      "overrides": [
+        "edges.min_query_coverage=0.0",
+        "edges.min_target_coverage=0.0"
+      ],
+      "run_id": "coverage-494cfc50ca24",
+      "value": {
+        "edges.min_query_coverage": 0.0,
+        "edges.min_target_coverage": 0.0
+      }
+    },
+    {
+      "axis": "coverage",
+      "config_sha256": "c9bd735f00e3ce2ec2ab6f7121290ffa16a8e51da28157354a5dd6149d5d4c1e",
+      "overrides": [
+        "edges.min_query_coverage=70.0",
+        "edges.min_target_coverage=70.0"
+      ],
+      "run_id": "coverage-c6bc14bf24d3",
+      "value": {
+        "edges.min_query_coverage": 70.0,
+        "edges.min_target_coverage": 70.0
+      }
+    },
+    {
+      "axis": "symmetrization",
+      "config_sha256": "680f6d064d5c642ef7e4464c4170bc54fd4ca5080e86eb0d78c4384ead8d0a01",
+      "overrides": [
+        "edges.symmetrization=min"
+      ],
+      "run_id": "symmetrization-6a9c009391c5",
+      "value": {
+        "edges.symmetrization": "min"
+      }
+    },
+    {
+      "axis": "symmetrization",
+      "config_sha256": "7b7620f4e0027427f583315ea467ee52aafc952ea7f7166f1e89ac2b4e160375",
+      "overrides": [
+        "edges.symmetrization=mean"
+      ],
+      "run_id": "symmetrization-6793579552db",
+      "value": {
+        "edges.symmetrization": "mean"
+      }
+    },
+    {
+      "axis": "symmetrization",
+      "config_sha256": "c320d7aa6ef53f8955850e11c529c18c322cf1f085f55030445470540d6eacec",
+      "overrides": [
+        "edges.symmetrization=geometric_mean"
+      ],
+      "run_id": "symmetrization-999f7f024c2a",
+      "value": {
+        "edges.symmetrization": "geometric_mean"
+      }
+    },
+    {
+      "axis": "leiden_method",
+      "config_sha256": "325b8ccd76c13e115f15448b6789eaae5a0d2475242d991efb7259b65882f4de",
+      "overrides": [
+        "hierarchy.method=rbcv"
+      ],
+      "run_id": "leiden_method-f947bb8fe9ad",
+      "value": {
+        "hierarchy.method": "rbcv"
+      }
+    },
+    {
+      "axis": "leiden_method",
+      "config_sha256": "04e00f1b85157457344cab2d1758a6ad6109adb989d3537f9b2dcf2e1ea35766",
+      "overrides": [
+        "hierarchy.method=cpm"
+      ],
+      "run_id": "leiden_method-5429c1b59d6a",
+      "value": {
+        "hierarchy.method": "cpm"
+      }
+    },
+    {
+      "axis": "leiden_method",
+      "config_sha256": "ab4463fb25119cc01f353dc35af6445f36f785e4c45a60a46ffd18eea3da8c39",
+      "overrides": [
+        "hierarchy.method=modularity"
+      ],
+      "run_id": "leiden_method-13befdd6539f",
+      "value": {
+        "hierarchy.method": "modularity"
+      }
+    },
+    {
+      "axis": "gamma_strategy",
+      "config_sha256": "2f0dbe7c42e2e10d8e27222984abc31608c6ab479b8a730d8db8a325f413ad39",
+      "overrides": [
+        "hierarchy.resolution_strategy=log_grid"
+      ],
+      "run_id": "gamma_strategy-d24cc1f499bd",
+      "value": {
+        "hierarchy.resolution_strategy": "log_grid"
+      }
+    },
+    {
+      "axis": "split_acceptance",
+      "config_sha256": "214463a43aeb0eec3684490b41ced3391c3d1fae20918091b2b2a324b3652a8a",
+      "overrides": [
+        "hierarchy.max_child_fraction=0.9",
+        "hierarchy.min_family_size=3"
+      ],
+      "run_id": "split_acceptance-9597c7e8c72b",
+      "value": {
+        "hierarchy.max_child_fraction": 0.9,
+        "hierarchy.min_family_size": 3
+      }
+    },
+    {
+      "axis": "split_acceptance",
+      "config_sha256": "b8a81eef65fc4da12b9fe19152de38791e9513dd496f6e8136fae3b476e3191c",
+      "overrides": [
+        "hierarchy.max_child_fraction=0.8",
+        "hierarchy.min_family_size=5"
+      ],
+      "run_id": "split_acceptance-0665b625b286",
+      "value": {
+        "hierarchy.max_child_fraction": 0.8,
+        "hierarchy.min_family_size": 5
+      }
+    },
+    {
+      "axis": "seed",
+      "config_sha256": "246cfe05d74367d1a2281333452b4d1af6c8437dbb2fc7b7bfe37e939dd465a7",
+      "overrides": [
+        "hierarchy.seed=7"
+      ],
+      "run_id": "seed-0e81dc884def",
+      "value": {
+        "hierarchy.seed": 7
+      }
+    },
+    {
+      "axis": "seed",
+      "config_sha256": "2456729f7271f824bde28309cb72354a48823f9e9ec07a795582f27cc3683bc0",
+      "overrides": [
+        "hierarchy.seed=104729"
+      ],
+      "run_id": "seed-2531ae09ced1",
+      "value": {
+        "hierarchy.seed": 104729
+      }
+    }
+  ],
+  "schema_version": "parameter-matrix-v1"
+}

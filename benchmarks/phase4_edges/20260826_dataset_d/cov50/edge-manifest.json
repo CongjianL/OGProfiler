@@ -1,0 +1,40 @@
+{
+  "algorithm_version": "legacy-nbs-edge-v2",
+  "command": [
+    "ogprofiler",
+    "edges",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase4-dataset-d-20260826-cov50",
+    "--method",
+    "lrb",
+    "--set",
+    "edges.min_query_coverage=50",
+    "--set",
+    "edges.min_target_coverage=50"
+  ],
+  "counts": {
+    "coverage_filtered_hits": 132,
+    "directional_hits": 244,
+    "normalized_hits": 196,
+    "retained_directional_hits": 132,
+    "retained_edges": 66
+  },
+  "input_checksums": {
+    "hits.parquet": "4aa2e3c89459e643842b7e081d384317de4dff594a356981f4b8fd5b65c49535",
+    "proteins.parquet": "542fcdfceb16a75a6f3c2727804fde1d633dcffa0da975500efaf88930be3a9a"
+  },
+  "output_checksums": {
+    "normalized_hits.parquet": "55fdec064f86c04ce115700aff7c2c1760cc8cd6b995dae3becc3b4772414618",
+    "retained_edges.parquet": "a94a1b6e74414b4e5c91d8d0d2b6b87ce7a500050a508f3e2c3efd064e732245"
+  },
+  "parameters": {
+    "best_hit_tolerance": 0.001,
+    "method": "lrb",
+    "min_bidirectional_coverage": 0.0,
+    "min_query_coverage": 50.0,
+    "min_target_coverage": 50.0,
+    "normalization": "legacy_nbs",
+    "symmetrization": "max"
+  },
+  "parameters_sha256": "7c6e2b7bb3f471e2cd66269b225bd5037bf13fd1ed9726d16b706b05c226b7bb"
+}

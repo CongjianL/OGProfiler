@@ -1,0 +1,59 @@
+{
+  "dataset": "E_large_connected_component",
+  "evolution": {
+    "evaluated_network_nodes": 0,
+    "gene_tree_concordance": null,
+    "mean_reconciliation_confidence": null,
+    "reconciliation_consistency": null,
+    "refined_families": 0,
+    "species_overlap_consistency": null
+  },
+  "family": {
+    "exact_family_recovery": {
+      "count": 0,
+      "rate": 0.0,
+      "total": 1
+    },
+    "family_number": 45,
+    "family_size_distribution": {
+      "max": 10,
+      "mean": 2.3777777777777778,
+      "median": 1,
+      "min": 1,
+      "q25": 1.0,
+      "q75": 2.0
+    },
+    "large_family_fragmentation": {
+      "families": 1,
+      "max_fragments": 45,
+      "mean_fragments": 45,
+      "threshold": 20,
+      "unfragmented_fraction": 0.0
+    },
+    "membership_coverage": 0.44583333333333336,
+    "pairwise_clustering": {
+      "f1": 0.07501697216564834,
+      "intersection": 221,
+      "precision": 1.0,
+      "predicted_pairs": 221,
+      "recall": 0.03897019925938988,
+      "true_pairs": 5671
+    },
+    "single_copy_family_recovery": {
+      "count": 0,
+      "rate": null,
+      "total": 0
+    },
+    "species_coverage": {
+      "complete_fraction": 0.0,
+      "mean": 0.25
+    }
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "de1f906001094f5ac11463ca5fa4178e51cbf74eede7ee6d2a8551eab8aa5141",
+    "normalized_hierarchy.json": "61c7fc5d161d39deef778b062fff71c7872bf95572dac799fe71985b06167557"
+  },
+  "method": "ogprofiler1",
+  "orthology": null,
+  "schema_version": "scientific-benchmark-v1"
+}

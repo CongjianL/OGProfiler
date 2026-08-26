@@ -1,0 +1,13 @@
+{
+  "algorithm": "frozen-v1-hierarchy",
+  "gamma_coefficient": 1.0,
+  "hierarchy_edges": 66,
+  "hierarchy_nodes": 77,
+  "method": "rber",
+  "peak_rss_bytes": 113496064,
+  "runtime_seconds": 0.19670708989724517,
+  "ssn_edges": 136,
+  "ssn_nodes": 240,
+  "threads": 8,
+  "weight": "NBS"
+}

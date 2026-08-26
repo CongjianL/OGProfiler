@@ -1,0 +1,473 @@
+{
+  "datasets": [
+    {
+      "dataset": "C_gene_family_expansion",
+      "determinism": {
+        "v1_fingerprints": [
+          "a0da6d6553627ae281935c3dd9e75bb29b0d4783a552a5df0164d455d8e58131",
+          "8bf10a740bc18399eb099f33c1139b8556e93ca34320028a80b7daf591b439cf",
+          "8bf10a740bc18399eb099f33c1139b8556e93ca34320028a80b7daf591b439cf"
+        ],
+        "v1_unique_normalized_fingerprints": 2,
+        "v2_fingerprints": [
+          "7d093aae3318dc867dad9613cc95d71a7d56d3829d961d105f088535c719833f",
+          "7d093aae3318dc867dad9613cc95d71a7d56d3829d961d105f088535c719833f",
+          "7d093aae3318dc867dad9613cc95d71a7d56d3829d961d105f088535c719833f"
+        ],
+        "v2_unique_normalized_fingerprints": 1
+      },
+      "membership": {
+        "intersection": 600,
+        "jaccard": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "v1_pairs": 600,
+        "v2_pairs": 600
+      },
+      "performance": {
+        "core_ratio_v1_over_v2": 117.84929921505721,
+        "rss_ratio_v1_over_v2": 1.827062706270627,
+        "v1_core_seconds_median": 3.981664708117023,
+        "v1_peak_rss_bytes_median": 113377280.0,
+        "v1_wall_seconds_median": 5.32,
+        "v1_wall_seconds_range": [
+          5.21,
+          5.48
+        ],
+        "v2_core_seconds_median": 0.03378607030026615,
+        "v2_peak_rss_bytes_median": 62054400.0,
+        "v2_wall_seconds_median": 1.69,
+        "v2_wall_seconds_range": [
+          1.0,
+          2.09
+        ],
+        "wall_ratio_v1_over_v2": 3.1479289940828403
+      },
+      "proteins": {
+        "common": 80,
+        "exact_terminal_set_assignments": 80,
+        "v1": 80,
+        "v2": 80
+      },
+      "repeat_count": 3,
+      "repeats": [
+        {
+          "membership": {
+            "intersection": 600,
+            "jaccard": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "v1_pairs": 600,
+            "v2_pairs": 600
+          },
+          "proteins": {
+            "common": 80,
+            "exact_terminal_set_assignments": 80,
+            "v1": 80,
+            "v2": 80
+          },
+          "repeat": "repeat_00",
+          "ssn": {
+            "components": 6,
+            "edges": 602,
+            "largest_component": 60,
+            "nodes": 80
+          },
+          "topology": {
+            "edge_jaccard": 0.16666666666666666,
+            "node_jaccard": 0.9,
+            "shared_edges": 1,
+            "shared_member_sets": 9,
+            "v1_edges": 4,
+            "v1_nodes": 10,
+            "v2_edges": 3,
+            "v2_nodes": 9
+          },
+          "v1_core_seconds": 3.9608434489928186,
+          "v1_fingerprint": "a0da6d6553627ae281935c3dd9e75bb29b0d4783a552a5df0164d455d8e58131",
+          "v1_time": {
+            "peak_rss_bytes": 113377280.0,
+            "wall_seconds": 5.21
+          },
+          "v2_core_seconds": 0.03378607030026615,
+          "v2_fingerprint": "7d093aae3318dc867dad9613cc95d71a7d56d3829d961d105f088535c719833f",
+          "v2_metrics": {
+            "hierarchy_nodes": 9,
+            "leiden_calls": 81,
+            "resolution_candidates": 81,
+            "subgraph_constructions": 3,
+            "terminal_families": 8
+          },
+          "v2_time": {
+            "peak_rss_bytes": 62054400.0,
+            "wall_seconds": 1.69
+          }
+        },
+        {
+          "membership": {
+            "intersection": 600,
+            "jaccard": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "v1_pairs": 600,
+            "v2_pairs": 600
+          },
+          "proteins": {
+            "common": 80,
+            "exact_terminal_set_assignments": 80,
+            "v1": 80,
+            "v2": 80
+          },
+          "repeat": "repeat_01",
+          "ssn": {
+            "components": 6,
+            "edges": 602,
+            "largest_component": 60,
+            "nodes": 80
+          },
+          "topology": {
+            "edge_jaccard": 0.16666666666666666,
+            "node_jaccard": 0.9,
+            "shared_edges": 1,
+            "shared_member_sets": 9,
+            "v1_edges": 4,
+            "v1_nodes": 10,
+            "v2_edges": 3,
+            "v2_nodes": 9
+          },
+          "v1_core_seconds": 3.981664708117023,
+          "v1_fingerprint": "8bf10a740bc18399eb099f33c1139b8556e93ca34320028a80b7daf591b439cf",
+          "v1_time": {
+            "peak_rss_bytes": 113528832.0,
+            "wall_seconds": 5.48
+          },
+          "v2_core_seconds": 0.04254826996475458,
+          "v2_fingerprint": "7d093aae3318dc867dad9613cc95d71a7d56d3829d961d105f088535c719833f",
+          "v2_metrics": {
+            "hierarchy_nodes": 9,
+            "leiden_calls": 81,
+            "resolution_candidates": 81,
+            "subgraph_constructions": 3,
+            "terminal_families": 8
+          },
+          "v2_time": {
+            "peak_rss_bytes": 61726720.0,
+            "wall_seconds": 2.09
+          }
+        },
+        {
+          "membership": {
+            "intersection": 600,
+            "jaccard": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "v1_pairs": 600,
+            "v2_pairs": 600
+          },
+          "proteins": {
+            "common": 80,
+            "exact_terminal_set_assignments": 80,
+            "v1": 80,
+            "v2": 80
+          },
+          "repeat": "repeat_02",
+          "ssn": {
+            "components": 6,
+            "edges": 602,
+            "largest_component": 60,
+            "nodes": 80
+          },
+          "topology": {
+            "edge_jaccard": 0.16666666666666666,
+            "node_jaccard": 0.9,
+            "shared_edges": 1,
+            "shared_member_sets": 9,
+            "v1_edges": 4,
+            "v1_nodes": 10,
+            "v2_edges": 3,
+            "v2_nodes": 9
+          },
+          "v1_core_seconds": 4.085577551042661,
+          "v1_fingerprint": "8bf10a740bc18399eb099f33c1139b8556e93ca34320028a80b7daf591b439cf",
+          "v1_time": {
+            "peak_rss_bytes": 113348608.0,
+            "wall_seconds": 5.32
+          },
+          "v2_core_seconds": 0.0145309551153332,
+          "v2_fingerprint": "7d093aae3318dc867dad9613cc95d71a7d56d3829d961d105f088535c719833f",
+          "v2_metrics": {
+            "hierarchy_nodes": 9,
+            "leiden_calls": 81,
+            "resolution_candidates": 81,
+            "subgraph_constructions": 3,
+            "terminal_families": 8
+          },
+          "v2_time": {
+            "peak_rss_bytes": 62246912.0,
+            "wall_seconds": 1.0
+          }
+        }
+      ],
+      "ssn": {
+        "components": 6,
+        "edges": 602,
+        "largest_component": 60,
+        "nodes": 80
+      },
+      "topology": {
+        "edge_jaccard": 0.16666666666666666,
+        "node_jaccard": 0.9,
+        "shared_edges": 1,
+        "shared_member_sets": 9,
+        "v1_edges": 4,
+        "v1_nodes": 10,
+        "v2_edges": 3,
+        "v2_nodes": 9
+      },
+      "v2_metrics": {
+        "hierarchy_nodes": 9,
+        "leiden_calls": 81,
+        "resolution_candidates": 81,
+        "subgraph_constructions": 3,
+        "terminal_families": 8
+      }
+    },
+    {
+      "dataset": "E_large_connected_component",
+      "determinism": {
+        "v1_fingerprints": [
+          "71fbc060d8da0225a566b37f8ee448a7c98d67b65027f99193f1e682d433d1b0",
+          "71fbc060d8da0225a566b37f8ee448a7c98d67b65027f99193f1e682d433d1b0",
+          "71fbc060d8da0225a566b37f8ee448a7c98d67b65027f99193f1e682d433d1b0"
+        ],
+        "v1_unique_normalized_fingerprints": 1,
+        "v2_fingerprints": [
+          "0a0cc69fac8bef44084904d6b8e71f616ca723ef3d97e8d11c3407a58a7a2831",
+          "0a0cc69fac8bef44084904d6b8e71f616ca723ef3d97e8d11c3407a58a7a2831",
+          "0a0cc69fac8bef44084904d6b8e71f616ca723ef3d97e8d11c3407a58a7a2831"
+        ],
+        "v2_unique_normalized_fingerprints": 1
+      },
+      "membership": {
+        "intersection": 4680,
+        "jaccard": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "v1_pairs": 4680,
+        "v2_pairs": 4680
+      },
+      "performance": {
+        "core_ratio_v1_over_v2": 376.87502680850986,
+        "rss_ratio_v1_over_v2": 1.7696315593598808,
+        "v1_core_seconds_median": 13.311867833137512,
+        "v1_peak_rss_bytes_median": 116858880.0,
+        "v1_wall_seconds_median": 14.59,
+        "v1_wall_seconds_range": [
+          14.45,
+          14.78
+        ],
+        "v2_core_seconds_median": 0.03532170318067074,
+        "v2_peak_rss_bytes_median": 66035712.0,
+        "v2_wall_seconds_median": 0.83,
+        "v2_wall_seconds_range": [
+          0.81,
+          0.86
+        ],
+        "wall_ratio_v1_over_v2": 17.57831325301205
+      },
+      "proteins": {
+        "common": 240,
+        "exact_terminal_set_assignments": 240,
+        "v1": 240,
+        "v2": 240
+      },
+      "repeat_count": 3,
+      "repeats": [
+        {
+          "membership": {
+            "intersection": 4680,
+            "jaccard": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "v1_pairs": 4680,
+            "v2_pairs": 4680
+          },
+          "proteins": {
+            "common": 240,
+            "exact_terminal_set_assignments": 240,
+            "v1": 240,
+            "v2": 240
+          },
+          "repeat": "repeat_00",
+          "ssn": {
+            "components": 1,
+            "edges": 4685,
+            "largest_component": 240,
+            "nodes": 240
+          },
+          "topology": {
+            "edge_jaccard": 0.0,
+            "node_jaccard": 0.6363636363636364,
+            "shared_edges": 0,
+            "shared_member_sets": 7,
+            "v1_edges": 10,
+            "v1_nodes": 11,
+            "v2_edges": 6,
+            "v2_nodes": 7
+          },
+          "v1_core_seconds": 13.45240402710624,
+          "v1_fingerprint": "71fbc060d8da0225a566b37f8ee448a7c98d67b65027f99193f1e682d433d1b0",
+          "v1_time": {
+            "peak_rss_bytes": 116858880.0,
+            "wall_seconds": 14.78
+          },
+          "v2_core_seconds": 0.03532170318067074,
+          "v2_fingerprint": "0a0cc69fac8bef44084904d6b8e71f616ca723ef3d97e8d11c3407a58a7a2831",
+          "v2_metrics": {
+            "hierarchy_nodes": 7,
+            "leiden_calls": 61,
+            "resolution_candidates": 61,
+            "subgraph_constructions": 6,
+            "terminal_families": 6
+          },
+          "v2_time": {
+            "peak_rss_bytes": 66039808.0,
+            "wall_seconds": 0.81
+          }
+        },
+        {
+          "membership": {
+            "intersection": 4680,
+            "jaccard": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "v1_pairs": 4680,
+            "v2_pairs": 4680
+          },
+          "proteins": {
+            "common": 240,
+            "exact_terminal_set_assignments": 240,
+            "v1": 240,
+            "v2": 240
+          },
+          "repeat": "repeat_01",
+          "ssn": {
+            "components": 1,
+            "edges": 4685,
+            "largest_component": 240,
+            "nodes": 240
+          },
+          "topology": {
+            "edge_jaccard": 0.0,
+            "node_jaccard": 0.6363636363636364,
+            "shared_edges": 0,
+            "shared_member_sets": 7,
+            "v1_edges": 10,
+            "v1_nodes": 11,
+            "v2_edges": 6,
+            "v2_nodes": 7
+          },
+          "v1_core_seconds": 13.158203708007932,
+          "v1_fingerprint": "71fbc060d8da0225a566b37f8ee448a7c98d67b65027f99193f1e682d433d1b0",
+          "v1_time": {
+            "peak_rss_bytes": 116850688.0,
+            "wall_seconds": 14.45
+          },
+          "v2_core_seconds": 0.03553484799340367,
+          "v2_fingerprint": "0a0cc69fac8bef44084904d6b8e71f616ca723ef3d97e8d11c3407a58a7a2831",
+          "v2_metrics": {
+            "hierarchy_nodes": 7,
+            "leiden_calls": 61,
+            "resolution_candidates": 61,
+            "subgraph_constructions": 6,
+            "terminal_families": 6
+          },
+          "v2_time": {
+            "peak_rss_bytes": 66035712.0,
+            "wall_seconds": 0.86
+          }
+        },
+        {
+          "membership": {
+            "intersection": 4680,
+            "jaccard": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "v1_pairs": 4680,
+            "v2_pairs": 4680
+          },
+          "proteins": {
+            "common": 240,
+            "exact_terminal_set_assignments": 240,
+            "v1": 240,
+            "v2": 240
+          },
+          "repeat": "repeat_02",
+          "ssn": {
+            "components": 1,
+            "edges": 4685,
+            "largest_component": 240,
+            "nodes": 240
+          },
+          "topology": {
+            "edge_jaccard": 0.0,
+            "node_jaccard": 0.6363636363636364,
+            "shared_edges": 0,
+            "shared_member_sets": 7,
+            "v1_edges": 10,
+            "v1_nodes": 11,
+            "v2_edges": 6,
+            "v2_nodes": 7
+          },
+          "v1_core_seconds": 13.311867833137512,
+          "v1_fingerprint": "71fbc060d8da0225a566b37f8ee448a7c98d67b65027f99193f1e682d433d1b0",
+          "v1_time": {
+            "peak_rss_bytes": 117813248.0,
+            "wall_seconds": 14.59
+          },
+          "v2_core_seconds": 0.03453711816109717,
+          "v2_fingerprint": "0a0cc69fac8bef44084904d6b8e71f616ca723ef3d97e8d11c3407a58a7a2831",
+          "v2_metrics": {
+            "hierarchy_nodes": 7,
+            "leiden_calls": 61,
+            "resolution_candidates": 61,
+            "subgraph_constructions": 6,
+            "terminal_families": 6
+          },
+          "v2_time": {
+            "peak_rss_bytes": 66031616.0,
+            "wall_seconds": 0.83
+          }
+        }
+      ],
+      "ssn": {
+        "components": 1,
+        "edges": 4685,
+        "largest_component": 240,
+        "nodes": 240
+      },
+      "topology": {
+        "edge_jaccard": 0.0,
+        "node_jaccard": 0.6363636363636364,
+        "shared_edges": 0,
+        "shared_member_sets": 7,
+        "v1_edges": 10,
+        "v1_nodes": 11,
+        "v2_edges": 6,
+        "v2_nodes": 7
+      },
+      "v2_metrics": {
+        "hierarchy_nodes": 7,
+        "leiden_calls": 61,
+        "resolution_candidates": 61,
+        "subgraph_constructions": 6,
+        "terminal_families": 6
+      }
+    }
+  ],
+  "metadata": {
+    "run_id": "20260825T153940Z_e46af3ed522d_aa4ad90e_67933",
+    "slurm_job_id": "1404170",
+    "source_sha256": "aa4ad90ecfb1327e4f23277d1f3641ce2860dc3a7ca548eb816ff4c12bfae9da"
+  }
+}

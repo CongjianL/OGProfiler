@@ -1,0 +1,37 @@
+{
+  "algorithm_version": "selected-family-phylogeny-v1",
+  "command": [
+    "ogprofiler",
+    "annotate",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T071500Z_phase11_phylogeny/run",
+    "--phylogenetic-refinement",
+    "--family",
+    "OG000000000",
+    "--species-tree",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T071500Z_phase11_phylogeny/species.nwk",
+    "--rooting",
+    "species-tree-aware"
+  ],
+  "counts": {
+    "completed": 1,
+    "reused": 1,
+    "selected": 1
+  },
+  "output_checksums": {
+    "phylogenetic-events.tsv": "cb2a63d71f15d8fd3417f52f9962d04aa5e022ef1f65a542a3d9bb3542ed6303"
+  },
+  "rooting": "species-tree-aware",
+  "selection": {
+    "explicit_family_ids": [
+      "OG000000000"
+    ],
+    "large_family_size": 100,
+    "max_families": 100,
+    "selection_events": [
+      "AMBIGUOUS",
+      "MIXED"
+    ]
+  },
+  "species_tree": "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T071500Z_phase11_phylogeny/species.nwk"
+}

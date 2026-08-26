@@ -1,0 +1,20 @@
+{
+  "expected": {
+    "domain_families": 2,
+    "fusion_proteins": 4,
+    "proteins_per_species": 12
+  },
+  "files": {
+    "ground_truth.tsv": "b69da4eacfe9834a5ba3c0b3b965592242f7a2d1938f8bf4f36d7655271f4c28",
+    "proteomes/species_01.faa": "6a090a3665dcef9a23edd7a357a05b4cafc222bb55abf41a65d51a9c6060624d",
+    "proteomes/species_02.faa": "bf9146bfa26c86f25ce14bce2515903f8adb426a9b08c99041a4d33090b48c3d",
+    "proteomes/species_03.faa": "32da5a6440891f328bf8bec8a2771c10e509344a6f2e94614ff6c91d315c8fd8",
+    "proteomes/species_04.faa": "b4b585eea1feaac264d52d004e555774364c35a62e68d573b4d99e3597cab81e",
+    "reference_ssn.gml": "d5eb093d1fcbe2b2bd87d4d2f70937fe5c0238c1ca91ba48d631eb378dec9c03"
+  },
+  "generator_seed": 20260825,
+  "n_proteins": 48,
+  "n_species": 4,
+  "name": "D_fusion_multidomain",
+  "purpose": "Coverage filtering and bridge sensitivity for domain-only and fusion hits."
+}

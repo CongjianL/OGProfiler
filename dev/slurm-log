@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
+CONFIG="$SCRIPT_DIR/remote.env"
+[[ -f "$CONFIG" ]] || { echo "Missing $CONFIG" >&2; exit 2; }
+# shellcheck source=/dev/null
+source "$CONFIG"
+: "${REMOTE_HOST:?Set REMOTE_HOST in dev/remote.env}"
+
+usage() {
+  echo "Usage: $0 <job-id> [--task ARRAY_TASK_ID] [--lines N]" >&2
+}
+
+[[ $# -ge 1 ]] || { usage; exit 2; }
+JOB_ID="$1"
+shift
+TASK_ID=""
+LINES=100
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --task)
+      [[ $# -ge 2 ]] || { usage; exit 2; }
+      TASK_ID="$2"
+      shift 2
+      ;;
+    --lines)
+      [[ $# -ge 2 ]] || { usage; exit 2; }
+      LINES="$2"
+      shift 2
+      ;;
+    *) usage; exit 2 ;;
+  esac
+done
+[[ "$JOB_ID" =~ ^[0-9]+([_.][0-9]+)?$ ]] || { echo "Invalid job id: $JOB_ID" >&2; exit 2; }
+[[ "$LINES" =~ ^[0-9]+$ ]] || { echo "--lines must be an integer" >&2; exit 2; }
+[[ -z "$TASK_ID" || "$TASK_ID" =~ ^[0-9]+$ ]] || { echo "--task must be an integer" >&2; exit 2; }
+
+MASTER_ID="${JOB_ID%%_*}"
+MASTER_ID="${MASTER_ID%%.*}"
+BASE="$ROOT/.provenance/slurm"
+RUN_DIR=""
+if [[ -d "$BASE" ]]; then
+  for f in "$BASE"/*/job_id.txt; do
+    [[ -f "$f" ]] || continue
+    if [[ "$(cat "$f")" == "$MASTER_ID" ]]; then
+      RUN_DIR="$(dirname "$f")"
+      break
+    fi
+  done
+fi
+
+if [[ -z "$RUN_DIR" ]]; then
+  echo "No local provenance record found for job $MASTER_ID." >&2
+  echo "This command is intended for jobs submitted through ./dev/slurm-submit." >&2
+  exit 3
+fi
+
+REMOTE_RUN_DIR="$(cat "$RUN_DIR/remote_run_dir.txt")"
+IS_ARRAY="$(cat "$RUN_DIR/is_array.txt")"
+
+if [[ "$IS_ARRAY" == "1" && -z "$TASK_ID" ]]; then
+  printf -v Q_REMOTE_RUN_DIR '%q' "$REMOTE_RUN_DIR"
+  echo "This is a Slurm array. Specify one task, for example:"
+  echo "  ./dev/slurm-log $MASTER_ID --task 0"
+  echo
+  echo "Recent log files:"
+  ssh "$REMOTE_HOST" "find $Q_REMOTE_RUN_DIR -maxdepth 1 -type f \( -name 'slurm-*.out' -o -name 'slurm-*.err' \) -print | sort | tail -20"
+  exit 0
+fi
+
+if [[ "$IS_ARRAY" == "1" ]]; then
+  OUT_FILE="$REMOTE_RUN_DIR/slurm-${MASTER_ID}_${TASK_ID}.out"
+  ERR_FILE="$REMOTE_RUN_DIR/slurm-${MASTER_ID}_${TASK_ID}.err"
+else
+  OUT_FILE="$REMOTE_RUN_DIR/slurm-${MASTER_ID}.out"
+  ERR_FILE="$REMOTE_RUN_DIR/slurm-${MASTER_ID}.err"
+fi
+
+printf -v Q_OUT '%q' "$OUT_FILE"
+printf -v Q_ERR '%q' "$ERR_FILE"
+printf -v Q_LINES '%q' "$LINES"
+
+ssh "$REMOTE_HOST" "
+for f in $Q_ERR $Q_OUT; do
+  echo \"===== \$f =====\"
+  if [ -f \"\$f\" ]; then
+    tail -n $Q_LINES \"\$f\"
+  else
+    echo '[not created yet]'
+  fi
+  echo
+done
+"

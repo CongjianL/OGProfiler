@@ -1,0 +1,86 @@
+{
+  "algorithm_version": "hierarchy-prototype-v1",
+  "command": [
+    "ogprofiler",
+    "prototype-hierarchy",
+    "--ssn",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260825T153940Z_e46af3ed522d_aa4ad90e_67933/source/benchmarks/datasets/C_gene_family_expansion/reference_ssn.gml",
+    "--out",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260825T153940Z_e46af3ed522d_aa4ad90e_67933/results/C_gene_family_expansion/repeat_00/v2_hierarchy",
+    "--weight-attribute",
+    "NBS"
+  ],
+  "component_count": 6,
+  "components": [
+    {
+      "component_id": 0,
+      "hierarchy_node_count": 4,
+      "leiden_calls": 31,
+      "n_edges": 572,
+      "n_vertices": 60,
+      "peak_rss_bytes": 61018112,
+      "runtime_seconds": 0.018395581049844623,
+      "subgraph_constructions": 3,
+      "terminal_family_count": 3
+    },
+    {
+      "component_id": 1,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61288448,
+      "runtime_seconds": 0.003137455089017749,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 2,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61288448,
+      "runtime_seconds": 0.0030166800133883953,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 3,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61288448,
+      "runtime_seconds": 0.0030881899874657393,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 4,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61288448,
+      "runtime_seconds": 0.003047185018658638,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 5,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61288448,
+      "runtime_seconds": 0.0031009791418910027,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    }
+  ],
+  "ogprofiler_version": "2.0.0a1",
+  "resolved_config_sha256": "6057885ae861330c8ef5b397123fe3d887930ce668084db487810ddd08cbdaef",
+  "ssn_sha256": "504b7a26cb565b3c63b7558093e7404b63ed79df37d8f4a7e4d45c086ec8b699",
+  "weight_attribute": "NBS"
+}

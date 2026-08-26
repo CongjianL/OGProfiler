@@ -1,0 +1,19 @@
+2026-08-26 14:57:49,995 INFO stage=orthology task=pairwise-candidates component=- Generating cross-child ortholog candidates
+2026-08-26 14:57:50,062 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=4096 chunks=1
+2026-08-26 14:57:50,070 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=8192 chunks=2
+2026-08-26 14:57:50,078 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=12288 chunks=3
+2026-08-26 14:57:50,085 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=16384 chunks=4
+2026-08-26 14:57:50,093 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=20480 chunks=5
+2026-08-26 14:57:50,101 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=24576 chunks=6
+2026-08-26 14:57:50,109 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=28672 chunks=7
+2026-08-26 14:57:50,116 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=32768 chunks=8
+2026-08-26 14:57:50,124 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=36864 chunks=9
+2026-08-26 14:57:50,132 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=40960 chunks=10
+2026-08-26 14:57:50,140 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=45056 chunks=11
+2026-08-26 14:57:50,147 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=49152 chunks=12
+2026-08-26 14:57:50,155 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=53248 chunks=13
+2026-08-26 14:57:50,163 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=57344 chunks=14
+2026-08-26 14:57:50,168 INFO stage=orthology task=pairwise-candidates component=- Streaming ortholog candidates: pairs=60000 chunks=15
+2026-08-26 14:57:50,170 INFO stage=orthology task=pairwise-candidates component=- Completed pairwise ortholog output: pairs=60000 manifest=/home/mselab/licj/projects/running/ogprofiler-runs/20260826T065800Z_phase10_orthology/run/results/ortholog-manifest.json
+2026-08-26 14:57:50,406 INFO stage=orthology task=pairwise-candidates component=- Generating cross-child ortholog candidates
+2026-08-26 14:57:50,408 INFO stage=orthology task=pairwise-candidates component=- Reused verified pairwise ortholog output: pairs=60000 manifest=/home/mselab/licj/projects/running/ogprofiler-runs/20260826T065800Z_phase10_orthology/run/results/ortholog-manifest.json

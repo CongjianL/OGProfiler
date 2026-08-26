@@ -1,0 +1,31 @@
+{
+  "algorithm_version": "hierarchy-prototype-v1",
+  "command": [
+    "ogprofiler",
+    "prototype-hierarchy",
+    "--ssn",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260825T153940Z_e46af3ed522d_aa4ad90e_67933/source/benchmarks/datasets/E_large_connected_component/reference_ssn.gml",
+    "--out",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260825T153940Z_e46af3ed522d_aa4ad90e_67933/results/E_large_connected_component/repeat_01/v2_hierarchy",
+    "--weight-attribute",
+    "NBS"
+  ],
+  "component_count": 1,
+  "components": [
+    {
+      "component_id": 0,
+      "hierarchy_node_count": 7,
+      "leiden_calls": 61,
+      "n_edges": 4685,
+      "n_vertices": 240,
+      "peak_rss_bytes": 66035712,
+      "runtime_seconds": 0.03553484799340367,
+      "subgraph_constructions": 6,
+      "terminal_family_count": 6
+    }
+  ],
+  "ogprofiler_version": "2.0.0a1",
+  "resolved_config_sha256": "6057885ae861330c8ef5b397123fe3d887930ce668084db487810ddd08cbdaef",
+  "ssn_sha256": "92cca4eee78974473f1df01950068c2bb851c23617f1d4a95f88c35cfd1d82c4",
+  "weight_attribute": "NBS"
+}

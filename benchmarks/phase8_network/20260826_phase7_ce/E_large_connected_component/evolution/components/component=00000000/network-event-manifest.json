@@ -1,0 +1,31 @@
+{
+  "algorithm_version": "network-overlap-v1",
+  "command": [
+    "ogprofiler",
+    "annotate-network",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/E_large_connected_component/run",
+    "--set",
+    "evolution.network_overlap_threshold=0.5"
+  ],
+  "counts": {
+    "events": {
+      "AMBIGUOUS": 6,
+      "DUPLICATION_LIKE": 1
+    },
+    "nodes": 7
+  },
+  "input_checksums": {
+    "hierarchy/components/component=00000000/members.parquet": "343572b64fa1f4212bbca3a37e209831c27a14398d7bc42cda4887673faf5dc8",
+    "hierarchy/components/component=00000000/nodes.parquet": "fbdfee51cefd914cc854c8907bc78153d5111041dafdc4c3000cc5c757efd3be",
+    "input/proteins.parquet": "ae1ec635f406e897e18d34e2812240efaafae57d1fd5a8303382166c6a340bc5"
+  },
+  "output_checksums": {
+    "events.parquet": "928be355b433ba858e75c99a2dca224754021bb3ca6849c0e715841a7d0fa982"
+  },
+  "parameters": {
+    "component_id": 0,
+    "overlap_threshold": 0.5
+  },
+  "parameters_sha256": "2cbeea0c0e5fed16fdf883d4bd6283d88e5124f156e4d230aaff46633030cd18"
+}

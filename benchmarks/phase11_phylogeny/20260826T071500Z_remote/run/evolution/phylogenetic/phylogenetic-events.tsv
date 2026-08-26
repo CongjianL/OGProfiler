@@ -1,0 +1,2 @@
+family_id	component_id	cluster_id	network_event	phylo_event	event_confidence	supporting_node	conflict_status	selection_reasons
+OG000000000	0	1	AMBIGUOUS	DUPLICATION	0.5	gene_node_000038	UNRESOLVED	USER_SELECTED,AMBIGUOUS,DUPLICATION_RICH

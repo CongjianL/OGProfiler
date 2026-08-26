@@ -1,0 +1,33 @@
+{
+  "axis": "split_acceptance",
+  "config_sha256": "214463a43aeb0eec3684490b41ced3391c3d1fae20918091b2b2a324b3652a8a",
+  "headline_metrics": {
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066"
+  },
+  "overrides": [
+    "hierarchy.max_child_fraction=0.9",
+    "hierarchy.min_family_size=3"
+  ],
+  "run_id": "split_acceptance-9597c7e8c72b",
+  "stage_seconds": {
+    "components": 0.6029704401735216,
+    "edges": 0.3953492122236639,
+    "evolution": 0.6414734171703458,
+    "export": 0.7289677120279521,
+    "hierarchy": 2.869865362998098,
+    "metrics": 0.3163901229854673,
+    "prepare": 0.440346164861694
+  },
+  "total_seconds": 5.995362432440743,
+  "value": {
+    "hierarchy.max_child_fraction": 0.9,
+    "hierarchy.min_family_size": 3
+  }
+}

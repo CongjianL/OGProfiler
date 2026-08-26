@@ -1,0 +1,870 @@
+{
+  "membership": {
+    "species_01|c_bg000_01": "337a8941ad5d9a9f886c",
+    "species_01|c_bg001_01": "901a670dda749740d2b1",
+    "species_01|c_bg002_01": "b1eca1ef00b7eda194ac",
+    "species_01|c_bg003_01": "24250d378a9843d60192",
+    "species_01|c_bg004_01": "fe8d31e4c35b9168fda3",
+    "species_01|c_expand_s01_clade01_c01": "564bd938d12fa9afa9aa",
+    "species_01|c_expand_s01_clade01_c02": "282e4113334eaa9b30be",
+    "species_01|c_expand_s01_clade01_c03": "114b75c716bc01cad7cd",
+    "species_01|c_expand_s01_clade01_c04": "7c7bfb907d9d92a44d16",
+    "species_01|c_expand_s01_clade01_c05": "d59f2893901b7b044099",
+    "species_01|c_expand_s01_clade02_c01": "6e702deb363de620b235",
+    "species_01|c_expand_s01_clade02_c02": "7a279f2b23b908fd3a95",
+    "species_01|c_expand_s01_clade02_c03": "fa8489f54d4ccfa6aea2",
+    "species_01|c_expand_s01_clade02_c04": "01d22a8084917d39e90d",
+    "species_01|c_expand_s01_clade02_c05": "357892de9a6263db596c",
+    "species_01|c_expand_s01_clade03_c01": "dffaa6d713a95ae53488",
+    "species_01|c_expand_s01_clade03_c02": "1da0243a9dc7341266d4",
+    "species_01|c_expand_s01_clade03_c03": "80d5d0fc099702e283eb",
+    "species_01|c_expand_s01_clade03_c04": "d6ccdccc0d8ea64b1d7b",
+    "species_01|c_expand_s01_clade03_c05": "914f4d163f8c45360d63",
+    "species_02|c_bg000_02": "b7afca846df8d4bb2a86",
+    "species_02|c_bg001_02": "9bb2ce536b19aaaa4418",
+    "species_02|c_bg002_02": "b7960ea9bdef9a05e34e",
+    "species_02|c_bg003_02": "0210412bd245e4211aaa",
+    "species_02|c_bg004_02": "0e58e4e20c5333f7744d",
+    "species_02|c_expand_s02_clade01_c01": "1b419c6fe85709700db2",
+    "species_02|c_expand_s02_clade01_c02": "4e876489ab55dc9f2967",
+    "species_02|c_expand_s02_clade01_c03": "e664d61b39ca3f256537",
+    "species_02|c_expand_s02_clade01_c04": "3f4d638b966c5d1c2ca5",
+    "species_02|c_expand_s02_clade01_c05": "6da3759d6979f2fd220f",
+    "species_02|c_expand_s02_clade02_c01": "bed4a1493932e2366a26",
+    "species_02|c_expand_s02_clade02_c02": "b20dcb7c6c60028a5324",
+    "species_02|c_expand_s02_clade02_c03": "bd494832c5e8ee06d632",
+    "species_02|c_expand_s02_clade02_c04": "3199b84d53ccc4be0a34",
+    "species_02|c_expand_s02_clade02_c05": "1d50cb1de7ab2a0bcc8b",
+    "species_02|c_expand_s02_clade03_c01": "f576666f1a36b6338a91",
+    "species_02|c_expand_s02_clade03_c02": "b87e915c22f902aefe71",
+    "species_02|c_expand_s02_clade03_c03": "115d7051b5d5741fe8d2",
+    "species_02|c_expand_s02_clade03_c04": "050c82b6965505e120e1",
+    "species_02|c_expand_s02_clade03_c05": "0a7ef9c3df748602d8a8",
+    "species_03|c_bg000_03": "337a8941ad5d9a9f886c",
+    "species_03|c_bg001_03": "901a670dda749740d2b1",
+    "species_03|c_bg002_03": "b1eca1ef00b7eda194ac",
+    "species_03|c_bg003_03": "24250d378a9843d60192",
+    "species_03|c_bg004_03": "fe8d31e4c35b9168fda3",
+    "species_03|c_expand_s03_clade01_c01": "564bd938d12fa9afa9aa",
+    "species_03|c_expand_s03_clade01_c02": "9414774a714ef95ae602",
+    "species_03|c_expand_s03_clade01_c03": "409c63a34b0d80ffce52",
+    "species_03|c_expand_s03_clade01_c04": "e55cd23f7d10e856a61f",
+    "species_03|c_expand_s03_clade01_c05": "f534721e36797fd0d751",
+    "species_03|c_expand_s03_clade02_c01": "7a279f2b23b908fd3a95",
+    "species_03|c_expand_s03_clade02_c02": "9723247251496924f497",
+    "species_03|c_expand_s03_clade02_c03": "07ed5c2e8b7e52fb2900",
+    "species_03|c_expand_s03_clade02_c04": "4e3b57fe7a1c1c4b4e79",
+    "species_03|c_expand_s03_clade02_c05": "26242350482e1abb9dd1",
+    "species_03|c_expand_s03_clade03_c01": "dffaa6d713a95ae53488",
+    "species_03|c_expand_s03_clade03_c02": "285232fd361de6344384",
+    "species_03|c_expand_s03_clade03_c03": "44938491ce577f440d8f",
+    "species_03|c_expand_s03_clade03_c04": "fef7d26bb55e526fbb33",
+    "species_03|c_expand_s03_clade03_c05": "e47bcc63038f73c639c2",
+    "species_04|c_bg000_04": "337a8941ad5d9a9f886c",
+    "species_04|c_bg001_04": "901a670dda749740d2b1",
+    "species_04|c_bg002_04": "b1eca1ef00b7eda194ac",
+    "species_04|c_bg003_04": "24250d378a9843d60192",
+    "species_04|c_bg004_04": "fe8d31e4c35b9168fda3",
+    "species_04|c_expand_s04_clade01_c01": "564bd938d12fa9afa9aa",
+    "species_04|c_expand_s04_clade01_c02": "e9b59e900fe349c6d91a",
+    "species_04|c_expand_s04_clade01_c03": "9c58eacf649db769e642",
+    "species_04|c_expand_s04_clade01_c04": "9942a9208d8ad78923cc",
+    "species_04|c_expand_s04_clade01_c05": "714447a9b5479850cf1f",
+    "species_04|c_expand_s04_clade02_c01": "7a279f2b23b908fd3a95",
+    "species_04|c_expand_s04_clade02_c02": "07e1168b9818627a7491",
+    "species_04|c_expand_s04_clade02_c03": "619596fd71156bf1cb44",
+    "species_04|c_expand_s04_clade02_c04": "5063731ac25d2541973d",
+    "species_04|c_expand_s04_clade02_c05": "f5e833a9836dc1505875",
+    "species_04|c_expand_s04_clade03_c01": "131690d2ba652386b020",
+    "species_04|c_expand_s04_clade03_c02": "dffaa6d713a95ae53488",
+    "species_04|c_expand_s04_clade03_c03": "e0214ed199d90866d818",
+    "species_04|c_expand_s04_clade03_c04": "67497959655a2248b954",
+    "species_04|c_expand_s04_clade03_c05": "111d5201cc27dac4b96c"
+  },
+  "nodes": [
+    {
+      "cluster_hash": "337a8941ad5d9a9f886c",
+      "cluster_id": 0,
+      "component_id": 0,
+      "depth": 0,
+      "members": [
+        "species_01|c_bg000_01",
+        "species_03|c_bg000_03",
+        "species_04|c_bg000_04"
+      ],
+      "n_genes": 3,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "901a670dda749740d2b1",
+      "cluster_id": 0,
+      "component_id": 1,
+      "depth": 0,
+      "members": [
+        "species_01|c_bg001_01",
+        "species_03|c_bg001_03",
+        "species_04|c_bg001_04"
+      ],
+      "n_genes": 3,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "7a279f2b23b908fd3a95",
+      "cluster_id": 0,
+      "component_id": 2,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade02_c02",
+        "species_03|c_expand_s03_clade02_c01",
+        "species_04|c_expand_s04_clade02_c01"
+      ],
+      "n_genes": 3,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "dffaa6d713a95ae53488",
+      "cluster_id": 0,
+      "component_id": 3,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade03_c01",
+        "species_03|c_expand_s03_clade03_c01",
+        "species_04|c_expand_s04_clade03_c02"
+      ],
+      "n_genes": 3,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "b1eca1ef00b7eda194ac",
+      "cluster_id": 0,
+      "component_id": 4,
+      "depth": 0,
+      "members": [
+        "species_01|c_bg002_01",
+        "species_03|c_bg002_03",
+        "species_04|c_bg002_04"
+      ],
+      "n_genes": 3,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "24250d378a9843d60192",
+      "cluster_id": 0,
+      "component_id": 5,
+      "depth": 0,
+      "members": [
+        "species_01|c_bg003_01",
+        "species_03|c_bg003_03",
+        "species_04|c_bg003_04"
+      ],
+      "n_genes": 3,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "fe8d31e4c35b9168fda3",
+      "cluster_id": 0,
+      "component_id": 6,
+      "depth": 0,
+      "members": [
+        "species_01|c_bg004_01",
+        "species_03|c_bg004_03",
+        "species_04|c_bg004_04"
+      ],
+      "n_genes": 3,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "564bd938d12fa9afa9aa",
+      "cluster_id": 0,
+      "component_id": 7,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade01_c01",
+        "species_03|c_expand_s03_clade01_c01",
+        "species_04|c_expand_s04_clade01_c01"
+      ],
+      "n_genes": 3,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "07e1168b9818627a7491",
+      "cluster_id": 0,
+      "component_id": 8,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade02_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "619596fd71156bf1cb44",
+      "cluster_id": 0,
+      "component_id": 9,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade02_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "5063731ac25d2541973d",
+      "cluster_id": 0,
+      "component_id": 10,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade02_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "f5e833a9836dc1505875",
+      "cluster_id": 0,
+      "component_id": 11,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade02_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "131690d2ba652386b020",
+      "cluster_id": 0,
+      "component_id": 12,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade03_c01"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "e0214ed199d90866d818",
+      "cluster_id": 0,
+      "component_id": 13,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade03_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "67497959655a2248b954",
+      "cluster_id": 0,
+      "component_id": 14,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade03_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "111d5201cc27dac4b96c",
+      "cluster_id": 0,
+      "component_id": 15,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade03_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "e9b59e900fe349c6d91a",
+      "cluster_id": 0,
+      "component_id": 16,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade01_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "9c58eacf649db769e642",
+      "cluster_id": 0,
+      "component_id": 17,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade01_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "9942a9208d8ad78923cc",
+      "cluster_id": 0,
+      "component_id": 18,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade01_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "714447a9b5479850cf1f",
+      "cluster_id": 0,
+      "component_id": 19,
+      "depth": 0,
+      "members": [
+        "species_04|c_expand_s04_clade01_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "b7afca846df8d4bb2a86",
+      "cluster_id": 0,
+      "component_id": 20,
+      "depth": 0,
+      "members": [
+        "species_02|c_bg000_02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "9bb2ce536b19aaaa4418",
+      "cluster_id": 0,
+      "component_id": 21,
+      "depth": 0,
+      "members": [
+        "species_02|c_bg001_02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "bed4a1493932e2366a26",
+      "cluster_id": 0,
+      "component_id": 22,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade02_c01"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "b20dcb7c6c60028a5324",
+      "cluster_id": 0,
+      "component_id": 23,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade02_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "bd494832c5e8ee06d632",
+      "cluster_id": 0,
+      "component_id": 24,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade02_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "3199b84d53ccc4be0a34",
+      "cluster_id": 0,
+      "component_id": 25,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade02_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "1d50cb1de7ab2a0bcc8b",
+      "cluster_id": 0,
+      "component_id": 26,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade02_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "f576666f1a36b6338a91",
+      "cluster_id": 0,
+      "component_id": 27,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade03_c01"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "b87e915c22f902aefe71",
+      "cluster_id": 0,
+      "component_id": 28,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade03_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "115d7051b5d5741fe8d2",
+      "cluster_id": 0,
+      "component_id": 29,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade03_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "050c82b6965505e120e1",
+      "cluster_id": 0,
+      "component_id": 30,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade03_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "0a7ef9c3df748602d8a8",
+      "cluster_id": 0,
+      "component_id": 31,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade03_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "b7960ea9bdef9a05e34e",
+      "cluster_id": 0,
+      "component_id": 32,
+      "depth": 0,
+      "members": [
+        "species_02|c_bg002_02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "0210412bd245e4211aaa",
+      "cluster_id": 0,
+      "component_id": 33,
+      "depth": 0,
+      "members": [
+        "species_02|c_bg003_02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "0e58e4e20c5333f7744d",
+      "cluster_id": 0,
+      "component_id": 34,
+      "depth": 0,
+      "members": [
+        "species_02|c_bg004_02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "1b419c6fe85709700db2",
+      "cluster_id": 0,
+      "component_id": 35,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade01_c01"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "4e876489ab55dc9f2967",
+      "cluster_id": 0,
+      "component_id": 36,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade01_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "e664d61b39ca3f256537",
+      "cluster_id": 0,
+      "component_id": 37,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade01_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "3f4d638b966c5d1c2ca5",
+      "cluster_id": 0,
+      "component_id": 38,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade01_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "6da3759d6979f2fd220f",
+      "cluster_id": 0,
+      "component_id": 39,
+      "depth": 0,
+      "members": [
+        "species_02|c_expand_s02_clade01_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "6e702deb363de620b235",
+      "cluster_id": 0,
+      "component_id": 40,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade02_c01"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "fa8489f54d4ccfa6aea2",
+      "cluster_id": 0,
+      "component_id": 41,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade02_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "01d22a8084917d39e90d",
+      "cluster_id": 0,
+      "component_id": 42,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade02_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "357892de9a6263db596c",
+      "cluster_id": 0,
+      "component_id": 43,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade02_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "1da0243a9dc7341266d4",
+      "cluster_id": 0,
+      "component_id": 44,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade03_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "80d5d0fc099702e283eb",
+      "cluster_id": 0,
+      "component_id": 45,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade03_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "d6ccdccc0d8ea64b1d7b",
+      "cluster_id": 0,
+      "component_id": 46,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade03_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "914f4d163f8c45360d63",
+      "cluster_id": 0,
+      "component_id": 47,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade03_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "282e4113334eaa9b30be",
+      "cluster_id": 0,
+      "component_id": 48,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade01_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "114b75c716bc01cad7cd",
+      "cluster_id": 0,
+      "component_id": 49,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade01_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "7c7bfb907d9d92a44d16",
+      "cluster_id": 0,
+      "component_id": 50,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade01_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "d59f2893901b7b044099",
+      "cluster_id": 0,
+      "component_id": 51,
+      "depth": 0,
+      "members": [
+        "species_01|c_expand_s01_clade01_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "9723247251496924f497",
+      "cluster_id": 0,
+      "component_id": 52,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade02_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "07ed5c2e8b7e52fb2900",
+      "cluster_id": 0,
+      "component_id": 53,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade02_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "4e3b57fe7a1c1c4b4e79",
+      "cluster_id": 0,
+      "component_id": 54,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade02_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "26242350482e1abb9dd1",
+      "cluster_id": 0,
+      "component_id": 55,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade02_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "285232fd361de6344384",
+      "cluster_id": 0,
+      "component_id": 56,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade03_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "44938491ce577f440d8f",
+      "cluster_id": 0,
+      "component_id": 57,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade03_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "fef7d26bb55e526fbb33",
+      "cluster_id": 0,
+      "component_id": 58,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade03_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "e47bcc63038f73c639c2",
+      "cluster_id": 0,
+      "component_id": 59,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade03_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "9414774a714ef95ae602",
+      "cluster_id": 0,
+      "component_id": 60,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade01_c02"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "409c63a34b0d80ffce52",
+      "cluster_id": 0,
+      "component_id": 61,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade01_c03"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "e55cd23f7d10e856a61f",
+      "cluster_id": 0,
+      "component_id": 62,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade01_c04"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    },
+    {
+      "cluster_hash": "f534721e36797fd0d751",
+      "cluster_id": 0,
+      "component_id": 63,
+      "depth": 0,
+      "members": [
+        "species_03|c_expand_s03_clade01_c05"
+      ],
+      "n_genes": 1,
+      "parent_hashes": [],
+      "terminal": true
+    }
+  ]
+}

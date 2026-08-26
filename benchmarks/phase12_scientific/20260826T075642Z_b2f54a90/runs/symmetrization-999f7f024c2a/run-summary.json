@@ -1,0 +1,31 @@
+{
+  "axis": "symmetrization",
+  "config_sha256": "c320d7aa6ef53f8955850e11c529c18c322cf1f085f55030445470540d6eacec",
+  "headline_metrics": {
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066"
+  },
+  "overrides": [
+    "edges.symmetrization=geometric_mean"
+  ],
+  "run_id": "symmetrization-999f7f024c2a",
+  "stage_seconds": {
+    "components": 0.5843783291056752,
+    "edges": 0.41948369005694985,
+    "evolution": 0.8200281870085746,
+    "export": 0.5169204601552337,
+    "hierarchy": 3.602358466014266,
+    "metrics": 0.3088370298501104,
+    "prepare": 0.5258619289379567
+  },
+  "total_seconds": 6.7778680911287665,
+  "value": {
+    "edges.symmetrization": "geometric_mean"
+  }
+}

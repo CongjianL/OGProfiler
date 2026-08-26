@@ -1,0 +1,31 @@
+{
+  "axis": "symmetrization",
+  "config_sha256": "680f6d064d5c642ef7e4464c4170bc54fd4ca5080e86eb0d78c4384ead8d0a01",
+  "headline_metrics": {
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066"
+  },
+  "overrides": [
+    "edges.symmetrization=min"
+  ],
+  "run_id": "symmetrization-6a9c009391c5",
+  "stage_seconds": {
+    "components": 0.5671693000476807,
+    "edges": 0.38115215790458024,
+    "evolution": 0.8829038108233362,
+    "export": 0.5734529299661517,
+    "hierarchy": 3.9372801159042865,
+    "metrics": 0.3084821808151901,
+    "prepare": 0.4757501499261707
+  },
+  "total_seconds": 7.126190645387396,
+  "value": {
+    "edges.symmetrization": "min"
+  }
+}

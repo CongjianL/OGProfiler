@@ -1,0 +1,26 @@
+{
+  "algorithm_version": "prepare-v1",
+  "command": [
+    "ogprofiler",
+    "prepare",
+    "--proteomes",
+    "benchmarks/datasets/E_large_connected_component/proteomes",
+    "--out",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase5-reference-e-20260826"
+  ],
+  "dataset": {
+    "dataset_sha256": "af90f064b14e8fffca035fbb7c5346e0804159d4ce104a814eb5a277881c95ca",
+    "id_algorithm": "sorted-path+sorted-original-id-v1",
+    "input_checksums": {
+      "species_01.faa": "c4f1ab46853e3686462c42d62d82de93509c095d599a647e830c7426c8fa7512",
+      "species_02.faa": "4a2c7929f7d57cce2b422622ebdbb04e0834e8ed65e1ff81d72593e8e601c353",
+      "species_03.faa": "a0f478bff35067fa0c740c9a9b49ccf56c66a5e7e8f9adc1f37baa88191537f0",
+      "species_04.faa": "cf7af2f41eba251c7896fc84728239e88c0c4b65583f0a7e88d99029ecc6427f"
+    },
+    "n_proteins": 240,
+    "n_species": 4
+  },
+  "ogprofiler_version": "2.0.0a1",
+  "random_seed": 42,
+  "resolved_config_sha256": "50adec51763572c43247e342f29ce95f01eab08facbf23b038a300c5e8c15753"
+}

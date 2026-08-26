@@ -1,0 +1,23 @@
+{
+  "component_id": 0,
+  "engine_metrics": {
+    "hierarchy_node_count": 7,
+    "leiden_calls": 183,
+    "peak_rss_bytes": 77021184,
+    "resolution_candidate_count": 61,
+    "runtime_seconds": 0.13986002490855753,
+    "subgraph_constructions": 6,
+    "terminal_family_count": 6
+  },
+  "hierarchy_nodes": 7,
+  "max_depth": 1,
+  "n_proteins": 240,
+  "peak_rss_kib": 77580,
+  "resolution_candidates": 61,
+  "terminal_families": 6,
+  "terminal_reason_counts": {
+    "GAMMA_LIMIT": 6
+  },
+  "verified_resume": true,
+  "wall_seconds": 1.05
+}

@@ -1,0 +1,31 @@
+{
+  "axis": "leiden_method",
+  "config_sha256": "ab4463fb25119cc01f353dc35af6445f36f785e4c45a60a46ffd18eea3da8c39",
+  "headline_metrics": {
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066"
+  },
+  "overrides": [
+    "hierarchy.method=modularity"
+  ],
+  "run_id": "leiden_method-13befdd6539f",
+  "stage_seconds": {
+    "components": 0.671787487110123,
+    "edges": 0.6216118319425732,
+    "evolution": 0.8080947000999004,
+    "export": 0.4633801830932498,
+    "hierarchy": 3.619462254922837,
+    "metrics": 0.3313152070622891,
+    "prepare": 0.545708168996498
+  },
+  "total_seconds": 7.0613598332274705,
+  "value": {
+    "hierarchy.method": "modularity"
+  }
+}

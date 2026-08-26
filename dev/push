@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
+CONFIG="$SCRIPT_DIR/remote.env"
+
+[[ -f "$CONFIG" ]] || { echo "Missing $CONFIG" >&2; exit 2; }
+# shellcheck source=/dev/null
+source "$CONFIG"
+
+: "${REMOTE_HOST:?Set REMOTE_HOST in dev/remote.env}"
+: "${REMOTE_DIR:?Set REMOTE_DIR in dev/remote.env}"
+
+if [[ "${REMOTE_DIR_IS_DISPOSABLE:-0}" != "1" ]]; then
+  echo "Refusing to sync with --delete because REMOTE_DIR_IS_DISPOSABLE is not 1." >&2
+  echo "REMOTE_DIR must be a disposable deployment mirror, never a results directory." >&2
+  exit 2
+fi
+
+cd "$ROOT"
+
+printf -v Q_REMOTE_DIR '%q' "$REMOTE_DIR"
+ssh "$REMOTE_HOST" "mkdir -p $Q_REMOTE_DIR"
+
+# macOS ships rsync 2.6, which predates --info=stats2.  --stats is supported
+# by both the system rsync and modern cluster installations.
+RSYNC_ARGS=(-az --delete --stats)
+for pattern in "${PUSH_EXCLUDES[@]:-}"; do
+  [[ -n "$pattern" ]] && RSYNC_ARGS+=(--exclude "$pattern")
+done
+if [[ "${DRY_RUN:-0}" == "1" ]]; then
+  RSYNC_ARGS+=(--dry-run --itemize-changes)
+fi
+
+echo "==> Sync: $ROOT -> $REMOTE_HOST:$REMOTE_DIR"
+rsync "${RSYNC_ARGS[@]}" ./ "$REMOTE_HOST:${REMOTE_DIR%/}/"
+
+if [[ "${DRY_RUN:-0}" == "1" ]]; then
+  exit 0
+fi
+
+GIT_COMMIT="$(git rev-parse HEAD 2>/dev/null || printf 'NO_GIT')"
+GIT_DIRTY=0
+if [[ -n "$(git status --porcelain=v1 --untracked-files=all 2>/dev/null || true)" ]]; then
+  GIT_DIRTY=1
+fi
+PUSHED_AT="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+META_FILE="$(mktemp -t dev-push-meta.XXXXXX)"
+trap 'rm -f "$META_FILE"' EXIT
+{
+  printf 'pushed_at_utc=%s\n' "$PUSHED_AT"
+  printf 'git_commit=%s\n' "$GIT_COMMIT"
+  printf 'git_dirty=%s\n' "$GIT_DIRTY"
+} > "$META_FILE"
+rsync -az "$META_FILE" "$REMOTE_HOST:${REMOTE_DIR%/}/.dev-deploy-meta"
+
+echo "==> Sync complete: commit=$GIT_COMMIT dirty=$GIT_DIRTY"

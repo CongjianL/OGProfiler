@@ -1,0 +1,273 @@
+{
+  "algorithm_version": "selected-family-phylogeny-v1",
+  "backend_commands": {
+    "alignment": [
+      "/home/mselab/licj/micromamba/envs/ogprofiler/bin/mafft",
+      "--thread",
+      "1",
+      "--auto",
+      "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T071500Z_phase11_phylogeny/run/evolution/phylogenetic/.family=OG000000000.b599ccfffd2744c6b1cbdd0e69495426.building/input.faa"
+    ],
+    "tree": [
+      "/home/mselab/licj/micromamba/envs/ogprofiler/bin/FastTree",
+      "-quiet",
+      "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T071500Z_phase11_phylogeny/run/evolution/phylogenetic/.family=OG000000000.b599ccfffd2744c6b1cbdd0e69495426.building/alignment.faa"
+    ]
+  },
+  "backend_versions": {
+    "alignment": "v7.526 (2024/Apr/26)",
+    "reconciliation": "lca-reconciliation-v1",
+    "tree": "FastTree Version 2.2.0 Double precision"
+  },
+  "command": [
+    "ogprofiler",
+    "annotate",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T071500Z_phase11_phylogeny/run",
+    "--phylogenetic-refinement",
+    "--family",
+    "OG000000000",
+    "--species-tree",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T071500Z_phase11_phylogeny/species.nwk",
+    "--rooting",
+    "species-tree-aware"
+  ],
+  "identity_sha256": "a33446376fe2f82971a28a4245c94056d3f013d797e1b5be80fa4813553222dc",
+  "output_checksums": {
+    "alignment.faa": "c68524310fbddb51b9df7a1623c5446e74e7dd6a168af8ff1662ce8e1724ed9f",
+    "gene_tree.rooted.nwk": "9564bd779070ac2ac9bda2a79c95ef2d8554122249a74d0e67d5f994ba7c263d",
+    "gene_tree.unrooted.nwk": "2b4c15e98d154af88d23031fb4b76a1436f8f8562d30fcfd5a1cd3a98a980040",
+    "input.faa": "dde4be51b20721d9e0aef722885ecc841905d1014a11cc45e9ad424fde0556bc",
+    "reconciliation.tsv": "ffeebbdc86007025ff9e18d3696dc82b61a563b18155637f8faa72052bd5718e",
+    "species_tree.pruned.nwk": "2f903aa800700c963ab50f7340ac8f04f9bf63f4e55debcf0db61aa1cefd6619"
+  },
+  "parameters": {
+    "alignment_backend": "mafft",
+    "alignment_backend_version": "v7.526 (2024/Apr/26)",
+    "family_id": "OG000000000",
+    "leaf_species": [
+      [
+        0,
+        "species_01"
+      ],
+      [
+        6,
+        "species_01"
+      ],
+      [
+        12,
+        "species_01"
+      ],
+      [
+        18,
+        "species_01"
+      ],
+      [
+        24,
+        "species_01"
+      ],
+      [
+        30,
+        "species_01"
+      ],
+      [
+        36,
+        "species_01"
+      ],
+      [
+        42,
+        "species_01"
+      ],
+      [
+        48,
+        "species_01"
+      ],
+      [
+        54,
+        "species_01"
+      ],
+      [
+        60,
+        "species_02"
+      ],
+      [
+        66,
+        "species_02"
+      ],
+      [
+        72,
+        "species_02"
+      ],
+      [
+        78,
+        "species_02"
+      ],
+      [
+        84,
+        "species_02"
+      ],
+      [
+        90,
+        "species_02"
+      ],
+      [
+        96,
+        "species_02"
+      ],
+      [
+        102,
+        "species_02"
+      ],
+      [
+        108,
+        "species_02"
+      ],
+      [
+        114,
+        "species_02"
+      ],
+      [
+        120,
+        "species_03"
+      ],
+      [
+        126,
+        "species_03"
+      ],
+      [
+        132,
+        "species_03"
+      ],
+      [
+        138,
+        "species_03"
+      ],
+      [
+        144,
+        "species_03"
+      ],
+      [
+        150,
+        "species_03"
+      ],
+      [
+        156,
+        "species_03"
+      ],
+      [
+        162,
+        "species_03"
+      ],
+      [
+        168,
+        "species_03"
+      ],
+      [
+        174,
+        "species_03"
+      ],
+      [
+        180,
+        "species_04"
+      ],
+      [
+        186,
+        "species_04"
+      ],
+      [
+        192,
+        "species_04"
+      ],
+      [
+        198,
+        "species_04"
+      ],
+      [
+        204,
+        "species_04"
+      ],
+      [
+        210,
+        "species_04"
+      ],
+      [
+        216,
+        "species_04"
+      ],
+      [
+        222,
+        "species_04"
+      ],
+      [
+        228,
+        "species_04"
+      ],
+      [
+        234,
+        "species_04"
+      ]
+    ],
+    "member_sequence_sha256": "c421a52f85fcabe5b1a5abcec54881fbd914cda98e3ca8a74ced1f8b29d05e82",
+    "members": [
+      0,
+      6,
+      12,
+      18,
+      24,
+      30,
+      36,
+      42,
+      48,
+      54,
+      60,
+      66,
+      72,
+      78,
+      84,
+      90,
+      96,
+      102,
+      108,
+      114,
+      120,
+      126,
+      132,
+      138,
+      144,
+      150,
+      156,
+      162,
+      168,
+      174,
+      180,
+      186,
+      192,
+      198,
+      204,
+      210,
+      216,
+      222,
+      228,
+      234
+    ],
+    "outgroup": null,
+    "reconciliation_backend": "lca-reconciliation-v1",
+    "rooting": "species-tree-aware",
+    "species_tree_sha256": "f4f772554823a7bf67329f6235f954783a4aa3603bf196e87ffb53999a7c16f5",
+    "threads": 1,
+    "tree_backend": "fasttree",
+    "tree_backend_version": "FastTree Version 2.2.0 Double precision"
+  },
+  "status": "DONE",
+  "summary": {
+    "cluster_id": 1,
+    "component_id": 0,
+    "conflict_status": "UNRESOLVED",
+    "event_confidence": 0.5,
+    "family_id": "OG000000000",
+    "network_event": "AMBIGUOUS",
+    "phylo_event": "DUPLICATION",
+    "selection_reasons": "USER_SELECTED,AMBIGUOUS,DUPLICATION_RICH",
+    "supporting_node": "gene_node_000038"
+  }
+}

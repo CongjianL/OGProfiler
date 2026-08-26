@@ -1,0 +1,31 @@
+{
+  "axis": "gamma_strategy",
+  "config_sha256": "2f0dbe7c42e2e10d8e27222984abc31608c6ab479b8a730d8db8a325f413ad39",
+  "headline_metrics": {
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066"
+  },
+  "overrides": [
+    "hierarchy.resolution_strategy=log_grid"
+  ],
+  "run_id": "gamma_strategy-d24cc1f499bd",
+  "stage_seconds": {
+    "components": 0.5963180530816317,
+    "edges": 0.6003607281018049,
+    "evolution": 0.8619195560459048,
+    "export": 0.5623191220220178,
+    "hierarchy": 3.7158750309608877,
+    "metrics": 0.30320821003988385,
+    "prepare": 0.6339306070003659
+  },
+  "total_seconds": 7.2739313072524965,
+  "value": {
+    "hierarchy.resolution_strategy": "log_grid"
+  }
+}

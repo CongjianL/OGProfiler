@@ -1,0 +1,275 @@
+"""Resolution search with split acceptance and multi-seed stability."""
+
+from __future__ import annotations
+
+import math
+from collections import Counter
+from dataclasses import dataclass
+
+import igraph as ig
+
+from ogprofiler.exceptions import HierarchyError
+from ogprofiler.hierarchy.leiden import LeidenCallCounter, LeidenResult, run_leiden
+
+
+@dataclass(frozen=True, slots=True)
+class ResolutionSearchConfig:
+    strategy: str = "adaptive"
+    gamma_min: float = 0.01
+    gamma_max: float = 10.0
+    growth_factor: float = 2.0
+    local_grid_points: int = 5
+    min_child_size: int = 2
+    max_child_fraction: float = 0.95
+    tiny_fragment_size: int = 2
+    max_tiny_fragment_fraction: float = 1.0
+    stability_threshold: float = 0.9
+    publication_seeds: int = 5
+    min_quality: float | None = None
+
+    def validate(self) -> None:
+        if self.strategy not in {"adaptive", "log_grid"}:
+            raise HierarchyError(f"Unknown resolution strategy: {self.strategy}")
+        if self.gamma_min <= 0 or self.gamma_max < self.gamma_min:
+            raise HierarchyError("Resolution bounds must satisfy 0 < gamma_min <= gamma_max")
+        if self.growth_factor <= 1 or self.local_grid_points < 2:
+            raise HierarchyError("Resolution search configuration is invalid")
+        if self.min_child_size < 1 or self.tiny_fragment_size < 1:
+            raise HierarchyError("Child sizes must be positive")
+        if not 0 < self.max_child_fraction < 1:
+            raise HierarchyError("max_child_fraction must be between 0 and 1")
+        if not 0 <= self.max_tiny_fragment_fraction <= 1:
+            raise HierarchyError("max_tiny_fragment_fraction must be between 0 and 1")
+        if not 0 <= self.stability_threshold <= 1:
+            raise HierarchyError("stability_threshold must be between 0 and 1")
+        if self.publication_seeds < 5:
+            raise HierarchyError("publication_seeds must be at least 5")
+
+
+@dataclass(frozen=True, slots=True)
+class SplitCandidate:
+    gamma: float
+    membership: tuple[int, ...]
+    child_count: int
+    quality: float
+    min_child_size: int
+    max_child_fraction: float
+    tiny_fragment_fraction: float
+    stability: float
+    adjusted_rand_index: float
+    normalized_mutual_info: float
+    inter_edge_fraction: float
+    intra_edge_fraction: float
+    valid: bool
+    rejection_reason: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class ResolutionSearchResult:
+    selected: SplitCandidate | None
+    candidates: tuple[SplitCandidate, ...]
+    terminal_reason: str | None
+
+
+def _canonical(membership: tuple[int, ...]) -> tuple[int, ...]:
+    first: dict[int, int] = {}
+    for index, label in enumerate(membership):
+        first.setdefault(label, index)
+    mapping = {label: rank for rank, label in enumerate(sorted(first, key=first.__getitem__))}
+    return tuple(mapping[label] for label in membership)
+
+
+def adjusted_rand_index(left: tuple[int, ...], right: tuple[int, ...]) -> float:
+    if len(left) != len(right):
+        raise HierarchyError("Partition sizes differ")
+    if len(left) < 2:
+        return 1.0
+    def choose2(value: int) -> float:
+        return value * (value - 1) / 2
+
+    contingency = Counter(zip(left, right, strict=True))
+    left_pairs = sum(choose2(value) for value in Counter(left).values())
+    right_pairs = sum(choose2(value) for value in Counter(right).values())
+    both = sum(choose2(value) for value in contingency.values())
+    total = choose2(len(left))
+    expected = left_pairs * right_pairs / total
+    denominator = (left_pairs + right_pairs) / 2 - expected
+    return 1.0 if math.isclose(denominator, 0.0) else (both - expected) / denominator
+
+
+def normalized_mutual_info(left: tuple[int, ...], right: tuple[int, ...]) -> float:
+    if len(left) != len(right):
+        raise HierarchyError("Partition sizes differ")
+    if not left:
+        return 1.0
+    n = len(left)
+    left_counts, right_counts = Counter(left), Counter(right)
+    mutual = sum(
+        (count / n)
+        * math.log((count * n) / (left_counts[left_label] * right_counts[right_label]))
+        for (left_label, right_label), count in Counter(zip(left, right, strict=True)).items()
+    )
+    h_left = -sum((count / n) * math.log(count / n) for count in left_counts.values())
+    h_right = -sum((count / n) * math.log(count / n) for count in right_counts.values())
+    return 1.0 if math.isclose(h_left + h_right, 0.0) else 2 * mutual / (h_left + h_right)
+
+
+def _seed_count(mode: str, publication_seeds: int) -> int:
+    values = {"fast": 1, "robust": 3, "publication": publication_seeds}
+    if mode not in values:
+        raise HierarchyError(f"Unknown stability mode: {mode}")
+    return values[mode]
+
+
+def _multi_seed(
+    graph: ig.Graph,
+    gamma: float,
+    method: str,
+    weights: str | list[float] | None,
+    seed: int,
+    mode: str,
+    publication_seeds: int,
+    counter: LeidenCallCounter,
+) -> tuple[LeidenResult, float, float, float]:
+    results = [
+        run_leiden(graph, gamma, method, weights, seed + index * 104_729, counter)
+        for index in range(_seed_count(mode, publication_seeds))
+    ]
+    memberships = [_canonical(result.membership) for result in results]
+    if len(results) == 1:
+        return LeidenResult(memberships[0], results[0].quality), 1.0, 1.0, 1.0
+    ari_values: list[float] = []
+    nmi_values: list[float] = []
+    support = [0.0] * len(results)
+    for left in range(len(results)):
+        for right in range(left + 1, len(results)):
+            ari = adjusted_rand_index(memberships[left], memberships[right])
+            nmi = normalized_mutual_info(memberships[left], memberships[right])
+            ari_values.append(ari)
+            nmi_values.append(nmi)
+            support[left] += ari
+            support[right] += ari
+    best = max(range(len(results)), key=lambda index: (support[index], results[index].quality))
+    mean_ari = sum(ari_values) / len(ari_values)
+    return (
+        LeidenResult(memberships[best], results[best].quality),
+        mean_ari,
+        mean_ari,
+        sum(nmi_values) / len(nmi_values),
+    )
+
+
+def _candidate(
+    graph: ig.Graph,
+    gamma: float,
+    result: LeidenResult,
+    stability: float,
+    ari: float,
+    nmi: float,
+    config: ResolutionSearchConfig,
+) -> SplitCandidate:
+    sizes = tuple(Counter(result.membership).values())
+    total = len(result.membership)
+    minimum = min(sizes)
+    maximum_fraction = max(sizes) / total
+    tiny_fraction = sum(size for size in sizes if size <= config.tiny_fragment_size) / total
+    inter = sum(
+        1
+        for left, right in graph.get_edgelist()
+        if result.membership[left] != result.membership[right]
+    )
+    inter_fraction = inter / graph.ecount() if graph.ecount() else 0.0
+    reason: str | None = None
+    if len(sizes) <= 1:
+        reason = "NO_SPLIT"
+    elif (
+        minimum < config.min_child_size
+        or maximum_fraction > config.max_child_fraction
+        or tiny_fraction > config.max_tiny_fragment_fraction
+    ):
+        reason = "GAMMA_LIMIT"
+    elif stability < config.stability_threshold:
+        reason = "UNSTABLE"
+    elif config.min_quality is not None and result.quality < config.min_quality:
+        reason = "LOW_QUALITY"
+    return SplitCandidate(
+        gamma,
+        result.membership,
+        len(sizes),
+        result.quality,
+        minimum,
+        maximum_fraction,
+        tiny_fraction,
+        stability,
+        ari,
+        nmi,
+        inter_fraction,
+        1.0 - inter_fraction,
+        reason is None,
+        reason,
+    )
+
+
+def _log_grid(lower: float, upper: float, points: int) -> tuple[float, ...]:
+    if math.isclose(lower, upper):
+        return (lower,)
+    step = (math.log(upper) - math.log(lower)) / (points - 1)
+    return tuple(math.exp(math.log(lower) + index * step) for index in range(points))
+
+
+def search_resolution(
+    graph: ig.Graph,
+    config: ResolutionSearchConfig,
+    *,
+    method: str,
+    weights: str | list[float] | None,
+    seed: int,
+    counter: LeidenCallCounter,
+    stability_mode: str = "fast",
+) -> ResolutionSearchResult:
+    config.validate()
+    candidates: dict[float, SplitCandidate] = {}
+
+    def evaluate(gamma: float) -> SplitCandidate:
+        result, stability, ari, nmi = _multi_seed(
+            graph, gamma, method, weights, seed, stability_mode, config.publication_seeds, counter
+        )
+        return _candidate(graph, gamma, result, stability, ari, nmi, config)
+
+    if config.strategy == "log_grid":
+        for gamma in _log_grid(config.gamma_min, config.gamma_max, config.local_grid_points):
+            candidates[gamma] = evaluate(gamma)
+    else:
+        gamma = config.gamma_min
+        previous = gamma
+        accepted: SplitCandidate | None = None
+        while gamma <= config.gamma_max * (1 + 1e-12):
+            candidates[gamma] = evaluate(gamma)
+            if candidates[gamma].valid:
+                accepted = candidates[gamma]
+                break
+            previous = gamma
+            gamma *= config.growth_factor
+        if accepted is not None and accepted.gamma > config.gamma_min:
+            for local_gamma in _log_grid(previous, accepted.gamma, config.local_grid_points):
+                if not any(
+                    math.isclose(local_gamma, value, rel_tol=1e-12)
+                    for value in candidates
+                ):
+                    candidates[local_gamma] = evaluate(local_gamma)
+    ordered = tuple(candidates[value] for value in sorted(candidates))
+    selected = min(
+        (item for item in ordered if item.valid), key=lambda item: item.gamma, default=None
+    )
+    reasons = {item.rejection_reason for item in ordered}
+    terminal_reason = None
+    if selected is None:
+        if "UNSTABLE" in reasons:
+            terminal_reason = "UNSTABLE"
+        elif "LOW_QUALITY" in reasons:
+            terminal_reason = "LOW_QUALITY"
+        elif reasons == {"NO_SPLIT"}:
+            terminal_reason = "NO_SPLIT"
+        else:
+            terminal_reason = "GAMMA_LIMIT"
+    return ResolutionSearchResult(selected, ordered, terminal_reason)

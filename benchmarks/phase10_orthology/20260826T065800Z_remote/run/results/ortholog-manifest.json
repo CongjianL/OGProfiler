@@ -1,0 +1,41 @@
+{
+  "algorithm_version": "hierarchy-cross-child-v1",
+  "command": [
+    "ogprofiler",
+    "orthologs",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T065800Z_phase10_orthology/run",
+    "--emit-pairwise-orthologs",
+    "--set",
+    "output.ortholog_pair_chunk_size=4096"
+  ],
+  "counts": {
+    "chunks": 15,
+    "components": 1,
+    "pairs": 60000,
+    "supporting_event_counts": {
+      "POLYTOMY": 1,
+      "SPECIATION_LIKE": 0
+    },
+    "supporting_nodes": 1
+  },
+  "input_checksums": {
+    "evolution/components/component=00000000/events.parquet": "aeccc7935ea7284515152fd66ec576a060a3dd68437c5e2a584a578a2174e02a",
+    "hierarchy/components/component=00000000/members.parquet": "a5b6b4f50e88967ddf80338f67d1e82b0aa7f8eb6900696b2597a14347690a50",
+    "hierarchy/components/component=00000000/nodes.parquet": "72a20073ed5a34aae4ad4fd0026bb06bef0eed47ca5ca46241eb664807a5160e",
+    "input/proteins.parquet": "0468ad0d71a688303f7ecb1352fbdb94443ce36f465d35dae324f16fac4c02c1"
+  },
+  "output_checksums": {
+    "ortholog_pairs.tsv.zst": "11aa5e8623b1c08b768a46a36b9f1b03fea2c3ba4556e625909d5dbba2d5b164"
+  },
+  "parameters": {
+    "chunk_size": 4096,
+    "events": [
+      "POLYTOMY",
+      "SPECIATION_LIKE"
+    ],
+    "relationship": "CO_ORTHOLOG_CANDIDATE",
+    "same_species_filter": true
+  },
+  "parameters_sha256": "69c047715b25eab7ba1b43aeb8eb0f75267959e9b4221d8a43705a2910040b17"
+}

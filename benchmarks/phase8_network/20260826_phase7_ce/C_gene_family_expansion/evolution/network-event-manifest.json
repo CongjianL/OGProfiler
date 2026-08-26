@@ -1,0 +1,26 @@
+{
+  "algorithm_version": "network-overlap-v1",
+  "command": [
+    "ogprofiler",
+    "annotate-network",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run",
+    "--set",
+    "evolution.network_overlap_threshold=0.5"
+  ],
+  "component_count": 6,
+  "component_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "event_counts": {
+    "AMBIGUOUS": 8,
+    "DUPLICATION_LIKE": 1
+  },
+  "overlap_threshold": 0.5,
+  "reused_components": 6
+}

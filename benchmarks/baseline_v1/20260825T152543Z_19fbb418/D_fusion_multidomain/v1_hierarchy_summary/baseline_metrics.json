@@ -1,0 +1,16 @@
+{
+  "connected_component_count": 15,
+  "hierarchy_depth": 3,
+  "hierarchy_edges": 66,
+  "hierarchy_nodes": 77,
+  "largest_component_size": 4,
+  "membership_count": 44,
+  "peak_rss_bytes": 113491968,
+  "runtime_seconds": 1.54,
+  "ssn_edges": 66,
+  "ssn_nodes": 48,
+  "stage_runtime_seconds": {
+    "HNN Construction": 0.2491
+  },
+  "terminal_family_count": 44
+}

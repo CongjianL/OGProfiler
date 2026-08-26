@@ -1,0 +1,63 @@
+{
+  "method_registry": {
+    "ogprofiler1": {
+      "input": "normalized V1 artifacts",
+      "status": "implemented"
+    },
+    "ogprofiler2": {
+      "input": "scientific-benchmark-v1",
+      "status": "implemented"
+    },
+    "orthofinder": {
+      "input": "Orthogroups.tsv/Orthologues",
+      "status": "planned-import"
+    },
+    "sonicparanoid": {
+      "input": "ortholog_groups.tsv",
+      "status": "planned-import"
+    }
+  },
+  "rows": [
+    {
+      "composite_score": 0.8333333333333334,
+      "dataset": "C_gene_family_expansion",
+      "exact_family_recovery": 0.8333333333333334,
+      "family_pair_f1": 0.5,
+      "method": "ogprofiler2",
+      "orthology_f1": null,
+      "single_copy_recovery": 1.0,
+      "species_overlap_consistency": 1.0
+    },
+    {
+      "composite_score": 0.0,
+      "dataset": "C_gene_family_expansion",
+      "exact_family_recovery": 0.0,
+      "family_pair_f1": null,
+      "method": "ogprofiler1",
+      "orthology_f1": null,
+      "single_copy_recovery": 0.0,
+      "species_overlap_consistency": null
+    },
+    {
+      "composite_score": 0.42685851318944845,
+      "dataset": "E_large_connected_component",
+      "exact_family_recovery": 0.0,
+      "family_pair_f1": 0.28057553956834536,
+      "method": "ogprofiler2",
+      "orthology_f1": null,
+      "single_copy_recovery": null,
+      "species_overlap_consistency": 1.0
+    },
+    {
+      "composite_score": 0.03750848608282417,
+      "dataset": "E_large_connected_component",
+      "exact_family_recovery": 0.0,
+      "family_pair_f1": 0.07501697216564834,
+      "method": "ogprofiler1",
+      "orthology_f1": null,
+      "single_copy_recovery": null,
+      "species_overlap_consistency": null
+    }
+  ],
+  "schema_version": "method-comparison-v1"
+}

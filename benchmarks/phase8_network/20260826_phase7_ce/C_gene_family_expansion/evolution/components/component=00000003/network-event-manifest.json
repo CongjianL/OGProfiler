@@ -1,0 +1,30 @@
+{
+  "algorithm_version": "network-overlap-v1",
+  "command": [
+    "ogprofiler",
+    "annotate-network",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run",
+    "--set",
+    "evolution.network_overlap_threshold=0.5"
+  ],
+  "counts": {
+    "events": {
+      "AMBIGUOUS": 1
+    },
+    "nodes": 1
+  },
+  "input_checksums": {
+    "hierarchy/components/component=00000003/members.parquet": "959e1f06d6c521802f1a339eb79f1652cc5c5634d87431666c2972b4438ad65c",
+    "hierarchy/components/component=00000003/nodes.parquet": "e41e4e4b1eb5fb71df5c9ec5ad8132eda91a5a57f39c969089b8267c26ee0d4e",
+    "input/proteins.parquet": "73e026bb349e9f51d568ff21b2a4d8e8076ff78e6c295a3971ce530b249984ab"
+  },
+  "output_checksums": {
+    "events.parquet": "77d7acdb2f8c503116cf7dc69dd4ad90f418e4b6d990ab5e0b801e863d07e84e"
+  },
+  "parameters": {
+    "component_id": 3,
+    "overlap_threshold": 0.5
+  },
+  "parameters_sha256": "3d7a00756621bc6001479614fe1123c775a603a8efa583f2060581f4f166f06a"
+}

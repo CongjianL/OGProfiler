@@ -1,0 +1,36 @@
+{
+  "performance": {
+    "rss_ratio_v1_over_v2": 1.8613035582161834,
+    "runtime_speedup_v1_over_v2": 14.001375681070678,
+    "v1_peak_rss_bytes": 113344512,
+    "v1_runtime_seconds": 0.14175299205817282,
+    "v2_leiden_calls": 0,
+    "v2_peak_rss_bytes": 60895232,
+    "v2_runtime_seconds": 0.010124218882992864,
+    "v2_subgraph_constructions": 0
+  },
+  "proteins": {
+    "common": 24,
+    "exact_terminal_set_assignments": 0,
+    "v1": 24,
+    "v2": 80
+  },
+  "terminal_pairing": {
+    "intersection": 0,
+    "jaccard": 0.0,
+    "precision": 0.0,
+    "recall": null,
+    "v1_pairs": 0,
+    "v2_pairs": 24
+  },
+  "topology": {
+    "edge_jaccard": 0.0,
+    "node_jaccard": 0.08333333333333333,
+    "shared_edges": 0,
+    "shared_member_sets": 8,
+    "v1_edges": 32,
+    "v1_nodes": 40,
+    "v2_edges": 0,
+    "v2_nodes": 64
+  }
+}

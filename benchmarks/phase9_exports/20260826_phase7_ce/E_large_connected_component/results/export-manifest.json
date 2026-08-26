@@ -1,0 +1,44 @@
+{
+  "algorithm_version": "terminal-family-export-v1",
+  "command": [
+    "ogprofiler",
+    "export",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/E_large_connected_component/run"
+  ],
+  "counts": {
+    "events": 7,
+    "families": 6,
+    "fasta_files": 0,
+    "hierarchy_nodes": 7,
+    "members": 240
+  },
+  "family_membership_sha256": {
+    "OG000000000": "d5923d8f1030d609b37062e9c898d5908791803d5c4977853361ab98c19749f6",
+    "OG000000001": "c0102910076bfc3466b483ce7c96b3f7988363489543a23bcc6462b84cc1ce9e",
+    "OG000000002": "be49fc1142a402e995f22328bcfad6affc83348c82ccf7519da5871de0774c06",
+    "OG000000003": "d3467d41e1a7bf64d0dc6cf43b71bbe1e7bd05a56a7b568e30ef8b05febb1365",
+    "OG000000004": "9cce7139c706e05573bbba9c05d4063ab11e97d58531192e9f8db73ad822e37d",
+    "OG000000005": "8f94ed3b84caa1503b2ae7f730f49a434e0dca34ea9754f161e9575b3cef04a8"
+  },
+  "input_checksums": {
+    "components/singleton_terminal_families.parquet": "9d9c182f2c36d2000c6988cb6e59937b45be4619e49d7a90036d8a3f1f30330a",
+    "evolution/components/component=00000000/events.parquet": "928be355b433ba858e75c99a2dca224754021bb3ca6849c0e715841a7d0fa982",
+    "hierarchy/components/component=00000000/members.parquet": "343572b64fa1f4212bbca3a37e209831c27a14398d7bc42cda4887673faf5dc8",
+    "hierarchy/components/component=00000000/nodes.parquet": "fbdfee51cefd914cc854c8907bc78153d5111041dafdc4c3000cc5c757efd3be",
+    "input/proteins.faa": "d46a8efc33aacb5395534f00b1a03648ea44f7803902d9924c3d72532a2ffb0e",
+    "input/proteins.parquet": "ae1ec635f406e897e18d34e2812240efaafae57d1fd5a8303382166c6a340bc5"
+  },
+  "output_checksums": {
+    "events.tsv": "e9819399e7c1cc2c69f55474d8b3981c72a67ea4ebc85f77fd06feff94c742e6",
+    "families.tsv": "3b59e90e839f796f8b63dcee1946b2803da53c2a7fa855c52f35791d294ca009",
+    "hierarchy.tsv": "db3cf96a6f19f31468e1f8189055ceb62e59f917ff597a78d6b93dea44b1ea6d",
+    "members.tsv": "b6a18511304da76aa0396a98913a60f28d4ac11c4faca7ad3bf482a8981752a9"
+  },
+  "parameters": {
+    "all_family_fasta": false,
+    "family_id_algorithm": "canonical-terminal-membership-rank-v1",
+    "fasta_families": []
+  },
+  "parameters_sha256": "79afcbdf0d60d35c4530c910f0a0d8c8a797d4ea5840ff94b6746d0e78b9e804"
+}

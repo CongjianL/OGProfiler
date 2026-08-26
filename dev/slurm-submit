@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
+CONFIG="$SCRIPT_DIR/remote.env"
+[[ -f "$CONFIG" ]] || { echo "Missing $CONFIG" >&2; exit 2; }
+# shellcheck source=/dev/null
+source "$CONFIG"
+
+: "${REMOTE_HOST:?Set REMOTE_HOST in dev/remote.env}"
+: "${REMOTE_RUNS_DIR:?Set REMOTE_RUNS_DIR in dev/remote.env}"
+: "${REMOTE_CONDA:?Set REMOTE_CONDA in dev/remote.env}"
+: "${REMOTE_CONDA_ENV:?Set REMOTE_CONDA_ENV in dev/remote.env}"
+
+usage() {
+  echo "Usage: $0 <job-script> [script-arg ...]" >&2
+  echo "Keep Slurm resource options in the #SBATCH lines of the job script." >&2
+}
+
+[[ $# -ge 1 ]] || { usage; exit 2; }
+JOB_SCRIPT_INPUT="$1"
+shift
+
+if [[ "$JOB_SCRIPT_INPUT" = /* ]]; then
+  JOB_SCRIPT_ABS="$JOB_SCRIPT_INPUT"
+else
+  JOB_SCRIPT_ABS="$ROOT/$JOB_SCRIPT_INPUT"
+fi
+[[ -f "$JOB_SCRIPT_ABS" ]] || { echo "Job script not found: $JOB_SCRIPT_ABS" >&2; exit 2; }
+JOB_SCRIPT_ABS="$(cd "$(dirname "$JOB_SCRIPT_ABS")" && pwd -P)/$(basename "$JOB_SCRIPT_ABS")"
+case "$JOB_SCRIPT_ABS" in
+  "$ROOT"/*) ;;
+  *) echo "Job script must be inside repository: $ROOT" >&2; exit 2 ;;
+esac
+JOB_SCRIPT_REL="${JOB_SCRIPT_ABS#"$ROOT"/}"
+
+cd "$ROOT"
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+  echo "slurm-submit requires a Git repository." >&2
+  exit 2
+}
+
+GIT_COMMIT="$(git rev-parse HEAD)"
+GIT_SHORT="$(git rev-parse --short=12 HEAD)"
+GIT_BRANCH="$(git symbolic-ref --short -q HEAD || printf 'DETACHED')"
+GIT_STATUS="$(git status --porcelain=v1 --untracked-files=all)"
+GIT_DIRTY=0
+[[ -n "$GIT_STATUS" ]] && GIT_DIRTY=1
+
+if [[ "${REQUIRE_CLEAN_FOR_SLURM:-0}" == "1" && "$GIT_DIRTY" == "1" ]]; then
+  echo "Refusing Slurm submission: working tree is dirty and REQUIRE_CLEAN_FOR_SLURM=1." >&2
+  git status --short >&2
+  exit 3
+fi
+
+TMP_DIR="$(mktemp -d -t slurm-submit.XXXXXX)"
+trap 'rm -rf "$TMP_DIR"' EXIT
+FILES0="$TMP_DIR/source-files.nul"
+git ls-files -co --exclude-standard -z > "$FILES0"
+
+MANIFEST="$TMP_DIR/source-manifest.sha256"
+: > "$MANIFEST"
+while IFS= read -r -d '' path; do
+  if [[ -L "$path" ]]; then
+    target="$(readlink "$path")"
+    hash="$(printf 'symlink:%s' "$target" | env LC_ALL=C LANG=C shasum -a 256 | awk '{print $1}')"
+    printf '%s  %s -> %s\n' "$hash" "$path" "$target" >> "$MANIFEST"
+  elif [[ -f "$path" ]]; then
+    hash="$(env LC_ALL=C LANG=C shasum -a 256 "./$path" | awk '{print $1}')"
+    printf '%s  %s\n' "$hash" "$path" >> "$MANIFEST"
+  fi
+done < "$FILES0"
+SOURCE_HASH="$(env LC_ALL=C LANG=C shasum -a 256 "$MANIFEST" | awk '{print $1}')"
+
+SUBMITTED_AT="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+STAMP="$(date -u '+%Y%m%dT%H%M%SZ')"
+RUN_ID="${STAMP}_${GIT_SHORT}_${SOURCE_HASH:0:8}_$$"
+LOCAL_RUN_DIR="$ROOT/.provenance/slurm/$RUN_ID"
+REMOTE_RUN_DIR="${REMOTE_RUNS_DIR%/}/$RUN_ID"
+REMOTE_SOURCE_DIR="$REMOTE_RUN_DIR/source"
+REMOTE_PROV_DIR="$REMOTE_RUN_DIR/provenance"
+mkdir -p "$LOCAL_RUN_DIR"
+
+printf '%s\n' "$GIT_STATUS" > "$LOCAL_RUN_DIR/git-status.txt"
+git diff HEAD --binary > "$LOCAL_RUN_DIR/git-diff.patch"
+git diff --stat HEAD > "$LOCAL_RUN_DIR/git-diff-stat.txt"
+git ls-files --others --exclude-standard > "$LOCAL_RUN_DIR/untracked-files.txt"
+cp "$MANIFEST" "$LOCAL_RUN_DIR/source-manifest.sha256"
+cp "$JOB_SCRIPT_ABS" "$LOCAL_RUN_DIR/slurm-script.sh"
+cp "$CONFIG" "$LOCAL_RUN_DIR/remote.env.snapshot"
+
+{
+  printf 'run_id\t%s\n' "$RUN_ID"
+  printf 'submitted_at_utc\t%s\n' "$SUBMITTED_AT"
+  printf 'git_commit\t%s\n' "$GIT_COMMIT"
+  printf 'git_branch\t%s\n' "$GIT_BRANCH"
+  printf 'git_dirty\t%s\n' "$GIT_DIRTY"
+  printf 'source_sha256\t%s\n' "$SOURCE_HASH"
+  printf 'slurm_script\t%s\n' "$JOB_SCRIPT_REL"
+  printf 'remote_host\t%s\n' "$REMOTE_HOST"
+  printf 'remote_run_dir\t%s\n' "$REMOTE_RUN_DIR"
+  printf 'remote_source_dir\t%s\n' "$REMOTE_SOURCE_DIR"
+  printf 'remote_conda\t%s\n' "$REMOTE_CONDA"
+  printf 'remote_conda_env\t%s\n' "$REMOTE_CONDA_ENV"
+} > "$LOCAL_RUN_DIR/provenance.tsv"
+
+{
+  printf '%q ' "$@"
+  printf '\n'
+} > "$LOCAL_RUN_DIR/script-args.shell"
+
+if grep -Eq '^[[:space:]]*#SBATCH[[:space:]]+(-a|--array)(=|[[:space:]])' "$JOB_SCRIPT_ABS"; then
+  IS_ARRAY=1
+  STDOUT_PATTERN="$REMOTE_RUN_DIR/slurm-%A_%a.out"
+  STDERR_PATTERN="$REMOTE_RUN_DIR/slurm-%A_%a.err"
+else
+  IS_ARRAY=0
+  STDOUT_PATTERN="$REMOTE_RUN_DIR/slurm-%j.out"
+  STDERR_PATTERN="$REMOTE_RUN_DIR/slurm-%j.err"
+fi
+printf '%s\n' "$IS_ARRAY" > "$LOCAL_RUN_DIR/is_array.txt"
+printf '%s\n' "$REMOTE_RUN_DIR" > "$LOCAL_RUN_DIR/remote_run_dir.txt"
+
+printf -v Q_REMOTE_RUN_DIR '%q' "$REMOTE_RUN_DIR"
+printf -v Q_REMOTE_SOURCE_DIR '%q' "$REMOTE_SOURCE_DIR"
+printf -v Q_REMOTE_PROV_DIR '%q' "$REMOTE_PROV_DIR"
+ssh "$REMOTE_HOST" "mkdir -p $Q_REMOTE_SOURCE_DIR $Q_REMOTE_PROV_DIR"
+
+# Snapshot exactly the Git tracked + untracked, non-ignored working tree used at submission time.
+rsync -azr --from0 --files-from="$FILES0" ./ "$REMOTE_HOST:${REMOTE_SOURCE_DIR%/}/"
+rsync -az "$LOCAL_RUN_DIR/" "$REMOTE_HOST:${REMOTE_PROV_DIR%/}/"
+
+REMOTE_JOB_SCRIPT="$REMOTE_SOURCE_DIR/$JOB_SCRIPT_REL"
+EXPORTS="ALL,DEV_RUN_ID=$RUN_ID,DEV_GIT_COMMIT=$GIT_COMMIT,DEV_GIT_DIRTY=$GIT_DIRTY,DEV_SOURCE_HASH=$SOURCE_HASH,DEV_RUN_DIR=$REMOTE_RUN_DIR,DEV_SOURCE_DIR=$REMOTE_SOURCE_DIR,DEV_CONDA=$REMOTE_CONDA,DEV_CONDA_ENV=$REMOTE_CONDA_ENV"
+
+printf -v Q_SOURCE_DIR '%q' "$REMOTE_SOURCE_DIR"
+printf -v Q_STDOUT '%q' "$STDOUT_PATTERN"
+printf -v Q_STDERR '%q' "$STDERR_PATTERN"
+printf -v Q_EXPORTS '%q' "$EXPORTS"
+printf -v Q_JOB_SCRIPT '%q' "$REMOTE_JOB_SCRIPT"
+
+REMOTE_CMD="unset DEV_RUN_ID DEV_GIT_COMMIT DEV_GIT_DIRTY DEV_SOURCE_HASH DEV_RUN_DIR DEV_SOURCE_DIR; sbatch --parsable --chdir=$Q_SOURCE_DIR --output=$Q_STDOUT --error=$Q_STDERR --export=$Q_EXPORTS $Q_JOB_SCRIPT"
+for arg in "$@"; do
+  printf -v Q_ARG '%q' "$arg"
+  REMOTE_CMD+=" $Q_ARG"
+done
+
+SBATCH_RAW="$(ssh "$REMOTE_HOST" "$REMOTE_CMD")"
+JOB_ID="${SBATCH_RAW%%;*}"
+if [[ ! "$JOB_ID" =~ ^[0-9]+$ ]]; then
+  echo "Could not parse Slurm job ID from: $SBATCH_RAW" >&2
+  exit 4
+fi
+
+printf '%s\n' "$JOB_ID" > "$LOCAL_RUN_DIR/job_id.txt"
+printf '%s\n' "$SBATCH_RAW" > "$LOCAL_RUN_DIR/sbatch-raw.txt"
+{
+  printf 'job_id\t%s\n' "$JOB_ID"
+  printf 'sbatch_raw\t%s\n' "$SBATCH_RAW"
+  printf 'stdout_pattern\t%s\n' "$STDOUT_PATTERN"
+  printf 'stderr_pattern\t%s\n' "$STDERR_PATTERN"
+} >> "$LOCAL_RUN_DIR/provenance.tsv"
+
+# Update remote provenance after the scheduler assigned the job ID.
+rsync -az "$LOCAL_RUN_DIR/" "$REMOTE_HOST:${REMOTE_PROV_DIR%/}/"
+
+echo "Submitted batch job $JOB_ID"
+echo "RUN_ID:            $RUN_ID"
+echo "Git commit:        $GIT_COMMIT"
+echo "Git dirty:         $GIT_DIRTY"
+echo "Source SHA256:     $SOURCE_HASH"
+echo "Local provenance:  $LOCAL_RUN_DIR"
+echo "Remote run dir:    $REMOTE_RUN_DIR"
+echo "Status:             ./dev/slurm-status $JOB_ID"
+echo "Logs:               ./dev/slurm-log $JOB_ID"

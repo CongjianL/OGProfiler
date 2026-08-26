@@ -1,0 +1,21 @@
+{
+  "algorithm_version": "network-overlap-v1",
+  "command": [
+    "ogprofiler",
+    "annotate-network",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/E_large_connected_component/run",
+    "--set",
+    "evolution.network_overlap_threshold=0.5"
+  ],
+  "component_count": 1,
+  "component_ids": [
+    0
+  ],
+  "event_counts": {
+    "AMBIGUOUS": 6,
+    "DUPLICATION_LIKE": 1
+  },
+  "overlap_threshold": 0.5,
+  "reused_components": 1
+}

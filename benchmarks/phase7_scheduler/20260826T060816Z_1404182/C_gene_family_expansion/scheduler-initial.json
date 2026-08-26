@@ -1,0 +1,108 @@
+{
+  "algorithm_version": "hierarchy-scheduler-v1",
+  "command": [
+    "ogprofiler",
+    "hierarchy-all",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run",
+    "--set",
+    "runtime.workers=4",
+    "--set",
+    "hierarchy.stability_mode=robust"
+  ],
+  "counts": {
+    "completed": 6,
+    "failed": 0,
+    "scheduled": 6,
+    "singleton_components": 0,
+    "skipped": 0
+  },
+  "failed_component_ids": [],
+  "parameters": {
+    "failed_only": false,
+    "hierarchy": {
+      "max_depth": 20,
+      "method": "rber",
+      "resolution": {
+        "gamma_max": 10.0,
+        "gamma_min": 0.01,
+        "growth_factor": 2.0,
+        "local_grid_points": 5,
+        "max_child_fraction": 0.95,
+        "max_tiny_fragment_fraction": 1.0,
+        "min_child_size": 2,
+        "min_quality": null,
+        "publication_seeds": 5,
+        "stability_threshold": 0.9,
+        "tiny_fragment_size": 2
+      },
+      "seed": 42,
+      "stability_mode": "robust"
+    },
+    "retries": 1,
+    "workers": 4
+  },
+  "parameters_sha256": "05d5d68ea47466b8d8043621d7003e948a53c1cf54bfa99580e03b38d01cdeb6",
+  "summaries": [
+    {
+      "component_id": 0,
+      "error": null,
+      "hierarchy_nodes": 4,
+      "output_path": "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run/hierarchy/components/component=00000000",
+      "reused": false,
+      "runtime_seconds": 0.028712278930470347,
+      "status": "DONE",
+      "terminal_families": 3
+    },
+    {
+      "component_id": 1,
+      "error": null,
+      "hierarchy_nodes": 1,
+      "output_path": "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run/hierarchy/components/component=00000001",
+      "reused": false,
+      "runtime_seconds": 0.003470389172434807,
+      "status": "DONE",
+      "terminal_families": 1
+    },
+    {
+      "component_id": 2,
+      "error": null,
+      "hierarchy_nodes": 1,
+      "output_path": "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run/hierarchy/components/component=00000002",
+      "reused": false,
+      "runtime_seconds": 0.003600090043619275,
+      "status": "DONE",
+      "terminal_families": 1
+    },
+    {
+      "component_id": 3,
+      "error": null,
+      "hierarchy_nodes": 1,
+      "output_path": "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run/hierarchy/components/component=00000003",
+      "reused": false,
+      "runtime_seconds": 0.003518312005326152,
+      "status": "DONE",
+      "terminal_families": 1
+    },
+    {
+      "component_id": 4,
+      "error": null,
+      "hierarchy_nodes": 1,
+      "output_path": "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run/hierarchy/components/component=00000004",
+      "reused": false,
+      "runtime_seconds": 0.003203841857612133,
+      "status": "DONE",
+      "terminal_families": 1
+    },
+    {
+      "component_id": 5,
+      "error": null,
+      "hierarchy_nodes": 1,
+      "output_path": "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run/hierarchy/components/component=00000005",
+      "reused": false,
+      "runtime_seconds": 0.003346079960465431,
+      "status": "DONE",
+      "terminal_families": 1
+    }
+  ]
+}

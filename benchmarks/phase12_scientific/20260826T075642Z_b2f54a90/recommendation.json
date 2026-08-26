@@ -1,0 +1,36 @@
+{
+  "baseline_metrics": {
+    "axis": "baseline",
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "run_id": "baseline",
+    "scientific_score": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null,
+    "total_seconds": 8.62940306100063,
+    "value": "default"
+  },
+  "completed_rows": 16,
+  "decision": "retain-baseline",
+  "default": {
+    "edges.min_query_coverage": 50.0,
+    "edges.min_target_coverage": 50.0,
+    "edges.symmetrization": "max",
+    "hierarchy.max_child_fraction": 0.95,
+    "hierarchy.method": "rber",
+    "hierarchy.min_family_size": 2,
+    "hierarchy.resolution_strategy": "adaptive",
+    "hierarchy.seed": 42,
+    "similarity.normalization": "legacy_nbs"
+  },
+  "job_id": "1404184",
+  "limitations": [
+    "Dataset A has no evaluable internal network-event node in these outputs.",
+    "Pairwise ortholog generation was not part of this matrix.",
+    "Tiny concurrent runtime is not used as an algorithm-selection tie-breaker."
+  ],
+  "reason": "All 16 rows tie at scientific score 1.0; baseline is exact, stable, and no variant improves declared metrics.",
+  "run_id": "20260826T075642Z_e46af3ed522d_b2f54a90_94464",
+  "schema_version": "phase12-algorithm-decision-v1",
+  "source_sha256": "b2f54a90928376ef7ab1a960083cd4253df080ec818f0a1cce088254f935b68f"
+}

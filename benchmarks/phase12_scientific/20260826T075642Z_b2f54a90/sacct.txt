@@ -1,0 +1,32 @@
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+/bin/bash: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)
+Job is not active in squeue; accounting record:
+JOBID|NAME|STATE|EXITCODE|ELAPSED|SUBMIT|START|END|PARTITION|ALLOCCPUS|REQMEM|NODELIST
+1404184_0|ogp-phase12|COMPLETED|0:0|00:00:11|2026-08-26T15:56:35|2026-08-26T15:56:35|2026-08-26T15:56:46|cu|4|16Gn|cu01
+1404184_1|ogp-phase12|COMPLETED|0:0|00:00:10|2026-08-26T15:56:35|2026-08-26T15:56:35|2026-08-26T15:56:45|cu|4|16Gn|cu02
+1404184_2|ogp-phase12|COMPLETED|0:0|00:00:09|2026-08-26T15:56:35|2026-08-26T15:56:45|2026-08-26T15:56:54|cu|4|16Gn|cu02
+1404184_3|ogp-phase12|COMPLETED|0:0|00:00:07|2026-08-26T15:56:35|2026-08-26T15:56:46|2026-08-26T15:56:53|cu|4|16Gn|cu01
+1404184_4|ogp-phase12|COMPLETED|0:0|00:00:08|2026-08-26T15:56:35|2026-08-26T15:56:53|2026-08-26T15:57:01|cu|4|16Gn|cu01
+1404184_5|ogp-phase12|COMPLETED|0:0|00:00:08|2026-08-26T15:56:35|2026-08-26T15:56:54|2026-08-26T15:57:02|cu|4|16Gn|cu02
+1404184_6|ogp-phase12|COMPLETED|0:0|00:00:08|2026-08-26T15:56:35|2026-08-26T15:57:01|2026-08-26T15:57:09|cu|4|16Gn|cu01
+1404184_7|ogp-phase12|COMPLETED|0:0|00:00:07|2026-08-26T15:56:35|2026-08-26T15:57:02|2026-08-26T15:57:09|cu|4|16Gn|cu02
+1404184_8|ogp-phase12|COMPLETED|0:0|00:00:08|2026-08-26T15:56:35|2026-08-26T15:57:09|2026-08-26T15:57:17|cu|4|16Gn|cu02
+1404184_9|ogp-phase12|COMPLETED|0:0|00:00:08|2026-08-26T15:56:35|2026-08-26T15:57:09|2026-08-26T15:57:17|cu|4|16Gn|cu01
+1404184_10|ogp-phase12|COMPLETED|0:0|00:00:08|2026-08-26T15:56:35|2026-08-26T15:57:17|2026-08-26T15:57:25|cu|4|16Gn|cu01
+1404184_11|ogp-phase12|COMPLETED|0:0|00:00:08|2026-08-26T15:56:35|2026-08-26T15:57:17|2026-08-26T15:57:25|cu|4|16Gn|cu02
+1404184_12|ogp-phase12|COMPLETED|0:0|00:00:06|2026-08-26T15:56:35|2026-08-26T15:57:25|2026-08-26T15:57:31|cu|4|16Gn|cu01
+1404184_13|ogp-phase12|COMPLETED|0:0|00:00:08|2026-08-26T15:56:35|2026-08-26T15:57:25|2026-08-26T15:57:33|cu|4|16Gn|cu02
+1404184_14|ogp-phase12|COMPLETED|0:0|00:00:07|2026-08-26T15:56:35|2026-08-26T15:57:31|2026-08-26T15:57:38|cu|4|16Gn|cu01
+1404184_15|ogp-phase12|COMPLETED|0:0|00:00:09|2026-08-26T15:56:35|2026-08-26T15:57:33|2026-08-26T15:57:42|cu|4|16Gn|cu02

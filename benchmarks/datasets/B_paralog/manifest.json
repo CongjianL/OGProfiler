@@ -1,0 +1,24 @@
+{
+  "expected": {
+    "copy_counts": [
+      3,
+      2,
+      1,
+      1
+    ],
+    "expanded_family": "B_PARALOG"
+  },
+  "files": {
+    "ground_truth.tsv": "d0b0c2efa15d532b294172a4df5c5528beacd655d10b5786d4d6807005b654ea",
+    "proteomes/species_01.faa": "c99ad9339d87e62326a04cb01a0831093704e6d41836c94fbee310a9793508bb",
+    "proteomes/species_02.faa": "1f728289271b0a695afd9740bae6926fb42941d20a69dc036552c92a4042e9b4",
+    "proteomes/species_03.faa": "598c8d105ae5ba1d414e531a1216c6831d177e89d2fcb5cb4a916f5bf4836b63",
+    "proteomes/species_04.faa": "8f3bea34d8f745ee43efa2e51da837c88a8dc97878f8daa85ad652d02c607dc5",
+    "reference_ssn.gml": "4cce75c52ec1b7ca9ec8e8150e15c591928d78a8a6b83aa47ce93e10def18d7a"
+  },
+  "generator_seed": 20260825,
+  "n_proteins": 48,
+  "n_species": 4,
+  "name": "B_paralog",
+  "purpose": "RBH/non-RBH/LRB behavior around recent species-specific duplications."
+}

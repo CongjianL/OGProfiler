@@ -1,0 +1,64 @@
+{
+  "algorithm_version": "hierarchical-leiden-v1",
+  "command": [
+    "ogprofiler",
+    "hierarchy",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T023943Z_e46af3ed522d_484dc7c7_81066/results/C_gene_family_expansion/run",
+    "--component-id",
+    "0",
+    "--set",
+    "hierarchy.stability_mode=robust",
+    "--set",
+    "hierarchy.gamma_min=0.01",
+    "--set",
+    "hierarchy.gamma_max=10.0"
+  ],
+  "input_checksums": {
+    "components/edges/component=00000000/part-00000000-0.parquet": "d53e5ce1bcc959bc3a72aa6492a779912c9a9101850888a105255c6796ec0ffb",
+    "components/edges/component=00000000/part-00000001-0.parquet": "de3ba1034f40ca8db9130d67efde5f6cad1e1d7685238de127a74c7db5c008b9",
+    "components/edges/component=00000000/part-00000002-0.parquet": "1f7a847bccf250f2b13c8198911d132741075405585d72a5e599c473998b3fd8",
+    "components/edges/component=00000000/part-00000003-0.parquet": "fd73f1da434983fa00f954f24e15da78fee7b8ec860534d8e03478a6bfaed3e7",
+    "components/edges/component=00000000/part-00000004-0.parquet": "489a7121b8a2b80ef1bf16dfdd3a6b269c8cddbc275e6d15316004be8e72f528",
+    "components/index.parquet": "000b5852500561c7b7533c2b99acb61ae0758329176024e2b020d145702cdc77",
+    "input/proteins.parquet": "73e026bb349e9f51d568ff21b2a4d8e8076ff78e6c295a3971ce530b249984ab"
+  },
+  "metrics": {
+    "hierarchy_node_count": 4,
+    "leiden_calls": 93,
+    "peak_rss_bytes": 72273920,
+    "resolution_candidate_count": 31,
+    "runtime_seconds": 0.07609463087283075,
+    "subgraph_constructions": 3,
+    "terminal_family_count": 3
+  },
+  "output_checksums": {
+    "candidates.parquet": "68e0235804f9cff6837564bc7f5f8b247c8ace3970df3ea163573500580aa804",
+    "members.parquet": "727da690a74438b7f8f6071f501f51298ddaff2244d5d2467cccb656b6964fca",
+    "metrics.json": "b870d263ef52105167aa01d7b0c1c80ee41d46085d5024bb07368e6a9ec5c20c",
+    "nodes.parquet": "6b0959476b819c45893769db7a8caa37625d940bd0473267861a9411ab1ae524"
+  },
+  "parameters": {
+    "component_id": 0,
+    "hierarchy": {
+      "max_depth": 20,
+      "method": "rber",
+      "resolution": {
+        "gamma_max": 10.0,
+        "gamma_min": 0.01,
+        "growth_factor": 2.0,
+        "local_grid_points": 5,
+        "max_child_fraction": 0.95,
+        "max_tiny_fragment_fraction": 1.0,
+        "min_child_size": 2,
+        "min_quality": null,
+        "publication_seeds": 5,
+        "stability_threshold": 0.9,
+        "tiny_fragment_size": 2
+      },
+      "seed": 42,
+      "stability_mode": "robust"
+    }
+  },
+  "parameters_sha256": "a1a1ff21d0e008b9076fa63d79230d7a3313e45e503be1cfa3b763fde403e039"
+}

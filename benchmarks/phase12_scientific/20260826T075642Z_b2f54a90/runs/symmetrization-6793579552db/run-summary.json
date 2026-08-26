@@ -1,0 +1,31 @@
+{
+  "axis": "symmetrization",
+  "config_sha256": "7b7620f4e0027427f583315ea467ee52aafc952ea7f7166f1e89ac2b4e160375",
+  "headline_metrics": {
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066"
+  },
+  "overrides": [
+    "edges.symmetrization=mean"
+  ],
+  "run_id": "symmetrization-6793579552db",
+  "stage_seconds": {
+    "components": 0.6398670200724155,
+    "edges": 0.3977260838728398,
+    "evolution": 0.8363156369887292,
+    "export": 0.6754362219944596,
+    "hierarchy": 3.6215227048378438,
+    "metrics": 0.3283802280202508,
+    "prepare": 0.5410834890790284
+  },
+  "total_seconds": 7.040331384865567,
+  "value": {
+    "edges.symmetrization": "mean"
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "algorithm_version": "hierarchy-prototype-v1",
+  "command": [
+    "ogprofiler",
+    "prototype-hierarchy",
+    "--ssn",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260825T152543Z_e46af3ed522d_19fbb418_53770/results/D_fusion_multidomain/v1_full/WorkingDirectory/ssn.gml",
+    "--out",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260825T152543Z_e46af3ed522d_19fbb418_53770/results/D_fusion_multidomain/v2_hierarchy",
+    "--weight-attribute",
+    "NBS"
+  ],
+  "component_count": 15,
+  "components": [
+    {
+      "component_id": 0,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60895232,
+      "runtime_seconds": 0.001472364878281951,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 1,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60895232,
+      "runtime_seconds": 0.0027698499616235495,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 2,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60895232,
+      "runtime_seconds": 0.0030868109315633774,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 3,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 60895232,
+      "runtime_seconds": 0.003055526176467538,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 4,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.003045537043362856,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 5,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.003094558836892247,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 6,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.0030291439034044743,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 7,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.0030625960789620876,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 8,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.002998769050464034,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 9,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.003057047026231885,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 10,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 10,
+      "n_edges": 6,
+      "n_vertices": 4,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.0029578800313174725,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 11,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.0001743501052260399,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 12,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.00016479194164276123,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 13,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.00015695905312895775,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    },
+    {
+      "component_id": 14,
+      "hierarchy_node_count": 1,
+      "leiden_calls": 0,
+      "n_edges": 0,
+      "n_vertices": 1,
+      "peak_rss_bytes": 61165568,
+      "runtime_seconds": 0.00015229987911880016,
+      "subgraph_constructions": 0,
+      "terminal_family_count": 1
+    }
+  ],
+  "ogprofiler_version": "2.0.0a1",
+  "resolved_config_sha256": "6057885ae861330c8ef5b397123fe3d887930ce668084db487810ddd08cbdaef",
+  "ssn_sha256": "d00f893c69e05fe0af70b5f3c39e818ed61b40dd6dc0ba4524af6801824bccb1",
+  "weight_attribute": "NBS"
+}

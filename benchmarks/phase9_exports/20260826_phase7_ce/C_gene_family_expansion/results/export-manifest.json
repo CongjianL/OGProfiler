@@ -1,0 +1,61 @@
+{
+  "algorithm_version": "terminal-family-export-v1",
+  "command": [
+    "ogprofiler",
+    "export",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20260826T060816Z_e46af3ed522d_55098951_14986/results/C_gene_family_expansion/run"
+  ],
+  "counts": {
+    "events": 9,
+    "families": 8,
+    "fasta_files": 0,
+    "hierarchy_nodes": 9,
+    "members": 80
+  },
+  "family_membership_sha256": {
+    "OG000000000": "4fda460429aa8444f9fb38b19e9573beb75230be4f0cbbb2aa3e23d4c2d8ec80",
+    "OG000000001": "0da63ad261f945977aebda04d6b935b2bd44d7a9c277c0718a4524e44196335b",
+    "OG000000002": "f6a5f3f1f4e71b2f8d61c7dd46fb2905624a8c32a33c4777346a7869ce8d012c",
+    "OG000000003": "0e63a7ec4606cb14225f2cf2e8b7e42caf3bf5da22dfaa4cee66654b48af6fa4",
+    "OG000000004": "9eeabbcbc0c7160c4b3c4dd9f80bfe9e9509e83fdb0a2f4dcdafbdaafd8f5463",
+    "OG000000005": "610c379d50ce9d0f5dbdf7e2f085bbed410d11e43dabd966a17a57e0e4fae695",
+    "OG000000006": "b03996b26ce9eb67389bdd9dc134aa144f2ea4c2abb918250dc2da548c7c2fb9",
+    "OG000000007": "9a0311417d9fc5f3bcebbdf7f4735a214f2d42b6ed65ccfd361464d0206c2e81"
+  },
+  "input_checksums": {
+    "components/singleton_terminal_families.parquet": "9d9c182f2c36d2000c6988cb6e59937b45be4619e49d7a90036d8a3f1f30330a",
+    "evolution/components/component=00000000/events.parquet": "e37e225b9643e29c5e14ac9e816c732732c59735fcdbfa9599e3fddc1e905126",
+    "evolution/components/component=00000001/events.parquet": "289c3e82e0a313258dea771462840d36da68749715938c0a7456306885c8af73",
+    "evolution/components/component=00000002/events.parquet": "4daf2f64e789a4b2e60509161439421365a9b61a09b395b8f5e14babb3f89fa0",
+    "evolution/components/component=00000003/events.parquet": "77d7acdb2f8c503116cf7dc69dd4ad90f418e4b6d990ab5e0b801e863d07e84e",
+    "evolution/components/component=00000004/events.parquet": "d0f9d33cddafc552eb2c1954be6fb422ab207a1399fed316029f6d77e69e81f3",
+    "evolution/components/component=00000005/events.parquet": "f9e6c12e6691a705b0f1c5bfc0e4faa7dde5d26eeac4cc4176c05fe2a1ad4d31",
+    "hierarchy/components/component=00000000/members.parquet": "727da690a74438b7f8f6071f501f51298ddaff2244d5d2467cccb656b6964fca",
+    "hierarchy/components/component=00000000/nodes.parquet": "6b0959476b819c45893769db7a8caa37625d940bd0473267861a9411ab1ae524",
+    "hierarchy/components/component=00000001/members.parquet": "144d298cfc3ea4688abb89aeb1c46302f5e9d0acac95635556933b1c86597349",
+    "hierarchy/components/component=00000001/nodes.parquet": "217d1ba3fdf085c827b16265e3bd13837503f8abec08adf6bf9d3daf59a6fed8",
+    "hierarchy/components/component=00000002/members.parquet": "8ab34db552931d1652ab37f97a8a05a41c7079a17a637810aed31c3a9b70a89d",
+    "hierarchy/components/component=00000002/nodes.parquet": "613efa9ebc577021fd7371478882a8bd7bf0e2073582f26682e0279ba3c44a6c",
+    "hierarchy/components/component=00000003/members.parquet": "959e1f06d6c521802f1a339eb79f1652cc5c5634d87431666c2972b4438ad65c",
+    "hierarchy/components/component=00000003/nodes.parquet": "e41e4e4b1eb5fb71df5c9ec5ad8132eda91a5a57f39c969089b8267c26ee0d4e",
+    "hierarchy/components/component=00000004/members.parquet": "d19095e2278d4fcd1c75d5d9ca1392bf89998f2949b108129c0c6d0fc964308d",
+    "hierarchy/components/component=00000004/nodes.parquet": "da12ead9a8533de9fe21aace650370b98bbb98c9b4691ff5528c7f842d55df92",
+    "hierarchy/components/component=00000005/members.parquet": "8629ec35ac28f0c0e2e224c640e9efde137d0cbcae0fe428546878d005c71fb8",
+    "hierarchy/components/component=00000005/nodes.parquet": "e892c5ba4053cf252d82e9b0ca86a02a21cdec47e1e47dfc5c4a6363cc540d5b",
+    "input/proteins.faa": "280b156c1737e9a3f9029477fc258d406a3d9e9c9c1b95af12f0a7d7e9f6e3f0",
+    "input/proteins.parquet": "73e026bb349e9f51d568ff21b2a4d8e8076ff78e6c295a3971ce530b249984ab"
+  },
+  "output_checksums": {
+    "events.tsv": "51895db4652fd6fd83827d0746025450bb0b6904bbeae85dbb99d7e8d2a7c338",
+    "families.tsv": "1e47cc33e1e508a79a179b4aed0286fc42724066a360a13af11f25ce6ce2cec1",
+    "hierarchy.tsv": "9254695af884cfc3abfd29c717c8845e581315ae9d24c340170ad13683df7201",
+    "members.tsv": "ffed6bedcaedcf2607db09cb065d0f810490eae6fd0705e89bf5663fd42e7d78"
+  },
+  "parameters": {
+    "all_family_fasta": false,
+    "family_id_algorithm": "canonical-terminal-membership-rank-v1",
+    "fasta_families": []
+  },
+  "parameters_sha256": "79afcbdf0d60d35c4530c910f0a0d8c8a797d4ea5840ff94b6746d0e78b9e804"
+}

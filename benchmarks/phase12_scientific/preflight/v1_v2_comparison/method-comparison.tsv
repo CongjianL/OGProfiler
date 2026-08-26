@@ -1,0 +1,5 @@
+method	dataset	family_pair_f1	exact_family_recovery	single_copy_recovery	species_overlap_consistency	orthology_f1	composite_score
+ogprofiler2	C_gene_family_expansion	0.5	0.8333333333333334	1.0	1.0		0.8333333333333334
+ogprofiler1	C_gene_family_expansion		0.0	0.0			0.0
+ogprofiler2	E_large_connected_component	0.28057553956834536	0.0		1.0		0.42685851318944845
+ogprofiler1	E_large_connected_component	0.07501697216564834	0.0				0.03750848608282417

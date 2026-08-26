@@ -1,0 +1,13 @@
+Python 3.12.14
+diamond version 2.2.5
+18.8cc5c
+blastp: 2.17.0+
+ Package: blast 2.17.0, build Aug 22 2026 11:52:50
+FastTree Version 2.2.0 Double precision
+Alignment: standard input
+Amino acid distances: BLOSUM45 Joins: balanced Support: SH-like 1000
+Search: Normal +NNI +SPR (2 rounds range 10) +ML-NNI opt-each=1
+TopHits: 1.00*sqrtN close=default refresh=0.80
+ML Model: Jones-Taylor-Thorton, CAT approximation with 20 rate categories
+Error reading header line
+v7.526 (2024/Apr/26)

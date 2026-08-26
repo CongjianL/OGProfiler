@@ -1,0 +1,10 @@
+cluster_id	parent_id	component_id	depth	n_genes	n_species	resolution	quality	child_count	terminal_reason
+0		0	0	60	4	0.01	1136.3281694915254	3	
+1	0	0	1	20	4			0	GAMMA_LIMIT
+2	0	0	1	20	4			0	GAMMA_LIMIT
+3	0	0	1	20	4			0	GAMMA_LIMIT
+0		1	0	4	4			0	GAMMA_LIMIT
+0		2	0	4	4			0	GAMMA_LIMIT
+0		3	0	4	4			0	GAMMA_LIMIT
+0		4	0	4	4			0	GAMMA_LIMIT
+0		5	0	4	4			0	GAMMA_LIMIT

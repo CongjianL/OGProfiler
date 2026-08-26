@@ -1,0 +1,33 @@
+{
+  "axis": "coverage",
+  "config_sha256": "5171815aa8576c0929b9e1d481ee1b4faa0777db9a19ef4f822a30ae969df628",
+  "headline_metrics": {
+    "exact_family_recovery": 1.0,
+    "family_pair_f1": 1.0,
+    "single_copy_recovery": 1.0,
+    "species_overlap_consistency": null
+  },
+  "input_checksums": {
+    "ground_truth.tsv": "dc8b11cb5fdacbad85cf4fa6bb560b13960c2c398554b09df701b2c61a037af2",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066"
+  },
+  "overrides": [
+    "edges.min_query_coverage=0.0",
+    "edges.min_target_coverage=0.0"
+  ],
+  "run_id": "coverage-494cfc50ca24",
+  "stage_seconds": {
+    "components": 0.6634508420247585,
+    "edges": 0.4769175569526851,
+    "evolution": 0.8224141881801188,
+    "export": 0.5565503688994795,
+    "hierarchy": 3.80808592797257,
+    "metrics": 0.307394698029384,
+    "prepare": 0.44489683397114277
+  },
+  "total_seconds": 7.079710416030139,
+  "value": {
+    "edges.min_query_coverage": 0.0,
+    "edges.min_target_coverage": 0.0
+  }
+}

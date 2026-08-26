@@ -1,0 +1,83 @@
+{
+  "algorithm_version": "directional-search-v1",
+  "backend": "diamond",
+  "backend_version": "diamond version 2.2.5",
+  "command": [
+    "ogprofiler",
+    "search",
+    "--run",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase3-diamond-smoke-20260826T0011Z",
+    "--backend",
+    "diamond",
+    "--set",
+    "search.threads=2",
+    "--set",
+    "search.max_target_seqs=0"
+  ],
+  "database_command": [
+    "diamond",
+    "makedb",
+    "--in",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase3-diamond-smoke-20260826T0011Z/input/proteins.faa",
+    "--db",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase3-diamond-smoke-20260826T0011Z/search/diamond/proteins"
+  ],
+  "directional": true,
+  "hit_count": 168,
+  "hit_schema": [
+    "query_id",
+    "target_id",
+    "query_species",
+    "target_species",
+    "bitscore",
+    "identity",
+    "query_coverage",
+    "target_coverage",
+    "evalue"
+  ],
+  "input_checksums": {
+    "proteins.faa": "76d2afe9400d92c452cdeda6eec4242c9a14d488b763c72ec47dd338ba1116b2",
+    "proteins.parquet": "1e85057b1267349a1a30ff9fdb70726a8ded3718efe2d5bbe272fc8484cc9ed3"
+  },
+  "output_checksums": {
+    "database.dmnd": "b08bddf6bc2e693fa1176ff5896feaec4e6ff0a4b610bbdac8961827e2caf5e0",
+    "hits.parquet": "2ce33504812e26d0da23614124b7b0cc7dd7229e16b0e4b5b09cd26d2e8ac066",
+    "hits.tsv": "e7d437a8331cd9a82f6a9101b6f76e550b172ab38201e18cbfd9438ef3e407a4"
+  },
+  "parameters": {
+    "evalue": 0.001,
+    "max_target_seqs": 0,
+    "sensitivity": "sensitive",
+    "threads": 2
+  },
+  "parameters_sha256": "d3aaee1a9e500df9311bcbbab2339deca4c491fa8a0227f07f5ed48369385d3f",
+  "search_command": [
+    "diamond",
+    "blastp",
+    "--query",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase3-diamond-smoke-20260826T0011Z/input/proteins.faa",
+    "--db",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase3-diamond-smoke-20260826T0011Z/search/diamond/proteins",
+    "--out",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/phase3-diamond-smoke-20260826T0011Z/search/diamond/hits.tsv",
+    "--outfmt",
+    "6",
+    "qseqid",
+    "sseqid",
+    "pident",
+    "length",
+    "qlen",
+    "slen",
+    "evalue",
+    "bitscore",
+    "--evalue",
+    "0.001",
+    "--threads",
+    "2",
+    "--sensitive",
+    "--max-target-seqs",
+    "0",
+    "--max-hsps",
+    "1"
+  ]
+}

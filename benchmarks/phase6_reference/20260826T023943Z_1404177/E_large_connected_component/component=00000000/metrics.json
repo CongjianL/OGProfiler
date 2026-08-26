@@ -1,0 +1,9 @@
+{
+  "hierarchy_node_count": 7,
+  "leiden_calls": 183,
+  "peak_rss_bytes": 77021184,
+  "resolution_candidate_count": 61,
+  "runtime_seconds": 0.13986002490855753,
+  "subgraph_constructions": 6,
+  "terminal_family_count": 6
+}
