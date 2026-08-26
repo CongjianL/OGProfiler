@@ -58,6 +58,17 @@ TMP_DIR="$(mktemp -d -t slurm-submit.XXXXXX)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 FILES0="$TMP_DIR/source-files.nul"
 git ls-files -co --exclude-standard -z > "$FILES0"
+# Git records remote-only raw-data symlinks, but the local snapshot host cannot
+# stat their remote targets.  Preserve their identities in MANIFEST below and
+# omit only dangling link payloads from rsync; jobs use configured remote paths.
+TRANSFER_FILES0="$TMP_DIR/source-files-transfer.nul"
+: > "$TRANSFER_FILES0"
+while IFS= read -r -d '' path; do
+  if [[ -L "$path" && ! -e "$path" ]]; then
+    continue
+  fi
+  printf '%s\0' "$path" >> "$TRANSFER_FILES0"
+done < "$FILES0"
 
 MANIFEST="$TMP_DIR/source-manifest.sha256"
 : > "$MANIFEST"
@@ -128,7 +139,7 @@ printf -v Q_REMOTE_PROV_DIR '%q' "$REMOTE_PROV_DIR"
 ssh "$REMOTE_HOST" "mkdir -p $Q_REMOTE_SOURCE_DIR $Q_REMOTE_PROV_DIR"
 
 # Snapshot exactly the Git tracked + untracked, non-ignored working tree used at submission time.
-rsync -azr --from0 --files-from="$FILES0" ./ "$REMOTE_HOST:${REMOTE_SOURCE_DIR%/}/"
+rsync -azr --from0 --files-from="$TRANSFER_FILES0" ./ "$REMOTE_HOST:${REMOTE_SOURCE_DIR%/}/"
 rsync -az "$LOCAL_RUN_DIR/" "$REMOTE_HOST:${REMOTE_PROV_DIR%/}/"
 
 REMOTE_JOB_SCRIPT="$REMOTE_SOURCE_DIR/$JOB_SCRIPT_REL"

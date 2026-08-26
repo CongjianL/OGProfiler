@@ -1,0 +1,2 @@
+timestamp_utc	stage	command	status
+2026-08-27T00:00:00Z	phase0	.venv/bin/ogprofiler --help	OK

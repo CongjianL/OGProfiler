@@ -1,0 +1,18 @@
+# Generated benchmark artifacts
+03_runs/**
+04_standardized/**
+05_metrics/**
+06_statistics/**
+07_figures/**
+08_tables/**
+01_data/processed/**
+!**/.gitkeep
+*.parquet
+*.zst
+*.tmp
+*.cache
+cache/
+containers/
+database/
+slurm-*.out
+slurm-*.err
