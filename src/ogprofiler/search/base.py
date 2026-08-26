@@ -41,6 +41,8 @@ class SearchBackend(Protocol):
 
     def build_database(self, fasta_path: Path, database_path: Path) -> tuple[str, ...]: ...
 
+    def database_files(self, database_path: Path) -> tuple[Path, ...]: ...
+
     def search(
         self,
         query_path: Path,

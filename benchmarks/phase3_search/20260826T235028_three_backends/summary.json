@@ -1,0 +1,54 @@
+{
+  "dataset": "A_small_sanity",
+  "prepared_proteins": 48,
+  "results": [
+    {
+      "backend": "diamond",
+      "hit_count": 168,
+      "schema": [
+        "query_id",
+        "target_id",
+        "query_species",
+        "target_species",
+        "bitscore",
+        "identity",
+        "query_coverage",
+        "target_coverage",
+        "evalue"
+      ],
+      "version": "diamond version 2.2.5"
+    },
+    {
+      "backend": "mmseqs",
+      "hit_count": 168,
+      "schema": [
+        "query_id",
+        "target_id",
+        "query_species",
+        "target_species",
+        "bitscore",
+        "identity",
+        "query_coverage",
+        "target_coverage",
+        "evalue"
+      ],
+      "version": "18.8cc5c"
+    },
+    {
+      "backend": "blastp",
+      "hit_count": 168,
+      "schema": [
+        "query_id",
+        "target_id",
+        "query_species",
+        "target_species",
+        "bitscore",
+        "identity",
+        "query_coverage",
+        "target_coverage",
+        "evalue"
+      ],
+      "version": "blastp: 2.17.0+"
+    }
+  ]
+}

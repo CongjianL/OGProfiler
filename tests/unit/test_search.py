@@ -10,8 +10,10 @@ import pytest
 
 from ogprofiler.exceptions import SearchError
 from ogprofiler.search.base import SearchBackend, SearchParameters
+from ogprofiler.search.blast import BLAST_FIELDS, BlastBackend
 from ogprofiler.search.diamond import DIAMOND_FIELDS, DiamondBackend
 from ogprofiler.search.hits import HIT_COLUMNS, parse_diamond_hits
+from ogprofiler.search.mmseqs import MMSEQS_FIELDS, MmseqsBackend
 
 
 def test_diamond_backend_builds_explicit_argument_vectors(tmp_path: Path) -> None:
@@ -90,3 +92,66 @@ def test_parse_diamond_hits_writes_directional_standard_schema(tmp_path: Path) -
 
 def test_diamond_satisfies_search_backend_protocol() -> None:
     assert isinstance(DiamondBackend(), SearchBackend)
+
+
+def test_mmseqs_backend_uses_easy_search_and_cleans_temporary_directory(
+    tmp_path: Path,
+) -> None:
+    commands: list[tuple[str, ...]] = []
+
+    def runner(command: Sequence[str]) -> subprocess.CompletedProcess[str]:
+        captured = tuple(command)
+        commands.append(captured)
+        if captured[1] == "version":
+            return subprocess.CompletedProcess(captured, 0, "15.6f452\n", "")
+        if captured[1] == "createdb":
+            Path(captured[3]).write_text("db", encoding="utf-8")
+            Path(captured[3] + ".dbtype").write_text("0", encoding="utf-8")
+        if captured[1] == "easy-search":
+            Path(captured[4]).write_text("", encoding="utf-8")
+            Path(captured[5]).mkdir(parents=True)
+        return subprocess.CompletedProcess(captured, 0, "", "")
+
+    backend = MmseqsBackend("mmseqs-test", runner)
+    fasta = tmp_path / "proteins.faa"
+    fasta.write_text(">OGP2P000000000000\nAAAA\n", encoding="utf-8")
+    database = tmp_path / "database/proteins"
+    output = tmp_path / "hits.tsv"
+    parameters = SearchParameters(4, 1e-5, "very-sensitive", 25)
+    assert backend.version() == "15.6f452"
+    backend.build_database(fasta, database)
+    command = backend.search(fasta, database, output, parameters)
+    assert command[1] == "easy-search"
+    assert command[command.index("--format-output") + 1] == MMSEQS_FIELDS
+    assert command[command.index("--max-seqs") + 1] == "25"
+    assert not Path(command[5]).exists()
+    assert isinstance(backend, SearchBackend)
+
+
+def test_blast_backend_builds_database_and_omits_zero_target_limit(tmp_path: Path) -> None:
+    commands: list[tuple[str, ...]] = []
+
+    def runner(command: Sequence[str]) -> subprocess.CompletedProcess[str]:
+        captured = tuple(command)
+        commands.append(captured)
+        if "-version" in captured:
+            return subprocess.CompletedProcess(captured, 0, "blastp: 2.16.0+\n", "")
+        if captured[0] == "makeblastdb-test":
+            prefix = Path(captured[captured.index("-out") + 1])
+            prefix.with_suffix(".pin").write_text("db", encoding="utf-8")
+        if captured[0] == "blastp-test" and "-query" in captured:
+            Path(captured[captured.index("-out") + 1]).write_text("", encoding="utf-8")
+        return subprocess.CompletedProcess(captured, 0, "", "")
+
+    backend = BlastBackend("blastp-test", "makeblastdb-test", runner)
+    fasta = tmp_path / "proteins.faa"
+    fasta.write_text(">OGP2P000000000000\nAAAA\n", encoding="utf-8")
+    database = tmp_path / "database/proteins"
+    output = tmp_path / "hits.tsv"
+    parameters = SearchParameters(2, 1e-3, "sensitive", 0)
+    assert backend.version() == "blastp: 2.16.0+"
+    backend.build_database(fasta, database)
+    command = backend.search(fasta, database, output, parameters)
+    assert command[command.index("-outfmt") + 1] == BLAST_FIELDS
+    assert "-max_target_seqs" not in command
+    assert isinstance(backend, SearchBackend)

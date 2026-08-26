@@ -9,9 +9,9 @@ from typing import Any
 from ogprofiler.core.manifest import sha256_file, sha256_json, write_json
 from ogprofiler.exceptions import InputError
 from ogprofiler.search.base import SearchBackend, SearchParameters, SearchStageResult
-from ogprofiler.search.hits import parse_diamond_hits
+from ogprofiler.search.hits import parse_tabular_hits
 
-SEARCH_ALGORITHM_VERSION = "directional-search-v1"
+SEARCH_ALGORITHM_VERSION = "directional-search-v2"
 
 
 def create_backend(config: dict[str, Any]) -> SearchBackend:
@@ -20,7 +20,17 @@ def create_backend(config: dict[str, Any]) -> SearchBackend:
         from ogprofiler.search.diamond import DiamondBackend
 
         return DiamondBackend(executable=str(config["search"]["executable"]))
-    raise InputError(f"Search backend is configured but not implemented in Phase 3: {backend_name}")
+    if backend_name == "mmseqs":
+        from ogprofiler.search.mmseqs import MmseqsBackend
+
+        return MmseqsBackend(executable=str(config["search"]["executable"]))
+    if backend_name == "blastp":
+        from ogprofiler.search.blast import BlastBackend
+
+        executable = str(config["search"]["executable"])
+        makeblastdb = str(Path(executable).with_name("makeblastdb"))
+        return BlastBackend(executable=executable, makeblastdb_executable=makeblastdb)
+    raise InputError(f"Unknown search backend: {backend_name}")
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -90,8 +100,12 @@ def run_search_stage(
     raw_path = backend_root / "hits.tsv"
     database_command = backend.build_database(input_fasta, database_path)
     search_command = backend.search(input_fasta, database_path, raw_path, parameters)
-    hit_count = parse_diamond_hits(raw_path, proteins_path, hits_path)
-    database_file = database_path.with_suffix(".dmnd")
+    hit_count = parse_tabular_hits(
+        raw_path, proteins_path, hits_path, backend_name=backend.name
+    )
+    database_files = backend.database_files(database_path)
+    if not database_files:
+        raise InputError(f"Search backend did not publish database files: {backend.name}")
     manifest = {
         "algorithm_version": SEARCH_ALGORITHM_VERSION,
         "backend": backend.name,
@@ -103,7 +117,10 @@ def run_search_stage(
         "parameters_sha256": sha256_json(parameters.to_dict()),
         "input_checksums": input_checksums,
         "output_checksums": {
-            "database.dmnd": sha256_file(database_file),
+            **{
+                f"database/{path.name}": sha256_file(path)
+                for path in database_files
+            },
             "hits.tsv": sha256_file(raw_path),
             "hits.parquet": sha256_file(hits_path),
         },

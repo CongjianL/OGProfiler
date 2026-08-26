@@ -88,6 +88,14 @@ ogprofiler annotate-network --run run/
 ogprofiler export --run run/
 ```
 
+DIAMOND is the production default. MMseqs2 and NCBI BLAST+ are interchangeable
+compatibility backends and emit the same directional Parquet schema:
+
+```bash
+ogprofiler search --run run/ --backend mmseqs
+ogprofiler search --run run/ --backend blastp
+```
+
 ## Configuration and reproducibility
 
 Configuration is YAML-based. `prepare` writes the fully resolved `run.yaml`;

@@ -1,16 +1,27 @@
-# Similarity search backend
+# Similarity search backends
 
-Phase 3 introduces an implementation-independent `SearchBackend` protocol and
-the production-path `DiamondBackend`. Search consumes a prepared run workspace:
+OGProfiler exposes one `SearchBackend` protocol with three implementations:
+
+- **DIAMOND**: production default;
+- **MMseqs2**: high-throughput compatibility path using `createdb` and
+  `easy-search`;
+- **NCBI BLAST+**: conservative compatibility/validation path using
+  `makeblastdb` and `blastp`.
+
+All backends consume the prepared global FASTA and produce the same directional
+hit table. Select a backend with:
 
 ```bash
-ogprofiler prepare --proteomes proteomes/ --out run/
 ogprofiler search --run run/ --backend diamond
+ogprofiler search --run run/ --backend mmseqs
+ogprofiler search --run run/ --backend blastp
 ```
 
-## DIAMOND behavior
+An explicit `--backend` selects the conventional executable of the same name.
+Use `--set search.executable=/path/to/tool` for a custom installation. For a
+custom BLAST path, `makeblastdb` is resolved beside the configured `blastp`.
 
-The defaults are resolved into `run.yaml`:
+## Common parameters
 
 ```yaml
 search:
@@ -22,20 +33,31 @@ search:
   max_target_seqs: 0
 ```
 
-`max_target_seqs: 0` is the OGProfiler all-vs-all default and is passed
-explicitly to DIAMOND; it requests no per-query target-count cap. A positive
-value opts into truncation and becomes part of the search manifest and resume
-identity. Supported sensitivity values are `fast`, `mid-sensitive`,
-`sensitive`, `more-sensitive`, `very-sensitive`, and `ultra-sensitive`.
+`max_target_seqs: 0` means no OGProfiler target-count cap. DIAMOND receives an
+explicit zero; MMseqs2 and BLAST+ omit their positive-limit option. A positive
+value maps to DIAMOND `--max-target-seqs`, MMseqs2 `--max-seqs`, or BLAST+
+`-max_target_seqs`.
 
-DIAMOND is invoked with argument vectors through
-`subprocess.run(..., check=True, capture_output=True, text=True)`. Database and
-hit output paths are explicit arguments; shell parsing and redirection are not
-used. One HSP is retained per query-target pair (`--max-hsps 1`).
+DIAMOND sensitivity names map directly to DIAMOND flags. MMseqs2 maps the same
+ordered names to `-s` values 2.0, 4.0, 5.7, 6.5, 7.5, and 8.5. BLAST+ has no
+direct equivalent and ignores this cross-backend convenience setting; it is
+not presented as the performance path.
 
-## Directional hit table
+Every subprocess uses an argument vector with `check=True`; shell parsing and
+redirection are absent. One HSP/alignment is requested per query-target pair.
+MMseqs2 creates a unique temporary directory beside the raw hit output and
+removes it on both success and command failure.
 
-`run/search/hits.parquet` contains one directional row per reported hit:
+## Standard directional hit table
+
+Each backend requests these eight raw fields in this order:
+
+```text
+query ID, target ID, identity, aligned length,
+query length, target length, e-value, bit score
+```
+
+The shared bounded-memory parser writes `run/search/hits.parquet`:
 
 ```text
 query_id          int64
@@ -50,25 +72,13 @@ evalue            float64
 ```
 
 Coverage is `100 * aligned_length / sequence_length`. Coverage filtering,
-normalization, reciprocal-hit logic, and edge symmetrization belong to Phase 4
-and are not performed by the search layer. Raw rows are converted to Parquet in
-bounded batches so the parser does not retain the complete hit table in memory.
+normalization, reciprocal-hit logic, and edge symmetrization remain downstream
+edge-stage responsibilities.
 
 ## Provenance and resume
 
-`run/search/search-manifest.json` records:
-
-- backend and reported version;
-- top-level, database-build, and search commands;
-- resolved parameters and their hash;
-- prepared FASTA/metadata checksums;
-- database, raw-hit, and Parquet output checksums;
-- hit count, schema, and directional semantics.
-
-Search is reused only when the algorithm version, backend and its currently
-reported version, parameters, input checksums, and current `hits.parquet`
-checksum match the manifest. Missing, changed, or corrupt output triggers a
-new database build and search.
-
-MMseqs and BLAST remain protocol slots for later Phase 3 compatibility work;
-the Diamond path is the 2.0 MVP search backend.
+`run/search/search-manifest.json` records backend/version, database and search
+commands, resolved parameters, input checksums, every database artifact, raw
+hits, normalized Parquet hits, row count, and schema. Verified resume requires
+matching algorithm version, backend version, parameters, prepared inputs, and
+current normalized hit checksum. Backend or parameter changes invalidate reuse.

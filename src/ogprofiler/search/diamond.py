@@ -86,6 +86,9 @@ class DiamondBackend:
             raise SearchError(f"DIAMOND database was not created: {expected}")
         return command
 
+    def database_files(self, database_path: Path) -> tuple[Path, ...]:
+        return (database_path.with_suffix(".dmnd"),)
+
     def search(
         self,
         query_path: Path,

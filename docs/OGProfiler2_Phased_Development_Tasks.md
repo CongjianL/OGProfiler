@@ -430,14 +430,14 @@ class SearchBackend:
 
 ## 任务 3.3：MMseqsBackend
 
-- [ ] easy-search / search 模式设计
-- [ ] temp directory management
-- [ ] output schema 一致化
+- [x] easy-search / search 模式设计
+- [x] temp directory management
+- [x] output schema 一致化
 
 ## 任务 3.4：BlastBackend
 
-- [ ] 作为兼容/验证 backend
-- [ ] 明确性能不作为主路径
+- [x] 作为兼容/验证 backend
+- [x] 明确性能不作为主路径
 
 ## 任务 3.5：Search manifest
 
@@ -454,7 +454,7 @@ output checksum
 
 ## 测试
 
-- [ ] Dataset A 三种 backend 均能产生可解析 hits
+- [x] Dataset A 三种 backend 均能产生可解析 hits
 - [x] failed subprocess 正确抛异常
 - [x] resume 不重复执行已完成 search
 

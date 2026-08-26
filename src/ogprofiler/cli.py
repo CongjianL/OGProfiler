@@ -431,6 +431,8 @@ def _search(args: argparse.Namespace, command: list[str]) -> int:
     overrides = list(args.overrides)
     if args.backend is not None:
         overrides.append(f"search.backend={args.backend}")
+        if not any(value.split("=", 1)[0] == "search.executable" for value in overrides):
+            overrides.append(f"search.executable={args.backend}")
     config = load_config(str(default_config) if default_config else None, overrides)
     search_options = config["search"]
     backend = create_backend(config)

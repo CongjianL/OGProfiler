@@ -56,12 +56,13 @@ def _hit_table(rows: list[HitRow]) -> pa.Table:
     )
 
 
-def parse_diamond_hits(
+def parse_tabular_hits(
     raw_path: Path,
     proteins_path: Path,
     output_path: Path,
     *,
     batch_size: int = 100_000,
+    backend_name: str = "search backend",
 ) -> int:
     if batch_size < 1:
         raise ValueError("batch_size must be positive")
@@ -83,7 +84,7 @@ def parse_diamond_hits(
                 fields = line.split("\t")
                 if len(fields) != 8:
                     raise SearchError(
-                        f"DIAMOND row {line_number} has {len(fields)} fields; expected 8"
+                        f"{backend_name} row {line_number} has {len(fields)} fields; expected 8"
                     )
                 (
                     query_raw,
@@ -98,7 +99,9 @@ def parse_diamond_hits(
                 query_id = _protein_id(query_raw)
                 target_id = _protein_id(target_raw)
                 if query_id not in species_by_protein or target_id not in species_by_protein:
-                    raise SearchError(f"DIAMOND row {line_number} references an unknown protein")
+                    raise SearchError(
+                        f"{backend_name} row {line_number} references an unknown protein"
+                    )
                 try:
                     aligned_length = float(aligned)
                     query_length_value = float(query_length)
@@ -118,7 +121,7 @@ def parse_diamond_hits(
                     )
                 except ValueError as error:
                     raise SearchError(
-                        f"Invalid numeric value in DIAMOND row {line_number}: {error}"
+                        f"Invalid numeric value in {backend_name} row {line_number}: {error}"
                     ) from error
                 rows.append(row)
                 hit_count += 1
@@ -131,9 +134,28 @@ def parse_diamond_hits(
         writer = None
         temporary_path.replace(output_path)
     except OSError as error:
-        raise SearchError(f"Failed to stream DIAMOND hits from {raw_path}: {error}") from error
+        raise SearchError(
+            f"Failed to stream {backend_name} hits from {raw_path}: {error}"
+        ) from error
     finally:
         if writer is not None:
             writer.close()
         temporary_path.unlink(missing_ok=True)
     return hit_count
+
+
+def parse_diamond_hits(
+    raw_path: Path,
+    proteins_path: Path,
+    output_path: Path,
+    *,
+    batch_size: int = 100_000,
+) -> int:
+    """Backward-compatible name for the shared eight-column parser."""
+    return parse_tabular_hits(
+        raw_path,
+        proteins_path,
+        output_path,
+        batch_size=batch_size,
+        backend_name="DIAMOND",
+    )

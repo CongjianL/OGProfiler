@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from pathlib import Path
 
 import pyarrow.parquet as pq
@@ -41,6 +42,109 @@ else:
     )
     executable.chmod(0o755)
     return executable
+
+
+def _fake_mmseqs(path: Path) -> Path:
+    executable = path / "mmseqs-fake"
+    executable.write_text(
+        """#!/usr/bin/env python3
+import pathlib
+import sys
+args = sys.argv[1:]
+if args[0] == "version":
+    print("15.6f452")
+elif args[0] == "createdb":
+    pathlib.Path(args[2]).write_text("fake-db")
+    pathlib.Path(args[2] + ".dbtype").write_text("0")
+elif args[0] == "easy-search":
+    pathlib.Path(args[3]).write_text(
+        "OGP2P000000000000\\tOGP2P000000000001\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
+        "OGP2P000000000001\\tOGP2P000000000000\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
+    )
+    pathlib.Path(args[4]).mkdir(parents=True)
+else:
+    raise SystemExit(2)
+""",
+        encoding="utf-8",
+    )
+    executable.chmod(0o755)
+    return executable
+
+
+def _fake_blast(path: Path) -> Path:
+    blastp = path / "blastp-fake"
+    blastp.write_text(
+        """#!/usr/bin/env python3
+import pathlib
+import sys
+args = sys.argv[1:]
+if args[0] == "-version":
+    print("blastp: 2.16.0+")
+else:
+    pathlib.Path(args[args.index("-out") + 1]).write_text(
+        "OGP2P000000000000\\tOGP2P000000000001\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
+        "OGP2P000000000001\\tOGP2P000000000000\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
+    )
+""",
+        encoding="utf-8",
+    )
+    blastp.chmod(0o755)
+    makeblastdb = path / "makeblastdb"
+    makeblastdb.write_text(
+        """#!/usr/bin/env python3
+import pathlib
+import sys
+args = sys.argv[1:]
+pathlib.Path(args[args.index("-out") + 1] + ".pin").write_text("fake-db")
+""",
+        encoding="utf-8",
+    )
+    makeblastdb.chmod(0o755)
+    return blastp
+
+
+@pytest.mark.parametrize(
+    ("backend", "factory"),
+    [("mmseqs", _fake_mmseqs), ("blastp", _fake_blast)],
+)
+def test_alternative_backends_emit_same_standard_hit_schema(
+    tmp_path: Path, backend: str, factory: Callable[[Path], Path]
+) -> None:
+    proteomes = tmp_path / "proteomes"
+    proteomes.mkdir()
+    (proteomes / "a.faa").write_text(">a\nAAAA\n", encoding="utf-8")
+    (proteomes / "b.faa").write_text(">b\nAAAA\n", encoding="utf-8")
+    run = tmp_path / "run"
+    assert main(["prepare", "--proteomes", str(proteomes), "--out", str(run)]) == 0
+    executable = factory(tmp_path)
+    command = [
+        "search",
+        "--run",
+        str(run),
+        "--backend",
+        backend,
+        "--set",
+        f"search.executable={executable}",
+    ]
+    assert main(command) == 0
+    table = pq.read_table(run / "search/hits.parquet")
+    assert table.num_rows == 2
+    assert table.column_names == [
+        "query_id",
+        "target_id",
+        "query_species",
+        "target_species",
+        "bitscore",
+        "identity",
+        "query_coverage",
+        "target_coverage",
+        "evalue",
+    ]
+    manifest = json.loads((run / "search/search-manifest.json").read_text(encoding="utf-8"))
+    assert manifest["backend"] == backend
+    first_mtime = (run / "search/hits.parquet").stat().st_mtime_ns
+    assert main(command) == 0
+    assert (run / "search/hits.parquet").stat().st_mtime_ns == first_mtime
 
 
 def test_search_cli_produces_manifest_and_verified_resume(tmp_path: Path) -> None:

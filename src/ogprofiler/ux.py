@@ -167,10 +167,12 @@ def inspect_run(run_root: Path, component_id: int | None = None) -> dict[str, An
     return report
 
 
-def _tool_version(executable: str) -> dict[str, Any]:
+def _tool_version(
+    executable: str, version_args: tuple[str, ...] = ("--version",)
+) -> dict[str, Any]:
     try:
         completed = subprocess.run(
-            [executable, "--version"],
+            [executable, *version_args],
             check=False,
             capture_output=True,
             text=True,
@@ -191,10 +193,19 @@ def write_run_provenance(run_root: Path, config: dict[str, Any], command: list[s
     run_yaml = run_root / "run.yaml"
     manifest = run_root / "manifest.json"
     path = run_root / "provenance.json"
+    search_backend = str(config["search"]["backend"])
+    search_version_args = {
+        "diamond": ("version",),
+        "mmseqs": ("version",),
+        "blastp": ("-version",),
+    }[search_backend]
     tools = {
-        "search": str(config["search"]["executable"]),
-        "alignment": str(config["phylogeny"]["alignment_executable"]),
-        "tree": str(config["phylogeny"]["tree_executable"]),
+        "search": (
+            str(config["search"]["executable"]),
+            search_version_args,
+        ),
+        "alignment": (str(config["phylogeny"]["alignment_executable"]), ("--version",)),
+        "tree": (str(config["phylogeny"]["tree_executable"]), ("--version",)),
     }
     write_json(
         path,
@@ -206,7 +217,10 @@ def write_run_provenance(run_root: Path, config: dict[str, Any], command: list[s
             "random_seed": int(config["hierarchy"]["seed"]),
             "run_yaml_sha256": sha256_file(run_yaml) if run_yaml.is_file() else None,
             "manifest_sha256": sha256_file(manifest) if manifest.is_file() else None,
-            "external_tools": {name: _tool_version(value) for name, value in tools.items()},
+            "external_tools": {
+                name: _tool_version(executable, version_args)
+                for name, (executable, version_args) in tools.items()
+            },
             "python_executable": sys.executable,
         },
     )

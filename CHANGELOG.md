@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Implement MMseqs2 `easy-search` and NCBI BLAST+ compatibility backends with
+  bounded temporary storage, common directional hit parsing, database artifact
+  provenance, backend version capture, and verified resume.
+
 ## 2.0.0a1 - 2026-08-26
 
 ### Phase 14
