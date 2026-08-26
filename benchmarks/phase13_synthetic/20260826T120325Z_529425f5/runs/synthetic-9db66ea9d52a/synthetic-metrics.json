@@ -1,0 +1,92 @@
+{
+  "events": {
+    "accuracy_on_matched": 0.0,
+    "confusion": {
+      "SPECIATION_LIKE": {
+        "AMBIGUOUS": 1
+      }
+    },
+    "correct": 0,
+    "coverage": 0.045454545454545456,
+    "end_to_end_accuracy": 0.0,
+    "matched_exact_clades": 1,
+    "truth_events": 22
+  },
+  "family": {
+    "exact_family_recovery": {
+      "count": 11,
+      "rate": 0.9166666666666666,
+      "total": 12
+    },
+    "family_number": 13,
+    "family_size_distribution": {
+      "max": 7,
+      "mean": 3.1538461538461537,
+      "median": 3,
+      "min": 1,
+      "q25": 2.0,
+      "q75": 3.0
+    },
+    "large_family_fragmentation": {
+      "families": 0,
+      "max_fragments": null,
+      "mean_fragments": null,
+      "threshold": 20,
+      "unfragmented_fraction": null
+    },
+    "membership_coverage": 1.0,
+    "pairwise_clustering": {
+      "f1": 0.9545454545454545,
+      "intersection": 63,
+      "precision": 1.0,
+      "predicted_pairs": 63,
+      "recall": 0.9130434782608695,
+      "true_pairs": 69
+    },
+    "single_copy_family_recovery": {
+      "count": 0,
+      "rate": null,
+      "total": 0
+    },
+    "species_coverage": {
+      "complete_fraction": 0.15384615384615385,
+      "mean": 0.5961538461538461
+    }
+  },
+  "hierarchy": {
+    "exact_clades": 11,
+    "f1": 0.5238095238095238,
+    "mean_best_truth_jaccard": 0.6730706075533661,
+    "precision": 0.8461538461538461,
+    "predicted_clades": 13,
+    "recall": 0.3793103448275862,
+    "truth_clades": 29
+  },
+  "input_checksums": {
+    "dataset_manifest": "c14cc335b3ee47f1bef6e0a2cd074ed0aa09b8b00f7eb941dec7710687093508",
+    "events.tsv": "fbb520e4c02e58e7beaf52a4ab1bb27b24df4fd5ca315fc2799230fa777f7953",
+    "families.tsv": "61cb9969a811fbbac2927ce819bce42a92c46b77b9e5a577560235bc33f9ca2a",
+    "hierarchy.tsv": "01f323315c2359c877a0ec58fcbd1ec254af6d245a209a59f01fe89e5dcf8ead",
+    "members.tsv": "5248585f5990f3d4defa0b2815d50c117a48c47f649c4cae759e5bcd0d76c06f"
+  },
+  "method": "ogprofiler2",
+  "orthology": {
+    "f1": 0.0,
+    "intersection": 0,
+    "precision": 0.0,
+    "predicted_pairs": 0,
+    "recall": 0.0,
+    "truth_pairs": 58
+  },
+  "scenario": {
+    "divergence": 0.05,
+    "duplication_rate": 0.25,
+    "expansion": 1,
+    "fusion_rate": 0.25,
+    "loss_rate": 0.4,
+    "replicate": 0,
+    "seed": 42
+  },
+  "scenario_id": "synthetic-9db66ea9d52a",
+  "schema_version": "synthetic-recovery-v1"
+}

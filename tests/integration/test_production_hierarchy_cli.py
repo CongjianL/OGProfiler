@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
 import pyarrow.parquet as pq
 
 from ogprofiler.cli import main
@@ -44,6 +45,9 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     assert loaded.local_to_global == tuple(range(15))
     assert loaded.global_to_local[14] == 14
     assert loaded.species_bitmap_by_protein[10] == 4
+    assert isinstance(loaded.global_ids, np.memmap)
+    assert isinstance(loaded.species_ids, np.memmap)
+    assert loaded.global_ids.tolist() == list(range(15))
 
     command = [
         "hierarchy",
@@ -59,6 +63,10 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
         "hierarchy.gamma_max=2.0",
         "--set",
         "hierarchy.max_child_fraction=0.8",
+        "--set",
+        "hierarchy.subtree_workers=2",
+        "--set",
+        "hierarchy.subtree_release_size=1",
     ]
     assert main(command) == 0
     output = run / "hierarchy" / "components" / "component=00000000"

@@ -7,13 +7,14 @@ dependencies:
   - pip
   - pyarrow>=15
   - pyyaml>=6
-  - numpy>=1.26
+  - "numpy>=1.26,<2"
   - scipy>=1.12
   - python-igraph>=0.11
   - leidenalg>=0.10
   - ete3>=3.1
   - progressbar2>=4
   - biopython>=1.83
+  - build>=1.2
   - psutil>=5.9
   - pytest>=8
   - ruff>=0.5
@@ -24,4 +25,3 @@ dependencies:
   - blast>=2.16
   - mafft>=7.5
   - fasttree>=2.1
-

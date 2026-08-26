@@ -49,6 +49,8 @@ DEFAULT_CONFIG: dict[str, dict[str, Any]] = {
         "publication_seeds": 5,
         "min_split_quality": None,
         "stability_mode": "robust",
+        "subtree_workers": 1,
+        "subtree_release_size": 50_000,
     },
     "evolution": {
         "network_overlap_threshold": 0.0,
@@ -230,6 +232,10 @@ def validate_config(config: dict[str, Any]) -> None:
         or config["hierarchy"]["max_depth"] < 1
     ):
         raise InputError("hierarchy.max_depth must be a positive integer")
+    for key in ("subtree_workers", "subtree_release_size"):
+        value = config["hierarchy"][key]
+        if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+            raise InputError(f"hierarchy.{key} must be a positive integer")
     for key in ("gamma_min", "gamma_max", "gamma_growth", "max_child_fraction"):
         value = config["hierarchy"][key]
         if not isinstance(value, (int, float)) or isinstance(value, bool):

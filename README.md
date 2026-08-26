@@ -1,54 +1,149 @@
 # OGProfiler 2
 
-OGProfiler 2 infers hierarchical protein families from sequence-similarity
-networks, with optional phylogenetic refinement. The V2 implementation is
-developed under `src/ogprofiler`; the frozen V1 reference is under `legacy/`.
+OGProfiler 2 builds deterministic, hierarchical protein-family assignments from
+sequence-similarity networks. It combines a directional homology search,
+legacy-compatible normalized bit scores, sparse connected components,
+hierarchical Leiden subdivision, stable terminal-family IDs, and optional
+phylogenetic evidence. The implementation lives in `src/ogprofiler`; the frozen
+V1 reference remains under `legacy/` for regression comparison.
 
-## Development preview
+## Scientific model
+
+The default pipeline is:
+
+```text
+proteomes → all-vs-all search → normalized retained edges → connected components
+          → hierarchical Leiden → network-event annotation → stable result tables
+```
+
+A terminal family is a hierarchy node at which subdivision stops because of an
+explicit rule such as one species, minimum size, depth, absent edges, instability,
+or exhausted resolution search. The network hierarchy describes nested
+community structure in a similarity graph. It is not a gene tree.
+
+## Installation
+
+Python 3.10 or newer is required. DIAMOND is the default search backend.
+
+### Conda / micromamba
 
 ```bash
+micromamba create -f environment.yml
+micromamba activate ogprofiler
+python -m pip install -e .
+```
+
+### Python development environment
+
+Install DIAMOND separately, then run:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
 python -m pip install -e '.[dev]'
-ogprofiler prepare --proteomes testdata/ --out run/
+```
+
+Confirm the installation with `ogprofiler --version`.
+
+## Quick start
+
+Run or resume the complete default workflow:
+
+```bash
+ogprofiler run --proteomes proteomes/ --out run/ \
+  --set search.threads=8 \
+  --set runtime.workers=4
+```
+
+Preview the exact stage commands without executing them:
+
+```bash
+ogprofiler run --proteomes proteomes/ --out run/ --dry-run
+```
+
+Resume an existing workspace from a stage:
+
+```bash
+ogprofiler run --out run/ --from-stage hierarchy
+```
+
+Monitor and inspect it:
+
+```bash
+ogprofiler status --run run/
+ogprofiler status --run run/ --json
+ogprofiler inspect --run run/
+ogprofiler inspect --run run/ --component 0 --json
+```
+
+Every pipeline stage also remains directly callable:
+
+```bash
+ogprofiler prepare --proteomes proteomes/ --out run/
 ogprofiler search --run run/ --backend diamond
 ogprofiler edges --run run/ --method lrb
 ogprofiler components --run run/
-ogprofiler hierarchy --run run/ --component-id 0
 ogprofiler hierarchy-all --run run/ --set runtime.workers=4
 ogprofiler annotate-network --run run/
 ogprofiler export --run run/
-ogprofiler orthologs --run run/ --emit-pairwise-orthologs
-ogprofiler annotate --run run/ --phylogenetic-refinement --family OG000000123
-ogprofiler benchmark plan --out benchmark-plan/
-ogprofiler benchmark metrics --run run/ --ground-truth truth.tsv \
-  --dataset reference-a --method ogprofiler2 --out scientific-metrics.json
 ```
 
-The prepare stage assigns deterministic integer species/protein IDs, writes
-normalized FASTA and Parquet metadata, and captures the resolved configuration
-and input checksums in the run workspace.
+## Configuration and reproducibility
 
-The search stage builds one global DIAMOND database, runs directional
-all-vs-all search, writes `search/hits.parquet`, and publishes a checksummed
-search manifest with verified resume semantics.
+Configuration is YAML-based. `prepare` writes the fully resolved `run.yaml`;
+`--set section.key=value` overrides a setting. The random seed defaults to 42.
+Each stage records input checksums, parameters, algorithm versions, commands,
+and output checksums. `ogprofiler run` additionally writes `provenance.json`
+with package, Python, platform, configuration, dataset-manifest, and external
+executable versions.
 
-The edge stage reproduces legacy NBS normalization, applies explicit coverage
-thresholds, performs RBH/LRB retention, and writes order-invariant canonical
-edges without species-pair sparse matrices.
+For formal runs, preserve the complete workspace, use a clean tagged source
+revision, pin `environment.yml`, and retain every manifest. See
+[`docs/reproducibility.md`](docs/reproducibility.md).
 
-The export stage assigns deterministic dataset-scoped OG IDs from canonical
-terminal memberships and writes `families.tsv`, `members.tsv`, `hierarchy.tsv`,
-and `events.tsv`. Per-family FASTA and component GraphML are explicit opt-in
-exports.
+## Outputs
 
-Pairwise ortholog candidates are disabled by default because output can be
-quadratic. When enabled, the hierarchy-driven orthology stage streams
-cross-child, cross-species candidates directly to `ortholog_pairs.tsv.zst`.
+The stable exchange tables under `run/results/` are:
 
-Selected terminal families can receive a second, explicitly separate evidence
-layer through MAFFT, FastTree, configurable rooting, and LCA reconciliation.
-The resulting `phylo_event` is stored beside, rather than over, the original
-`network_event`.
+| File | Meaning |
+|---|---|
+| `families.tsv` | One row per terminal family with stable dataset-scoped OG ID |
+| `members.tsv` | Protein-to-family membership with species and original IDs |
+| `hierarchy.tsv` | Parent/child hierarchy nodes, resolution, quality, and stop reason |
+| `events.tsv` | Network-derived event labels and confidence |
 
-Scientific algorithm selection uses a checksummed parameter matrix and common
-family, evolutionary-consistency, and orthology metrics. Frozen V1 membership
-and other methods can be compared through the same versioned result schema.
+`export-manifest.json` checksums these outputs. Per-family FASTA, component
+GraphML, pairwise ortholog candidates, and phylogenetic refinement are explicit
+opt-ins because they may be large or require external tools:
+
+```bash
+ogprofiler export --run run/ --family-fasta OG000000123
+ogprofiler export graph --run run/ --component 0
+ogprofiler orthologs --run run/ --emit-pairwise-orthologs
+ogprofiler annotate --run run/ --phylogenetic-refinement --family OG000000123
+```
+
+## Scientific caveats
+
+- Network hierarchy is not gene genealogy and does not establish duplication,
+  loss, or speciation history by itself.
+- `network_event` is a species-overlap heuristic. It must remain separate from
+  `phylo_event`, which is derived from alignment, tree inference, rooting, and
+  reconciliation.
+- Similarity thresholds, proteome completeness, fusion/domain architecture,
+  divergence, lineage expansion, and search sensitivity affect family recovery.
+- Pairwise ortholog output can grow quadratically and is disabled by default.
+- A successful process or Slurm job establishes execution success, not
+  biological validity. Interpret results against controls and benchmark truth.
+
+## Development and release verification
+
+```bash
+ruff check .
+mypy src/ogprofiler
+pytest -q
+python benchmarks/generate_phase0_datasets.py --check
+```
+
+The phased design, benchmark evidence, and release checklist are documented in
+`docs/`. Current package version: **2.0.0a1**.

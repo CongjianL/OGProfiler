@@ -5,6 +5,7 @@ from __future__ import annotations
 import resource
 import sys
 import time
+from collections.abc import Mapping
 from dataclasses import dataclass, replace
 
 import igraph as ig
@@ -22,6 +23,8 @@ class HierarchyConfig:
     seed: int = 42
     max_depth: int = 20
     stability_mode: str = "fast"
+    subtree_workers: int = 1
+    subtree_release_size: int = 50_000
     resolution: ResolutionSearchConfig = ResolutionSearchConfig()
 
 
@@ -79,7 +82,9 @@ def _peak_rss_bytes() -> int:
     return max(maximum, int(psutil.Process().memory_info().rss))
 
 
-def _species_count(global_ids: tuple[int, ...], species_by_protein: dict[int, int] | None) -> int:
+def _species_count(
+    global_ids: tuple[int, ...], species_by_protein: Mapping[int, int] | None
+) -> int:
     if species_by_protein is None:
         return 0
     bitmap = 0
@@ -93,7 +98,7 @@ def _terminal_reason(
     global_ids: tuple[int, ...],
     depth: int,
     config: HierarchyConfig,
-    species_by_protein: dict[int, int] | None,
+    species_by_protein: Mapping[int, int] | None,
 ) -> str | None:
     if len(global_ids) == 1:
         return "SINGLETON"
@@ -111,7 +116,7 @@ def _terminal_reason(
 def infer_component_hierarchy(
     component: Component,
     config: HierarchyConfig,
-    species_by_protein: dict[int, int] | None = None,
+    species_by_protein: Mapping[int, int] | None = None,
     root_graph: ig.Graph | None = None,
 ) -> HierarchyResult:
     """Infer one component from root to terminal families using explicit DFS."""

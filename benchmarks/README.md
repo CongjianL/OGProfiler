@@ -85,3 +85,36 @@ The completed formal run is archived under
 all Dataset A family metrics were perfect and invariant across the matrix, and
 the evidence-backed decision is to retain the baseline defaults rather than
 select a parameter from tiny-run timing noise.
+
+Phase 13 uses `run_phase13_scenario.py` and
+`aggregate_phase13_applicability.py` to execute a deterministic 243-scenario
+full factorial over divergence, duplication, loss, ancestral expansion, and
+fusion. Each scenario records genealogy, event, orthology, and domain truth;
+the Slurm wrapper packs the scenarios into 16 strided tasks capped at two
+concurrent allocations.
+
+The completed formal run is archived under
+`phase13_synthetic/20260826T120325Z_529425f5/`. All 243 scenarios completed.
+Terminal-family F1 passed its threshold in 63 scenarios, concentrated in the
+one-lineage region; complete gene-genealogy event and orthology thresholds were
+not reached, preserving the intended scientific boundary between network
+subdivision and phylogenetic reconstruction.
+
+Phase 14 preflight evidence is stored under `phase14_extreme_scale/preflight/`.
+It records a deterministic 100,000-row local tracer across three compression
+codecs, three Parquet row-group sizes, sequential mmap scans, and randomized
+row-group reads. It validates the benchmark protocol only; filesystem-scale
+selection remains a formal Slurm benchmark decision.
+
+The completed formal Phase 14 run is archived under
+`phase14_extreme_scale/20260826T130055Z_a377421e/`. Slurm array job `1404222`
+completed both tasks, recursively released C/E subtree work, checksum-merged
+all seven component results, and reused every result on the immediate resume.
+Two independent 2-million-row profiles select Zstandard with 262,144-row groups
+as the durable partition default.
+
+Phase 15 release-readiness evidence is stored under
+`phase15_release/20260826_2.0.0a1/`. It records local and remote CLI regression,
+the frozen dataset check, distribution hashes, and installed-wheel smoke tests.
+The annotated tag is intentionally deferred until the captured Phases 13–15
+working tree is committed as the release candidate.

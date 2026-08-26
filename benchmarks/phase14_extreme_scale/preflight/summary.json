@@ -1,0 +1,115 @@
+{
+  "profiles": [
+    {
+      "compression": "none",
+      "file_bytes": 2640529,
+      "random_rows_per_second": 78949958.63046436,
+      "random_seconds": 0.0014526670056511648,
+      "row_group_size": 16384,
+      "row_groups": 7,
+      "rows": 100000,
+      "sequential_rows_per_second": 2539335.9003358367,
+      "sequential_seconds": 0.039380374997563194,
+      "write_seconds": 0.009697833003883716
+    },
+    {
+      "compression": "none",
+      "file_bytes": 2686647,
+      "random_rows_per_second": 133576560.60305439,
+      "random_seconds": 0.0009812499993131496,
+      "row_group_size": 65536,
+      "row_groups": 2,
+      "rows": 100000,
+      "sequential_rows_per_second": 58405517.59902234,
+      "sequential_seconds": 0.0017121670025517233,
+      "write_seconds": 0.015305124994483776
+    },
+    {
+      "compression": "none",
+      "file_bytes": 2707095,
+      "random_rows_per_second": 115495579.82932658,
+      "random_seconds": 0.0008658340011606924,
+      "row_group_size": 262144,
+      "row_groups": 1,
+      "rows": 100000,
+      "sequential_rows_per_second": 49851492.26467721,
+      "sequential_seconds": 0.002005958005611319,
+      "write_seconds": 0.013991375002660789
+    },
+    {
+      "compression": "snappy",
+      "file_bytes": 1985290,
+      "random_rows_per_second": 55363588.96901748,
+      "random_seconds": 0.002071542003250215,
+      "row_group_size": 16384,
+      "row_groups": 7,
+      "rows": 100000,
+      "sequential_rows_per_second": 54063785.482643545,
+      "sequential_seconds": 0.0018496670018066652,
+      "write_seconds": 0.013843500004441012
+    },
+    {
+      "compression": "snappy",
+      "file_bytes": 2033368,
+      "random_rows_per_second": 85284750.14756545,
+      "random_seconds": 0.0015368749955086969,
+      "row_group_size": 65536,
+      "row_groups": 2,
+      "rows": 100000,
+      "sequential_rows_per_second": 63868869.535497144,
+      "sequential_seconds": 0.0015657080002711155,
+      "write_seconds": 0.015184541000053287
+    },
+    {
+      "compression": "snappy",
+      "file_bytes": 2054137,
+      "random_rows_per_second": 190839696.29763865,
+      "random_seconds": 0.0005239999954937957,
+      "row_group_size": 262144,
+      "row_groups": 1,
+      "rows": 100000,
+      "sequential_rows_per_second": 71856270.2371781,
+      "sequential_seconds": 0.001391666999552399,
+      "write_seconds": 0.01006904099631356
+    },
+    {
+      "compression": "zstd",
+      "file_bytes": 1503997,
+      "random_rows_per_second": 78535458.59257255,
+      "random_seconds": 0.0014603339950554073,
+      "row_group_size": 16384,
+      "row_groups": 7,
+      "rows": 100000,
+      "sequential_rows_per_second": 65468248.55177429,
+      "sequential_seconds": 0.0015274580000550486,
+      "write_seconds": 0.011244834000535775
+    },
+    {
+      "compression": "zstd",
+      "file_bytes": 1535262,
+      "random_rows_per_second": 86783510.62039933,
+      "random_seconds": 0.0015103330006240867,
+      "row_group_size": 65536,
+      "row_groups": 2,
+      "rows": 100000,
+      "sequential_rows_per_second": 62219700.40017341,
+      "sequential_seconds": 0.0016072079961304553,
+      "write_seconds": 0.012039917004585732
+    },
+    {
+      "compression": "zstd",
+      "file_bytes": 1553493,
+      "random_rows_per_second": 86539476.80732863,
+      "random_seconds": 0.0011555419987416826,
+      "row_group_size": 262144,
+      "row_groups": 1,
+      "rows": 100000,
+      "sequential_rows_per_second": 56034180.92798529,
+      "sequential_seconds": 0.0017846249975264072,
+      "write_seconds": 0.010763165999378543
+    }
+  ],
+  "rows": 100000,
+  "scope": "local deterministic 100000-row I/O tracer; not a scale conclusion",
+  "smallest_layout": "zstd-rg16384"
+}

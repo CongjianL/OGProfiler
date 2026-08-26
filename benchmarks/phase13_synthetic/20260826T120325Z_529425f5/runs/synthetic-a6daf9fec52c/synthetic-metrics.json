@@ -1,0 +1,88 @@
+{
+  "events": {
+    "accuracy_on_matched": null,
+    "confusion": {},
+    "correct": 0,
+    "coverage": 0.0,
+    "end_to_end_accuracy": 0.0,
+    "matched_exact_clades": 0,
+    "truth_events": 24
+  },
+  "family": {
+    "exact_family_recovery": {
+      "count": 12,
+      "rate": 1.0,
+      "total": 12
+    },
+    "family_number": 12,
+    "family_size_distribution": {
+      "max": 4,
+      "mean": 4,
+      "median": 4.0,
+      "min": 4,
+      "q25": 4.0,
+      "q75": 4.0
+    },
+    "large_family_fragmentation": {
+      "families": 0,
+      "max_fragments": null,
+      "mean_fragments": null,
+      "threshold": 20,
+      "unfragmented_fraction": null
+    },
+    "membership_coverage": 1.0,
+    "pairwise_clustering": {
+      "f1": 1.0,
+      "intersection": 72,
+      "precision": 1.0,
+      "predicted_pairs": 72,
+      "recall": 1.0,
+      "true_pairs": 72
+    },
+    "single_copy_family_recovery": {
+      "count": 12,
+      "rate": 1.0,
+      "total": 12
+    },
+    "species_coverage": {
+      "complete_fraction": 1.0,
+      "mean": 1.0
+    }
+  },
+  "hierarchy": {
+    "exact_clades": 12,
+    "f1": 0.5,
+    "mean_best_truth_jaccard": 0.6666666666666666,
+    "precision": 1.0,
+    "predicted_clades": 12,
+    "recall": 0.3333333333333333,
+    "truth_clades": 36
+  },
+  "input_checksums": {
+    "dataset_manifest": "d96da3a7538403ba99ac215560d0c357da66c0ec9e70568afee116731ffc49f8",
+    "events.tsv": "71148b9fdcb55af14025773950b07293e010a3cfce2fc61f06c7c74e4f44a8f3",
+    "families.tsv": "631b5bbefabc9fad7b0da1216a0d058a91896826e6cd560e39ea02ff7168609b",
+    "hierarchy.tsv": "1cf2f644289cba5df6326a869161bab4056cd90f00e1f02d77eb8918c5274b1c",
+    "members.tsv": "17a5ca70c81082a57d7920800c97f747962800c049f94245b66004870539b204"
+  },
+  "method": "ogprofiler2",
+  "orthology": {
+    "f1": 0.0,
+    "intersection": 0,
+    "precision": 0.0,
+    "predicted_pairs": 0,
+    "recall": 0.0,
+    "truth_pairs": 72
+  },
+  "scenario": {
+    "divergence": 0.05,
+    "duplication_rate": 0.0,
+    "expansion": 1,
+    "fusion_rate": 0.0,
+    "loss_rate": 0.0,
+    "replicate": 0,
+    "seed": 42
+  },
+  "scenario_id": "synthetic-a6daf9fec52c",
+  "schema_version": "synthetic-recovery-v1"
+}

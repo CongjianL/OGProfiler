@@ -1,0 +1,26 @@
+{
+  "algorithm_version": "prepare-v1",
+  "command": [
+    "ogprofiler",
+    "prepare",
+    "--proteomes",
+    "/tmp/ogp-phase13-tracer/runs/synthetic-a6daf9fec52c/dataset/proteomes",
+    "--out",
+    "/tmp/ogp-phase13-tracer/runs/synthetic-a6daf9fec52c/run"
+  ],
+  "dataset": {
+    "dataset_sha256": "f44578efb2ccc9ee61bfd0cec1fbecf1e1160de9b67af1000a16a8e5090c181c",
+    "id_algorithm": "sorted-path+sorted-original-id-v1",
+    "input_checksums": {
+      "species_00.faa": "785b8078bba0499370d73d36729314e53722feb2824cb995ad3be110bfa61161",
+      "species_01.faa": "ea16ca80440ca56062d1a25a63d7cfe40ec01ac82a99ceba525f2d59a64c790b",
+      "species_02.faa": "00ff75b1f8adf3d683e24f560553cbe73ee373ffc285457ac16445bfbf5199d2",
+      "species_03.faa": "63e9f61cc9519fb09f4aa81e50bd5cbf9577813f21add7df9c4d35fa27dbfeff"
+    },
+    "n_proteins": 48,
+    "n_species": 4
+  },
+  "ogprofiler_version": "2.0.0a1",
+  "random_seed": 42,
+  "resolved_config_sha256": "16b6a084f2f61c45fa30cef8d5142bfdc10df09e0c0fa6682f5a37b0621c6770"
+}

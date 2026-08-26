@@ -1,6 +1,26 @@
 # Changelog
 
-## 2.0.0a1
+## 2.0.0a1 - 2026-08-26
+
+### Phase 14
+
+- Added Arrow memory-mapped component reads, NumPy memmapped global/species
+  vectors, and binary-search mapping views to remove per-protein dictionary
+  storage from hierarchy workers.
+- Added deterministic path-based subtree identities and checksummed,
+  largest-first component task manifests. Accepted splits now recursively
+  release child process tasks and merge completion-order-independent topology.
+- Added Parquet compression/row-group sequential/random I/O profiling plus a
+  two-shard Slurm runner with component-level verified resume.
+
+### Phase 15
+
+- Added `ogprofiler run`, `status`, and `inspect`, including dry-run planning,
+  stage-bounded resume, JSON reporting, and component summaries.
+- Added runtime/external-tool provenance capture and comprehensive installation,
+  quick-start, output, scientific-caveat, reproducibility, and release docs.
+
+### Phases 0-13
 
 - Freeze the OGProfiler 1 reference implementation.
 - Add the OGProfiler 2 package, configuration, workspace, core models, and
@@ -45,3 +65,6 @@
   parameter matrix, configurable normalization and gamma-search strategies,
   family/evolution/orthology metrics, frozen-V1 evaluation, closed method
   comparison, and reproducible Slurm matrix aggregation.
+- Add the Phase 13 deterministic synthetic evolution framework with a
+  full-factorial scenario matrix, explicit genealogy/event/orthology/domain
+  truth, recovery metrics, applicability thresholds, and strided Slurm runner.

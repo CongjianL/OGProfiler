@@ -1,0 +1,43 @@
+ M CHANGELOG.md
+ M benchmarks/README.md
+ M docs/OGProfiler2_Phased_Development_Tasks.md
+ M src/ogprofiler/cli.py
+?? benchmarks/aggregate_phase13_applicability.py
+?? benchmarks/phase13_synthetic/REPORT.md
+?? benchmarks/phase13_synthetic/SHA256SUMS
+?? benchmarks/phase13_synthetic/tracers/baseline/dataset/domain_architecture.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/dataset/genealogy.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/dataset/ground_truth.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/dataset/manifest.json
+?? benchmarks/phase13_synthetic/tracers/baseline/dataset/species_tree.nwk
+?? benchmarks/phase13_synthetic/tracers/baseline/dataset/true_events.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/dataset/true_orthologs.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/run-summary.json
+?? benchmarks/phase13_synthetic/tracers/baseline/run/manifest.json
+?? benchmarks/phase13_synthetic/tracers/baseline/run/results/events.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/run/results/families.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/run/results/hierarchy.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/run/results/members.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/run/search/diamond/hits.tsv
+?? benchmarks/phase13_synthetic/tracers/baseline/synthetic-metrics.json
+?? benchmarks/phase13_synthetic/tracers/stress/dataset/domain_architecture.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/dataset/genealogy.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/dataset/ground_truth.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/dataset/manifest.json
+?? benchmarks/phase13_synthetic/tracers/stress/dataset/species_tree.nwk
+?? benchmarks/phase13_synthetic/tracers/stress/dataset/true_events.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/dataset/true_orthologs.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/run-summary.json
+?? benchmarks/phase13_synthetic/tracers/stress/run/manifest.json
+?? benchmarks/phase13_synthetic/tracers/stress/run/results/events.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/run/results/families.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/run/results/hierarchy.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/run/results/members.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/run/search/diamond/hits.tsv
+?? benchmarks/phase13_synthetic/tracers/stress/synthetic-metrics.json
+?? benchmarks/run_phase13_scenario.py
+?? docs/synthetic-evolution-benchmark.md
+?? slurm/phase13_synthetic_matrix.sh
+?? src/ogprofiler/benchmark/synthetic.py
+?? src/ogprofiler/benchmark/synthetic_metrics.py
+?? tests/unit/test_synthetic_benchmark.py

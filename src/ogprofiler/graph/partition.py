@@ -33,6 +33,7 @@ SINGLETON_SCHEMA = pa.schema(
         ("terminal_reason", pa.string()),
     ]
 )
+PARQUET_ROW_GROUP_SIZE = 262_144
 
 
 @dataclass(frozen=True, slots=True)
@@ -170,6 +171,8 @@ def build_component_artifacts(
             existing_data_behavior="overwrite_or_ignore",
             max_open_files=max_open_files,
             file_options=ds.ParquetFileFormat().make_write_options(compression="zstd"),
+            min_rows_per_group=PARQUET_ROW_GROUP_SIZE,
+            max_rows_per_group=PARQUET_ROW_GROUP_SIZE,
         )
 
     for name in (
@@ -193,25 +196,43 @@ def build_component_artifacts(
     )
 
 
-def read_component_edges(output_directory: Path, component_id: int) -> pa.Table:
+def read_component_edges(
+    output_directory: Path, component_id: int, *, memory_map: bool = False
+) -> pa.Table:
     """Read one edge partition without scanning partitions for other components."""
     path = output_directory / "edges" / f"component={component_id:08d}"
     if not path.is_dir():
         return pa.Table.from_pylist([], schema=RETAINED_EDGE_SCHEMA)
-    table = ds.dataset(path, format="parquet", schema=RETAINED_EDGE_SCHEMA).to_table()
+    if memory_map:
+        fragments = [
+            pq.read_table(fragment, schema=RETAINED_EDGE_SCHEMA, memory_map=True)
+            for fragment in sorted(path.glob("*.parquet"))
+        ]
+        table = (
+            pa.concat_tables(fragments)
+            if fragments
+            else pa.Table.from_pylist([], schema=RETAINED_EDGE_SCHEMA)
+        )
+    else:
+        table = ds.dataset(path, format="parquet", schema=RETAINED_EDGE_SCHEMA).to_table()
     return table.sort_by([("u", "ascending"), ("v", "ascending")])
 
 
-def load_component_edge_table(output_directory: Path, component_id: int) -> EdgeTable:
+def load_component_edge_table(
+    output_directory: Path, component_id: int, *, memory_map: bool = False
+) -> EdgeTable:
     """Load one component and remap only when a later hierarchy worker requests it."""
     index = pq.read_table(
         output_directory / "index.parquet",
         filters=[("component_id", "=", component_id)],
+        memory_map=memory_map,
     )
     vertices = [int(value) for value in index["protein_id"].to_pylist()]
     if not vertices:
         raise ComponentError(f"Unknown component ID: {component_id}")
-    rows = read_component_edges(output_directory, component_id).to_pylist()
+    rows = read_component_edges(
+        output_directory, component_id, memory_map=memory_map
+    ).to_pylist()
     return EdgeTable.canonicalize(
         vertices,
         [(int(row["u"]), int(row["v"]), float(row["weight"])) for row in rows],

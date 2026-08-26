@@ -1,0 +1,8 @@
+{
+  "algorithm_version": "phase14-component-task-manifest-v1",
+  "include_singletons": false,
+  "ordering": "descending(n_vertices+n_edges),ascending(component_id)",
+  "output_sha256": "e6eeba5c610ac313113380170ee3d8bb9bcea6d0a971a840098cc3c016ba042c",
+  "statistics_sha256": "ed33758bf5d15a7410b1a5932f8484878c4c0571692ceda9d84219d3dcaebf7a",
+  "task_count": 1
+}

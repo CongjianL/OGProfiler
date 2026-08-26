@@ -79,12 +79,23 @@ def run_hierarchy_component_stage(
     if hierarchy_component_is_verified(run_root, component_id, config):
         return output, True
     loaded = ComponentGraphLoader(run_root).load(component_id)
-    result = infer_component_hierarchy(
-        loaded.component,
-        config,
-        loaded.species_by_protein,
-        root_graph=loaded.graph,
-    )
+    if config.subtree_workers > 1 and len(loaded.component.vertices) >= config.subtree_release_size:
+        from ogprofiler.hierarchy.subtree import infer_component_hierarchy_parallel
+
+        result = infer_component_hierarchy_parallel(
+            loaded.component,
+            config,
+            loaded.species_by_protein,
+            loaded.graph,
+            workers=config.subtree_workers,
+        )
+    else:
+        result = infer_component_hierarchy(
+            loaded.component,
+            config,
+            loaded.species_by_protein,
+            root_graph=loaded.graph,
+        )
     validate_hierarchy(loaded.component, result)
     output.parent.mkdir(parents=True, exist_ok=True)
     staging = output.parent / f".{output.name}.{uuid.uuid4().hex}.tmp"

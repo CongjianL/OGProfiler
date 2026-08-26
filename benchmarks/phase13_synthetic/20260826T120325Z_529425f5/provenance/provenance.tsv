@@ -1,0 +1,16 @@
+run_id	20260826T120325Z_c1da58cee4ee_529425f5_54287
+submitted_at_utc	2026-08-26T12:03:25Z
+git_commit	c1da58cee4ee897eb3f30df0f4bf6c27bf171a8f
+git_branch	main
+git_dirty	1
+source_sha256	529425f53e103f7c505a1f91bbe3e986ffa567180944a7f8b41635e7bb6e06e9
+slurm_script	slurm/phase13_synthetic_matrix.sh
+remote_host	campus-server
+remote_run_dir	/home/mselab/licj/projects/running/ogprofiler-runs/20260826T120325Z_c1da58cee4ee_529425f5_54287
+remote_source_dir	/home/mselab/licj/projects/running/ogprofiler-runs/20260826T120325Z_c1da58cee4ee_529425f5_54287/source
+remote_conda	/home/mselab/licj/micromamba/bin/micromamba
+remote_conda_env	ogprofiler
+job_id	1404203
+sbatch_raw	1404203
+stdout_pattern	/home/mselab/licj/projects/running/ogprofiler-runs/20260826T120325Z_c1da58cee4ee_529425f5_54287/slurm-%A_%a.out
+stderr_pattern	/home/mselab/licj/projects/running/ogprofiler-runs/20260826T120325Z_c1da58cee4ee_529425f5_54287/slurm-%A_%a.err

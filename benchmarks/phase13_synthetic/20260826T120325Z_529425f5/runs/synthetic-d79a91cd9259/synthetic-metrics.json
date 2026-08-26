@@ -1,0 +1,92 @@
+{
+  "events": {
+    "accuracy_on_matched": 0.0,
+    "confusion": {
+      "DUPLICATION_LIKE": {
+        "SPECIES_SPECIFIC": 3
+      }
+    },
+    "correct": 0,
+    "coverage": 0.028846153846153848,
+    "end_to_end_accuracy": 0.0,
+    "matched_exact_clades": 3,
+    "truth_events": 104
+  },
+  "family": {
+    "exact_family_recovery": {
+      "count": 0,
+      "rate": 0.0,
+      "total": 24
+    },
+    "family_number": 21,
+    "family_size_distribution": {
+      "max": 12,
+      "mean": 5.761904761904762,
+      "median": 5,
+      "min": 1,
+      "q25": 2.0,
+      "q75": 10.0
+    },
+    "large_family_fragmentation": {
+      "families": 0,
+      "max_fragments": null,
+      "mean_fragments": null,
+      "threshold": 20,
+      "unfragmented_fraction": null
+    },
+    "membership_coverage": 1.0,
+    "pairwise_clustering": {
+      "f1": 0.5884016973125884,
+      "intersection": 208,
+      "precision": 0.46741573033707867,
+      "predicted_pairs": 445,
+      "recall": 0.7938931297709924,
+      "true_pairs": 262
+    },
+    "single_copy_family_recovery": {
+      "count": 0,
+      "rate": 0.0,
+      "total": 1
+    },
+    "species_coverage": {
+      "complete_fraction": 0.42857142857142855,
+      "mean": 0.6785714285714286
+    }
+  },
+  "hierarchy": {
+    "exact_clades": 13,
+    "f1": 0.19696969696969696,
+    "mean_best_truth_jaccard": 0.42611252152536555,
+    "precision": 0.5652173913043478,
+    "predicted_clades": 23,
+    "recall": 0.11926605504587157,
+    "truth_clades": 109
+  },
+  "input_checksums": {
+    "dataset_manifest": "773221db4e789795a571f6408ed25196c2fdff5d34eab411542c15548094d148",
+    "events.tsv": "a54df65390b5bb1515973568e8641e7e441bbd13cd9950d51467b11c6907c1b2",
+    "families.tsv": "a5b39e14420c663e02b40b8727bc3343a9be5da1e73c1f126aabb283c6fa0fff",
+    "hierarchy.tsv": "5d0feedac1ec28913e8f4f94a8482fd92ae95d79258eabd54da6cffa69269e2f",
+    "members.tsv": "ec66af6a86682053bafdacce3d29bee8c1f56d2c4e1df291decc3ba043a27de9"
+  },
+  "method": "ogprofiler2",
+  "orthology": {
+    "f1": 0.0,
+    "intersection": 0,
+    "precision": 0.0,
+    "predicted_pairs": 0,
+    "recall": 0.0,
+    "truth_pairs": 221
+  },
+  "scenario": {
+    "divergence": 0.05,
+    "duplication_rate": 0.5,
+    "expansion": 2,
+    "fusion_rate": 0.25,
+    "loss_rate": 0.2,
+    "replicate": 0,
+    "seed": 42
+  },
+  "scenario_id": "synthetic-d79a91cd9259",
+  "schema_version": "synthetic-recovery-v1"
+}

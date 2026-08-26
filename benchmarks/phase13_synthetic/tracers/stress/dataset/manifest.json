@@ -1,0 +1,34 @@
+{
+  "ancestral_families": 12,
+  "artifact_checksums": {
+    "domain_architecture.tsv": "268fb067a086051b15ab2ec23262b4372202cef0838e9172b845ff12c04f0ca0",
+    "genealogy.tsv": "abbf427890a670e7af74bdde694ba7764aae76d62bdbfb9551d09941befb483f",
+    "ground_truth.tsv": "9e19d23fa9ef401677b23291aa0361c50edfc4cb534b4d3867a3a53fb73bdaf5",
+    "proteomes/species_00.faa": "d24fa1c2adfa9b1e2f72b1f7e4df95824ee450364f9cb2faff1c7dd532a5f733",
+    "proteomes/species_01.faa": "427d2760623f0cd45f179b8b37289d809b4720b2fdb04a2760e270bce7f0b289",
+    "proteomes/species_02.faa": "c043c44595af8f50de6126c60dbbc3d3d7aa02a0eb32b21c45c74fbb65e90ef3",
+    "proteomes/species_03.faa": "03a46f605a93088e08cde066ea6bd717ebe2738ef596e4a7490c47178ac44a79",
+    "species_tree.nwk": "97ef786451e439617e9b591e37dc67869a7897daff7c3c3354a64e71f638e376",
+    "true_events.tsv": "57e4af893ecbf272a89c4b122aea39ed0f9d15465da1aba59c0b72c51db4f4b6",
+    "true_orthologs.tsv": "ef49e94af1a712c033f41fe45239513d924814543cb14e14c652dc82497875e2"
+  },
+  "fusion_count": 47,
+  "genealogy_node_count": 482,
+  "protein_count": 189,
+  "scenario": {
+    "divergence": 0.4,
+    "duplication_rate": 0.5,
+    "expansion": 4,
+    "fusion_rate": 0.25,
+    "loss_rate": 0.4,
+    "replicate": 0,
+    "seed": 42
+  },
+  "scenario_id": "synthetic-239f5f50d88d",
+  "schema_version": "synthetic-evolution-dataset-v1",
+  "sequence_length": 120,
+  "species_tree": "((species_00,species_01),(species_02,species_03));",
+  "terminal_family_count": 47,
+  "true_event_count": 281,
+  "true_ortholog_pair_count": 266
+}

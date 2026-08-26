@@ -1,0 +1,90 @@
+{
+  "artifact_checksums": {
+    "C_gene_family_expansion/component-results.manifest.json": "33ece42130d0b4103c981d1102851dd6ba46ce99e061f30b67e1562847e7c3db",
+    "C_gene_family_expansion/component-results.parquet": "dc7e95671526404f504a7ccf610362f0e528d26307d481d2fb101d0e687873d7",
+    "C_gene_family_expansion/component-tasks.manifest.json": "38bdb0dda3d33ba3755b773365f0f070cbbe6302f01d25a0256e3d374ab56c26",
+    "C_gene_family_expansion/component-tasks.parquet": "60ba9545ca0c9146282d7fcd402774700682cca34d561cb9b1db3467861046c9",
+    "C_gene_family_expansion/io/profiles.manifest.json": "f551063140dd7cc8100ca61f6c16631aacdcec504b79747afe4945c2fcb7a4b8",
+    "C_gene_family_expansion/io/profiles.parquet": "7825b84c638cd8662e4069d463e989439d704e6e7e34dfa0b5bb3d538a79c5eb",
+    "C_gene_family_expansion/parallel.time": "d1693340ea508cc007a04e1ee2d982be0f51f5f9314171d376902d64af1c31f5",
+    "C_gene_family_expansion/resume.time": "d0229556b365b7369fc6f00a9354876b451c8d364cfa12a1e3a38e080e4d8bdd",
+    "E_large_connected_component/component-results.manifest.json": "48152512888c6225bff6b986993b90b75475e1022feed5e105bd13d4f54d0fd6",
+    "E_large_connected_component/component-results.parquet": "719b3eeea8f01f314a132c7da5ade061de3e7f88a1f49c6525d0aa42453131d5",
+    "E_large_connected_component/component-tasks.manifest.json": "0179eac17b361f277a64c9de333c9ff4fe240e2f5233274b6d529964bf7abb3d",
+    "E_large_connected_component/component-tasks.parquet": "f08cdaa3ce0457fd9b5374f705399d577c3850c810ea5c9cc76328e6a77d7585",
+    "E_large_connected_component/io/profiles.manifest.json": "efd380a4f0dd7534733720aa717894c406b20789b1654e24b179f51c58d8fbd6",
+    "E_large_connected_component/io/profiles.parquet": "b3ac656e3494a5d792cd4f7e094b93c07477e8e39a228b22109a70538777ff30",
+    "E_large_connected_component/parallel.time": "5ca45e74360923b57ffae2a3c3c14964072e4868f6df1427f9668212b998f3e5",
+    "E_large_connected_component/resume.time": "ee0ad5f1205c0b4bf93d01c0f13f6c3e2b754e3d73cefcc9641a7068bfa2df37"
+  },
+  "datasets": {
+    "C_gene_family_expansion": {
+      "component_tasks": 6,
+      "hierarchy_nodes": 9,
+      "hierarchy_peak_rss_bytes_max": 74989568,
+      "hierarchy_runtime_seconds_sum": 3.5670512011274695,
+      "parallel": {
+        "max_rss_kib": 74292,
+        "wall_seconds": 6.58
+      },
+      "resume": {
+        "max_rss_kib": 69772,
+        "wall_seconds": 1.13
+      },
+      "terminal_families": 8,
+      "zstd_262144": {
+        "file_bytes": 27158390,
+        "random_rows_per_second": 35452785.822733134,
+        "sequential_rows_per_second": 44759654.93430233
+      }
+    },
+    "E_large_connected_component": {
+      "component_tasks": 1,
+      "hierarchy_nodes": 7,
+      "hierarchy_peak_rss_bytes_max": 77508608,
+      "hierarchy_runtime_seconds_sum": 1.151374656939879,
+      "parallel": {
+        "max_rss_kib": 77684,
+        "wall_seconds": 3.22
+      },
+      "resume": {
+        "max_rss_kib": 69880,
+        "wall_seconds": 0.63
+      },
+      "terminal_families": 6,
+      "zstd_262144": {
+        "file_bytes": 27158730,
+        "random_rows_per_second": 54929024.68911879,
+        "sequential_rows_per_second": 65444277.05362257
+      }
+    }
+  },
+  "git_commit": "c1da58cee4ee897eb3f30df0f4bf6c27bf171a8f",
+  "git_dirty": true,
+  "job_id": "1404222",
+  "recommendation": {
+    "basis": "smallest files and highest sequential/random throughput among compressed layouts in both 2M-row profiles",
+    "compression": "zstd",
+    "row_group_size": 262144
+  },
+  "resources": {
+    "array_tasks": 2,
+    "cpus_per_task": 4,
+    "memory_gib": 16,
+    "time_limit_minutes": 30
+  },
+  "run_id": "20260826T130055Z_c1da58cee4ee_a377421e_95874",
+  "slurm": {
+    "task_0": {
+      "elapsed_seconds": 25,
+      "exit_code": "0:0",
+      "state": "COMPLETED"
+    },
+    "task_1": {
+      "elapsed_seconds": 20,
+      "exit_code": "0:0",
+      "state": "COMPLETED"
+    }
+  },
+  "source_sha256": "a377421e044d837f7525c8f8cdbc122a2aa4f68892b21c7b6f4f9e38844342e4"
+}

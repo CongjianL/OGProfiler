@@ -26,6 +26,48 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
+    run = subparsers.add_parser("run", help="execute or resume the standard end-to-end pipeline")
+    run.add_argument("--proteomes", type=Path)
+    run.add_argument("--out", required=True, type=Path)
+    run.add_argument("--config", type=Path)
+    run.add_argument("--set", dest="overrides", action="append", default=[])
+    run.add_argument(
+        "--from-stage",
+        choices=(
+            "prepare",
+            "search",
+            "edges",
+            "components",
+            "hierarchy",
+            "annotate-network",
+            "export",
+        ),
+        default="prepare",
+    )
+    run.add_argument(
+        "--until-stage",
+        choices=(
+            "prepare",
+            "search",
+            "edges",
+            "components",
+            "hierarchy",
+            "annotate-network",
+            "export",
+        ),
+        default="export",
+    )
+    run.add_argument("--dry-run", action="store_true")
+
+    status = subparsers.add_parser("status", help="summarize pipeline and checkpoint state")
+    status.add_argument("--run", required=True, type=Path)
+    status.add_argument("--json", action="store_true")
+
+    inspect = subparsers.add_parser("inspect", help="inspect dataset and hierarchy summaries")
+    inspect.add_argument("--run", required=True, type=Path)
+    inspect.add_argument("--component", type=int)
+    inspect.add_argument("--json", action="store_true")
+
     prepare = subparsers.add_parser(
         "prepare",
         help="validate proteomes and write deterministic input metadata",
@@ -177,7 +219,18 @@ def build_parser() -> argparse.ArgumentParser:
         "benchmark",
         help="plan or evaluate scientific parameter and method benchmarks",
     )
-    benchmark.add_argument("kind", choices=("plan", "metrics", "compare"))
+    benchmark.add_argument(
+        "kind",
+        choices=(
+            "plan",
+            "metrics",
+            "compare",
+            "synthetic-plan",
+            "synthetic-generate",
+            "synthetic-metrics",
+            "synthetic-map",
+        ),
+    )
     benchmark.add_argument("--out", required=True, type=Path)
     benchmark.add_argument("--run", type=Path)
     benchmark.add_argument("--ground-truth", type=Path)
@@ -186,6 +239,11 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--metrics", type=Path, action="append", default=[])
     benchmark.add_argument("--legacy-normalized", type=Path)
     benchmark.add_argument("--large-family-size", type=int, default=20)
+    benchmark.add_argument("--dataset-root", type=Path)
+    benchmark.add_argument("--replicates", type=int, default=1)
+    benchmark.add_argument("--index", type=int, default=0)
+    benchmark.add_argument("--ancestral-families", type=int, default=12)
+    benchmark.add_argument("--sequence-length", type=int, default=120)
     return parser
 
 
@@ -216,6 +274,69 @@ def _prepare(args: argparse.Namespace, command: list[str]) -> int:
         result.dataset_manifest.n_species,
         result.dataset_manifest.dataset_sha256,
     )
+    return 0
+
+
+def _run_pipeline(args: argparse.Namespace, command: list[str]) -> int:
+    from ogprofiler.ux import pipeline_commands, write_run_provenance
+
+    commands = pipeline_commands(
+        args.out,
+        args.proteomes,
+        config=args.config,
+        overrides=tuple(args.overrides),
+        from_stage=str(args.from_stage),
+        until_stage=str(args.until_stage),
+    )
+    if args.dry_run:
+        for stage_command in commands:
+            print("ogprofiler " + " ".join(stage_command))
+        return 0
+    for stage_command in commands:
+        status = main(stage_command)
+        if status != 0:
+            return status
+    config_path = args.config
+    if config_path is None and (args.out / "run.yaml").is_file():
+        config_path = args.out / "run.yaml"
+    resolved = load_config(str(config_path) if config_path else None, args.overrides)
+    provenance = write_run_provenance(args.out, resolved, command)
+    print(f"pipeline complete: run={args.out} provenance={provenance}")
+    return 0
+
+
+def _print_report(report: dict[str, object], *, as_json: bool) -> None:
+    import json
+
+    if as_json:
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return
+    print(f"run: {report['run_root']}")
+    print(f"overall: {report['overall']}")
+    stages = report.get("stages", [])
+    if isinstance(stages, list):
+        for row in stages:
+            if isinstance(row, dict):
+                print(f"{row['stage']:<18} {row['status']:<11} {row['artifact']}")
+    counts = report.get("counts")
+    if isinstance(counts, dict) and counts:
+        print("counts: " + ", ".join(f"{key}={value}" for key, value in counts.items()))
+    component = report.get("component")
+    if isinstance(component, dict):
+        print("component: " + ", ".join(f"{key}={value}" for key, value in component.items()))
+
+
+def _status(args: argparse.Namespace) -> int:
+    from ogprofiler.ux import run_status
+
+    _print_report(run_status(args.run), as_json=bool(args.json))
+    return 0
+
+
+def _inspect(args: argparse.Namespace) -> int:
+    from ogprofiler.ux import inspect_run
+
+    _print_report(inspect_run(args.run, args.component), as_json=bool(args.json))
     return 0
 
 
@@ -399,6 +520,8 @@ def _hierarchy(args: argparse.Namespace, command: list[str]) -> int:
         seed=options["seed"],
         max_depth=options["max_depth"],
         stability_mode=options["stability_mode"],
+        subtree_workers=options["subtree_workers"],
+        subtree_release_size=options["subtree_release_size"],
         resolution=ResolutionSearchConfig(
             strategy=options["resolution_strategy"],
             gamma_min=options["gamma_min"],
@@ -441,6 +564,8 @@ def _hierarchy_all(args: argparse.Namespace, command: list[str]) -> int:
         seed=options["seed"],
         max_depth=options["max_depth"],
         stability_mode=options["stability_mode"],
+        subtree_workers=options["subtree_workers"],
+        subtree_release_size=options["subtree_release_size"],
         resolution=ResolutionSearchConfig(
             strategy=options["resolution_strategy"],
             gamma_min=options["gamma_min"],
@@ -617,6 +742,53 @@ def _phylogenetic_refinement(args: argparse.Namespace, command: list[str]) -> in
 
 
 def _benchmark(args: argparse.Namespace) -> int:
+    if args.kind in {"synthetic-plan", "synthetic-generate"}:
+        from ogprofiler.benchmark.synthetic import (
+            generate_scenario_matrix,
+            generate_synthetic_dataset,
+            write_scenario_matrix,
+        )
+
+        scenarios = generate_scenario_matrix(replicates=int(args.replicates))
+        if args.kind == "synthetic-plan":
+            json_path, _ = write_scenario_matrix(args.out, scenarios)
+            print(f"synthetic scenario matrix: runs={len(scenarios)} manifest={json_path}")
+            return 0
+        if not 0 <= args.index < len(scenarios):
+            raise OGProfilerError(
+                f"synthetic-generate --index must be between 0 and {len(scenarios) - 1}"
+            )
+        manifest = generate_synthetic_dataset(
+            args.out,
+            scenarios[int(args.index)],
+            ancestral_families=int(args.ancestral_families),
+            sequence_length=int(args.sequence_length),
+        )
+        print(f"synthetic dataset: {manifest}")
+        return 0
+    if args.kind == "synthetic-metrics":
+        from ogprofiler.benchmark.synthetic_metrics import (
+            evaluate_synthetic_run,
+            write_synthetic_evaluation,
+        )
+
+        if args.run is None or args.dataset_root is None:
+            raise OGProfilerError(
+                "benchmark synthetic-metrics requires --run and --dataset-root"
+            )
+        result = evaluate_synthetic_run(args.run, args.dataset_root, method=str(args.method))
+        output = args.out / "synthetic-metrics.json" if args.out.suffix == "" else args.out
+        write_synthetic_evaluation(output, result)
+        print(f"synthetic recovery metrics: {output}")
+        return 0
+    if args.kind == "synthetic-map":
+        from ogprofiler.benchmark.synthetic_metrics import aggregate_applicability
+
+        if not args.metrics:
+            raise OGProfilerError("benchmark synthetic-map requires --metrics files")
+        json_path, _ = aggregate_applicability(args.metrics, args.out)
+        print(f"Leiden applicability map: {json_path}")
+        return 0
     if args.kind == "plan":
         from ogprofiler.benchmark.matrix import generate_ofat_matrix, write_matrix
 
@@ -673,6 +845,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     supplied = list(argv) if argv is not None else sys.argv[1:]
     try:
         args = parser.parse_args(supplied)
+        if args.command == "run":
+            return _run_pipeline(args, ["ogprofiler", *supplied])
+        if args.command == "status":
+            return _status(args)
+        if args.command == "inspect":
+            return _inspect(args)
         if args.command == "prepare":
             return _prepare(args, ["ogprofiler", *supplied])
         if args.command == "prototype-hierarchy":

@@ -1,0 +1,99 @@
+{
+  "events": {
+    "accuracy_on_matched": 0.0625,
+    "confusion": {
+      "DUPLICATION_LIKE": {
+        "AMBIGUOUS": 4,
+        "SPECIATION_LIKE": 1,
+        "SPECIES_SPECIFIC": 4
+      },
+      "SPECIATION_LIKE": {
+        "AMBIGUOUS": 5,
+        "SPECIATION_LIKE": 1,
+        "SPECIES_SPECIFIC": 1
+      }
+    },
+    "correct": 1,
+    "coverage": 0.25396825396825395,
+    "end_to_end_accuracy": 0.015873015873015872,
+    "matched_exact_clades": 16,
+    "truth_events": 63
+  },
+  "family": {
+    "exact_family_recovery": {
+      "count": 6,
+      "rate": 0.2727272727272727,
+      "total": 22
+    },
+    "family_number": 20,
+    "family_size_distribution": {
+      "max": 10,
+      "mean": 3.65,
+      "median": 3.0,
+      "min": 1,
+      "q25": 2.0,
+      "q75": 4.25
+    },
+    "large_family_fragmentation": {
+      "families": 0,
+      "max_fragments": null,
+      "mean_fragments": null,
+      "threshold": 20,
+      "unfragmented_fraction": null
+    },
+    "membership_coverage": 1.0,
+    "pairwise_clustering": {
+      "f1": 0.6561264822134386,
+      "intersection": 83,
+      "precision": 0.5971223021582733,
+      "predicted_pairs": 139,
+      "recall": 0.7280701754385965,
+      "true_pairs": 114
+    },
+    "single_copy_family_recovery": {
+      "count": 0,
+      "rate": null,
+      "total": 0
+    },
+    "species_coverage": {
+      "complete_fraction": 0.1,
+      "mean": 0.55
+    }
+  },
+  "hierarchy": {
+    "exact_clades": 19,
+    "f1": 0.4523809523809524,
+    "mean_best_truth_jaccard": 0.6553023479252987,
+    "precision": 0.8260869565217391,
+    "predicted_clades": 23,
+    "recall": 0.3114754098360656,
+    "truth_clades": 61
+  },
+  "input_checksums": {
+    "dataset_manifest": "90763df9bda345213e5889e5c33b1a58e1294460a228e80873f94916077d47c3",
+    "events.tsv": "371dd67e60adae6d464b4b2ad7256d40c54a09f8a1a81efb2fdcec3361e8d9dc",
+    "families.tsv": "9d4abb87c4a88382010e74b0218097ca905a7f4e5437be3fb66357df1ba79089",
+    "hierarchy.tsv": "53711aeeb85f8fc04d399e253938a52433494712b8e29d7e35755a2c75022583",
+    "members.tsv": "326642cef4e2647b2fac737876cbbe61492f1915af7e9908590cdbdf56f06ea2"
+  },
+  "method": "ogprofiler2",
+  "orthology": {
+    "f1": 0.24528301886792453,
+    "intersection": 13,
+    "precision": 1.0,
+    "predicted_pairs": 13,
+    "recall": 0.13978494623655913,
+    "truth_pairs": 93
+  },
+  "scenario": {
+    "divergence": 0.2,
+    "duplication_rate": 0.5,
+    "expansion": 2,
+    "fusion_rate": 0.1,
+    "loss_rate": 0.4,
+    "replicate": 0,
+    "seed": 42
+  },
+  "scenario_id": "synthetic-465ec3948efe",
+  "schema_version": "synthetic-recovery-v1"
+}

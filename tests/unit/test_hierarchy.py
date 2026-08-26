@@ -13,6 +13,7 @@ from ogprofiler.hierarchy.engine import (
 )
 from ogprofiler.hierarchy.leiden import LeidenCallCounter, LeidenResult, run_leiden
 from ogprofiler.hierarchy.resolution import ResolutionSearchConfig, search_resolution
+from ogprofiler.hierarchy.subtree import infer_component_hierarchy_parallel
 from ogprofiler.hierarchy.validation import validate_hierarchy
 from ogprofiler.storage.hierarchy import write_hierarchy_result
 
@@ -110,6 +111,30 @@ def test_dfs_hierarchy_preserves_all_invariants_and_k_way_split(tmp_path: Path) 
     assert (tmp_path / "members.parquet").is_file()
     assert (tmp_path / "candidates.parquet").is_file()
     assert (tmp_path / "metrics.json").is_file()
+
+
+def test_parallel_subtree_scheduler_matches_frozen_dfs_topology() -> None:
+    component = planted_component()
+    graph, _ = component.as_edge_table().to_igraph()
+    config = HierarchyConfig(
+        max_depth=3,
+        resolution=ResolutionSearchConfig(
+            gamma_min=0.1,
+            gamma_max=2.0,
+            growth_factor=2.0,
+            local_grid_points=4,
+            min_child_size=2,
+            max_child_fraction=0.8,
+        ),
+    )
+    serial = infer_component_hierarchy(component, config, root_graph=graph)
+    parallel = infer_component_hierarchy_parallel(
+        component, config, None, graph, workers=2
+    )
+    validate_hierarchy(component, parallel)
+    assert parallel.nodes == serial.nodes
+    assert parallel.terminal_membership == serial.terminal_membership
+    assert parallel.resolution_candidates == serial.resolution_candidates
 
 
 def test_singleton_component_bypasses_leiden() -> None:

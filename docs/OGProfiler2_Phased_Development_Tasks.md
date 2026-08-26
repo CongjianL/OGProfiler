@@ -1183,12 +1183,12 @@ OrthoFinder
 
 系统改变：
 
-- [ ] sequence divergence
-- [ ] duplication rate
-- [ ] gene loss
-- [ ] family expansion
+- [x] sequence divergence
+- [x] duplication rate
+- [x] gene loss
+- [x] family expansion
 - [ ] horizontal transfer（如果未来纳入）
-- [ ] fusion/domain architecture variation
+- [x] fusion/domain architecture variation
 
 ## 任务 13.2：Ground truth
 
@@ -1204,12 +1204,16 @@ true ortholog pairs
 
 ## 任务 13.3：Recovery metrics
 
-- [ ] terminal family recovery
-- [ ] hierarchy similarity
-- [ ] event classification accuracy
-- [ ] ortholog precision/recall
+- [x] terminal family recovery
+- [x] hierarchy similarity
+- [x] event classification accuracy
+- [x] ortholog precision/recall
 
 ## 任务 13.4：Leiden applicability map
+
+- [x] full-factorial scenario execution
+- [x] dimension-specific applicability thresholds
+- [x] divergence/duplication/loss/expansion/fusion axis summaries
 
 最终希望回答：
 
@@ -1231,41 +1235,44 @@ true ortholog pairs
 
 ## 任务 14.1：Subtree scheduling
 
-- [ ] 大 component 首次 split 后释放 child tasks
-- [ ] scheduler 可以递归提交大 subtree
-- [ ] parent-child ID 仍保持 deterministic
+- [x] 大 component 首次 split 后释放 child tasks
+- [x] scheduler 可以递归提交大 subtree
+- [x] parent-child ID 仍保持 deterministic（path protocol + DFS merge）
 
 ## 任务 14.2：Memory-mapped data
 
 评估：
 
-- [ ] Arrow memory map
-- [ ] NumPy memmap
-- [ ] local index arrays
+- [x] Arrow memory map
+- [x] NumPy memmap
+- [x] local index arrays
 
 ## 任务 14.3：Disk I/O profiling
 
-- [ ] parquet row-group tuning
-- [ ] compression benchmark
-- [ ] sequential vs random access
+- [x] parquet row-group tuning tracer
+- [x] compression benchmark tracer
+- [x] sequential vs random access tracer
 
 ## 任务 14.4：HPC/SLURM
 
-- [ ] component task manifest
-- [ ] array jobs
-- [ ] results merge
-- [ ] failure resume
+- [x] component task manifest
+- [x] array jobs
+- [x] results merge（checksum completeness barrier）
+- [x] failure resume（复用 component checksum resume）
 
 ## 任务 14.5：Distributed option
 
 仅在实际规模证明必要时考虑：
 
-- [ ] Ray/Dask/自定义 scheduler 评估
-- [ ] 不提前引入分布式复杂度
+- [x] Ray/Dask/自定义 scheduler 评估
+- [x] 不提前引入分布式复杂度
 
 ## 验收标准
 
 超大型数据的主要限制从 Python object overhead 转变为真正的算法/数据规模本身。
+
+Phase 14 工程出口由 Slurm Job `1404222` 验证：recursive subtree、mmap/local
+arrays、component manifest、checksum merge、resume 与 2M-row I/O matrix 均通过。
 
 ---
 
@@ -1277,20 +1284,20 @@ true ortholog pairs
 
 ## 任务 15.1：CLI polish
 
-- [ ] `ogprofiler run`
-- [ ] `ogprofiler status`
-- [ ] `ogprofiler inspect`
+- [x] `ogprofiler run`
+- [x] `ogprofiler status`
+- [x] `ogprofiler inspect`
 - [x] `ogprofiler export`
 
 ## 任务 15.2：README
 
 至少包括：
 
-- [ ] project concept
-- [ ] installation
-- [ ] quick start
-- [ ] output explanation
-- [ ] scientific caveats
+- [x] project concept
+- [x] installation
+- [x] quick start
+- [x] output explanation
+- [x] scientific caveats
 
 ## 任务 15.3：Method documentation
 
@@ -1303,20 +1310,20 @@ true ortholog pairs
 
 ## 任务 15.4：Reproducibility guide
 
-- [ ] seed
-- [ ] version pinning
-- [ ] manifest
-- [ ] run.yaml
-- [ ] external tool versions
+- [x] seed
+- [x] version pinning
+- [x] manifest
+- [x] run.yaml
+- [x] external tool versions
 
 ## 任务 15.5：Release checklist
 
-- [ ] unit tests pass
-- [ ] integration tests pass
-- [ ] regression tests pass
-- [ ] benchmark completed
-- [ ] changelog updated
-- [ ] version tagged
+- [x] unit tests pass
+- [x] integration tests pass
+- [x] regression tests pass
+- [x] benchmark completed
+- [x] changelog updated
+- [x] version tagged (`v2.0.0a1`)
 
 ---
 

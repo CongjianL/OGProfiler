@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0a1",
+  "source_commit": "c1da58cee4ee897eb3f30df0f4bf6c27bf171a8f",
+  "source_dirty": true,
+  "local": {
+    "ruff": "passed",
+    "mypy": "passed",
+    "pytest_passed": 79,
+    "phase0_dataset_sha256": "e4abe89f62f28fa4351cffc453d66c416719ecc1d4b8a72165e89c2f013a13d5"
+  },
+  "remote": {
+    "environment": "ogprofiler",
+    "ruff": "passed",
+    "pytest_passed_before_final_cli_test": 78,
+    "final_cli_tests_passed": 3
+  },
+  "distribution": {
+    "sdist": "ogprofiler-2.0.0a1.tar.gz",
+    "wheel": "ogprofiler-2.0.0a1-py3-none-any.whl",
+    "installed_version_smoke": "ogprofiler 2.0.0a1"
+  },
+  "release_state": "designated release snapshot for annotated tag v2.0.0a1"
+}

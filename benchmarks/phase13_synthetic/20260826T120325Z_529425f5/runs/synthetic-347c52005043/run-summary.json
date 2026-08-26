@@ -1,0 +1,31 @@
+{
+  "dataset_manifest_sha256": "cb8a1d049b990a0d76db65e12a6ddeb3b405b5295044f3ed944a8135525978e4",
+  "headline_metrics": {
+    "event_accuracy": 0.009259259259259259,
+    "family_f1": 0.4884667571234735,
+    "hierarchy_f1": 0.367816091954023,
+    "orthology_f1": 0.20253164556962025
+  },
+  "scenario": {
+    "divergence": 0.4,
+    "duplication_rate": 0.5,
+    "expansion": 2,
+    "fusion_rate": 0.25,
+    "loss_rate": 0.2,
+    "replicate": 0,
+    "seed": 42
+  },
+  "scenario_id": "synthetic-347c52005043",
+  "stage_seconds": {
+    "components": 0.640739968046546,
+    "edges": 0.4980157809332013,
+    "export": 0.4592072169762105,
+    "hierarchy": 2.254424098879099,
+    "metrics": 0.3270151379983872,
+    "network": 0.8442984749563038,
+    "orthology": 0.48058516602031887,
+    "prepare": 1.0862877829931676,
+    "search": 1.374622710980475
+  },
+  "total_seconds": 7.965196337783709
+}
