@@ -154,17 +154,25 @@ def main()->None:
  # Family/fusion diagnostics.
  result_members=read_table(a.run/"results/members.tsv");fam_pid:dict[str,set[int]]=defaultdict(set)
  for r in result_members:fam_pid[r["family_id"]].add(int(r["protein_id"]))
- family_rows={r["family_id"]:r for r in read_table(a.run/"results/families.tsv")};burden=read_table(a.burden);top=burden[:10]
+ family_rows={r["family_id"]:r for r in read_table(a.run/"results/families.tsv")};burden=read_table(a.burden);burden_by_id={r["family_id"]:r for r in burden};top=burden[:10]
+ hierarchy_lookup={(r["component_id"],r["cluster_id"]):r for r in read_table(a.run/"results/hierarchy.tsv")}
+ catastrophic_ids=set()
+ for fid,members in fam_pid.items():
+  refcounts=Counter(pid_ref[x] for x in members if x in pid_ref)
+  if any(n/len(truth[ref])>=.8 and (len(members)-n)/len(members)>=.5 for ref,n in refcounts.items()):catastrophic_ids.add(fid)
+ bridge_ids={r["family_id"] for r in top}|{"OG000000491"};focus_ids=catastrophic_ids|bridge_ids
  catastrophic=[];bridge_rows=[]
- for b in top:
-  fid=b["family_id"];members=fam_pid[fid];fr=family_rows[fid];comp=int(fr["component_id"]);cluster=int(fr["cluster_id"])
-  comp_edges=a.run/"components/edges"/f"component={comp:08d}"
-  erows=pq.read_table(comp_edges).to_pylist() if comp_edges.is_dir() else []
-  induced=[r for r in erows if int(r["u"]) in members and int(r["v"]) in members]
+ for fid in sorted(focus_ids,key=lambda x:(-float(burden_by_id[x]["official_like_FP"]),x)):
+  b=burden_by_id[fid];members=fam_pid[fid];fr=family_rows[fid];comp=int(fr["component_id"]);cluster=int(fr["cluster_id"])
   refcounts=Counter(pid_ref[x] for x in members if x in pid_ref);ranked=refcounts.most_common();is_cat=False
   for ref,n in ranked:
    recall=n/len(truth[ref]);contam=(len(members)-n)/len(members);is_cat|=recall>=.8 and contam>=.5
-  catastrophic.append({"family_id":fid,"total_size":len(members),"n_species":len({meta[x]["species_id"] for x in members}),"n_refog_members":sum(refcounts.values()),"n_non_refog_members":len(members)-sum(refcounts.values()),"n_refogs":len(refcounts),"top_refog":ranked[0][0] if ranked else NA,"top_refog_fraction":ranked[0][1]/len(members) if ranked else 0,"second_refog":ranked[1][0] if len(ranked)>1 else NA,"official_like_FP":b["official_like_FP"],"fraction_total_FP":b["fraction_of_all_FP"],"hierarchy_depth":next((r["depth"] for r in read_table(a.run/"results/hierarchy.tsv") if r["component_id"]==str(comp) and r["cluster_id"]==str(cluster)),NA),"parent_node":next((r["parent_id"] or NA for r in read_table(a.run/"results/hierarchy.tsv") if r["component_id"]==str(comp) and r["cluster_id"]==str(cluster)),NA),"terminal_reason_if_available":fr["terminal_reason"],"catastrophic_definition_met":str(is_cat).lower()})
+  hr=hierarchy_lookup.get((str(comp),str(cluster)),{})
+  catastrophic.append({"family_id":fid,"total_size":len(members),"n_species":len({meta[x]["species_id"] for x in members}),"n_refog_members":sum(refcounts.values()),"n_non_refog_members":len(members)-sum(refcounts.values()),"n_refogs":len(refcounts),"top_refog":ranked[0][0] if ranked else NA,"top_refog_fraction":ranked[0][1]/len(members) if ranked else 0,"second_refog":ranked[1][0] if len(ranked)>1 else NA,"official_like_FP":b["official_like_FP"],"fraction_total_FP":b["fraction_of_all_FP"],"hierarchy_depth":hr.get("depth",NA),"parent_node":hr.get("parent_id") or NA,"terminal_reason_if_available":fr["terminal_reason"],"catastrophic_definition_met":str(is_cat).lower()})
+  if fid in bridge_ids:
+   comp_edges=a.run/"components/edges"/f"component={comp:08d}";erows=pq.read_table(comp_edges).to_pylist() if comp_edges.is_dir() else []
+   induced=[r for r in erows if int(r["u"]) in members and int(r["v"]) in members]
+  else:induced=[]
   if induced:
    import igraph as ig
    ids=sorted(members);idx={x:i for i,x in enumerate(ids)};g=ig.Graph(n=len(ids),edges=[(idx[int(r["u"])],idx[int(r["v"])]) for r in induced],directed=False);weights=[float(r["weight"]) for r in induced];degree=g.degree();wdegree=g.strength(weights=weights);arts=set(g.articulation_points()) if len(ids)<=10000 else set();between=g.betweenness(cutoff=4,directed=False) if len(ids)<=10000 else [math.nan]*len(ids)

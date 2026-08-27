@@ -20,10 +20,16 @@ METRICS="$ROOT/05_metrics/orthobench"
 DIAG_RUN="$ROOT/03_runs/B1_orthobench/OGProfiler2/seed42_rep2/stage1c_diagnostics"
 REF_METRICS="$METRICS/OGProfiler2_seed42_refog_metrics.tsv"
 
-[[ -d "$RUN" && -f "$GROUPS" && -d "$REFOGS" && -f "$REF_METRICS" ]] || {
-  echo "Missing immutable Stage 1B input artifact" >&2
-  exit 3
-}
+for attempt in 1 2 3 4 5; do
+  missing=0
+  [[ -d "$RUN" ]] || { echo "Missing directory: $RUN (attempt $attempt)" >&2; missing=1; }
+  [[ -f "$GROUPS" ]] || { echo "Missing file: $GROUPS (attempt $attempt)" >&2; missing=1; }
+  [[ -d "$REFOGS" ]] || { echo "Missing directory: $REFOGS (attempt $attempt)" >&2; missing=1; }
+  [[ -f "$REF_METRICS" ]] || { echo "Missing file: $REF_METRICS (attempt $attempt)" >&2; missing=1; }
+  [[ "$missing" == 0 ]] && break
+  sleep 5
+done
+[[ "$missing" == 0 ]] || exit 3
 [[ ! -e "$DIAG_RUN/STAGE1C_COMPLETE" ]] || {
   echo "Stage 1C diagnostics already complete: $DIAG_RUN" >&2
   exit 4
