@@ -10,6 +10,11 @@ def test_perfect_refog_pairwise_combinatorics():
     assert (tp,fp,fn,n)==(1.5,0.0,0.0,3)
 
 
+def test_low_certainty_member_is_removed_from_reference_and_prediction():
+    tp,fp,fn,n=official_family_contribution({"a","b","c"},{"c"},{"a","b","c"})
+    assert (tp,fp,fn,n)==(1.0,0.0,0.0,2)
+
+
 def test_disconnected_refog_has_family_attributable_fn():
     tp,fp,fn,n=official_family_contribution({"a","b","c","d"},set(),{"a","b"})
     assert (tp,fp,fn,n)==(1/3,0.0,2/3,2)
