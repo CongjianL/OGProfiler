@@ -170,6 +170,7 @@ def build_component_artifacts(
             basename_template=f"part-{batch_number:08d}-{{i}}.parquet",
             existing_data_behavior="overwrite_or_ignore",
             max_open_files=max_open_files,
+            max_partitions=max(1, batch.num_rows),
             file_options=ds.ParquetFileFormat().make_write_options(compression="zstd"),
             min_rows_per_group=PARQUET_ROW_GROUP_SIZE,
             max_rows_per_group=PARQUET_ROW_GROUP_SIZE,

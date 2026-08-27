@@ -116,3 +116,48 @@ def test_streamed_partitions_are_largest_first_and_preserve_singletons(tmp_path:
     assert read_component_edges(output, 2).num_rows == 0
     assert load_component_edge_table(output, 1).vertices == (3, 4, 5)
     assert non_singleton_component_ids(output) == (0, 1)
+
+
+def test_component_build_supports_more_than_arrow_partition_limit(tmp_path: Path) -> None:
+    """A single edge batch may span more than Arrow's default 1024 partitions."""
+    component_count = 1_025
+    proteins = tmp_path / "proteins.parquet"
+    edges = tmp_path / "retained_edges.parquet"
+    protein_ids = list(range(component_count * 2))
+    pq.write_table(
+        pa.table(
+            {
+                "protein_id": pa.array(protein_ids, type=pa.int64()),
+                "species_id": pa.array([value % 2 for value in protein_ids], type=pa.int32()),
+            }
+        ),
+        proteins,
+    )
+    rows = [
+        {
+            "u": component_id * 2,
+            "v": component_id * 2 + 1,
+            "u_species": 0,
+            "v_species": 1,
+            "score_uv": 1.0,
+            "score_vu": 1.0,
+            "weight": 1.0,
+            "coverage": 100.0,
+            "edge_type": "LRB",
+        }
+        for component_id in range(component_count)
+    ]
+    pq.write_table(pa.Table.from_pylist(rows, schema=RETAINED_EDGE_SCHEMA), edges)
+
+    output = tmp_path / "components"
+    result = build_component_artifacts(
+        proteins,
+        edges,
+        output,
+        batch_size=component_count,
+        max_open_files=16,
+    )
+
+    assert result.component_count == component_count
+    assert result.edge_count == component_count
+    assert read_component_edges(output, component_count - 1).num_rows == 1
