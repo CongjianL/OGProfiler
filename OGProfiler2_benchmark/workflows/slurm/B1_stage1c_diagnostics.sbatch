@@ -14,7 +14,7 @@ SOURCE_ROOT=${DEV_SOURCE_DIR:?Submitted immutable source snapshot is required}
 ROOT=/home/mselab/licj/project_data/OGProfiler/OGProfiler2_benchmark
 DATA_ROOT=/home/mselab/licj/project_data/OGProfiler/Open_Orthobench-master
 RUN="$ROOT/03_runs/B1_orthobench/OGProfiler2/seed42_rep2/run"
-GROUPS="$ROOT/04_standardized/groups/OGProfiler2/OpenOrthobench/groups_seed42_rep2.tsv"
+GROUPS_TSV="$ROOT/04_standardized/groups/OGProfiler2/OpenOrthobench/groups_seed42_rep2.tsv"
 REFOGS="$DATA_ROOT/BENCHMARKS/RefOGs"
 METRICS="$ROOT/05_metrics/orthobench"
 DIAG_RUN="$ROOT/03_runs/B1_orthobench/OGProfiler2/seed42_rep2/stage1c_diagnostics"
@@ -23,7 +23,7 @@ REF_METRICS="$METRICS/OGProfiler2_seed42_refog_metrics.tsv"
 for attempt in 1 2 3 4 5; do
   missing=0
   [[ -d "$RUN" ]] || { echo "Missing directory: $RUN (attempt $attempt)" >&2; missing=1; }
-  [[ -f "$GROUPS" ]] || { echo "Missing file: $GROUPS (attempt $attempt)" >&2; missing=1; }
+  [[ -f "$GROUPS_TSV" ]] || { echo "Missing file: $GROUPS_TSV (attempt $attempt)" >&2; missing=1; }
   [[ -d "$REFOGS" ]] || { echo "Missing directory: $REFOGS (attempt $attempt)" >&2; missing=1; }
   [[ -f "$REF_METRICS" ]] || { echo "Missing file: $REF_METRICS (attempt $attempt)" >&2; missing=1; }
   [[ "$missing" == 0 ]] && break
@@ -51,7 +51,7 @@ EOF
 
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 python "$SOURCE_ROOT/OGProfiler2_benchmark/scripts/diagnostics/orthobench_pairwise_attribution.py" \
-  --groups "$GROUPS" --refogs "$REFOGS" --outdir "$METRICS"
+  --groups "$GROUPS_TSV" --refogs "$REFOGS" --outdir "$METRICS"
 
 /usr/bin/time -v -o "$DIAG_RUN/stage_attribution.time.txt" \
 python "$SOURCE_ROOT/OGProfiler2_benchmark/scripts/diagnostics/refog_stage_attribution.py" \
