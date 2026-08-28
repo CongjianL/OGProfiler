@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Data-transfer fallback for clusters whose compute nodes cannot route to Zenodo.
+set -euo pipefail
+HERE=$(cd "$(dirname "$0")" && pwd -P)
+ROOT=$(cd "$HERE/.." && pwd -P)
+source "$HERE/remote.env"
+: "${REMOTE_HOST:?}"
+URL='https://zenodo.org/records/20814376/files/LUCA.h5?download=1'
+EXPECTED_SIZE=9918199250
+EXPECTED_MD5=87a322a0a6381a8de0b539d62e277054
+CACHE=${FASTOMA_DB_CACHE_DIR:-/tmp/ogprofiler-fastoma-luca}
+REMOTE_ENV=/home/mselab/licj/project_data/OGProfiler/OGProfiler2_benchmark/00_env/fastoma-0.5.1
+N=8
+mkdir -p "$CACHE/parts"
+chunk=$(( (EXPECTED_SIZE + N - 1) / N )); pids=()
+for ((i=0;i<N;i++)); do
+ start=$((i*chunk)); end=$((start+chunk-1)); if (( end >= EXPECTED_SIZE )); then end=$((EXPECTED_SIZE-1)); fi
+ expected=$((end-start+1)); printf -v tag '%02d' "$i"
+ done_file=$CACHE/parts/part-$tag.done; partial=$CACHE/parts/download-$tag.partial
+ if [[ -f "$done_file" && $(stat -f %z "$done_file") -eq $expected ]]; then continue; fi
+ (
+  curl -L --fail --retry 8 --connect-timeout 20 --range "$start-$end" -o "$partial" "$URL"
+  actual=$(stat -f %z "$partial"); [[ "$actual" -eq "$expected" ]] || { echo "part $tag size $actual != $expected" >&2; exit 5; }
+  mv "$partial" "$done_file"
+ ) & pids+=("$!")
+done
+status=0; for pid in "${pids[@]}"; do wait "$pid" || status=1; done; [[ "$status" -eq 0 ]] || exit 6
+ASSEMBLY=$CACHE/LUCA.h5
+: > "$ASSEMBLY"
+for ((i=0;i<N;i++)); do printf -v tag '%02d' "$i"; cat "$CACHE/parts/part-$tag.done" >> "$ASSEMBLY"; done
+[[ $(stat -f %z "$ASSEMBLY") -eq $EXPECTED_SIZE ]]
+md5 -q "$ASSEMBLY" | grep -qx "$EXPECTED_MD5"
+printf -v Q_ENV '%q' "$REMOTE_ENV"
+ssh "$REMOTE_HOST" "test ! -e $Q_ENV/LUCA.h5 && mkdir -p $Q_ENV"
+rsync -az --partial --progress "$ASSEMBLY" "$REMOTE_HOST:$REMOTE_ENV/LUCA.h5.uploading"
+GIT_COMMIT=$(git -C "$ROOT" rev-parse HEAD)
+printf -v Q_COMMIT '%q' "$GIT_COMMIT"
+ssh "$REMOTE_HOST" "set -e; test \"\$(stat -c %s $Q_ENV/LUCA.h5.uploading)\" -eq $EXPECTED_SIZE; echo '$EXPECTED_MD5  $REMOTE_ENV/LUCA.h5.uploading' | md5sum -c -; mv $Q_ENV/LUCA.h5.uploading $Q_ENV/LUCA.h5; md5sum $Q_ENV/LUCA.h5 > $Q_ENV/LUCA.h5.md5; sha256sum $Q_ENV/LUCA.h5 > $Q_ENV/LUCA.h5.sha256; printf 'source_url\\t%s\\nzenodo_record\\t20814376\\npublished_size_bytes\\t%s\\npublished_md5\\t%s\\nstaging_mode\\tlocal_parallel_download_then_rsync\\ngit_commit\\t%s\\n' '$URL' '$EXPECTED_SIZE' '$EXPECTED_MD5' $Q_COMMIT > $Q_ENV/LUCA.h5.provenance.tsv"
+echo "Staged and verified: $REMOTE_HOST:$REMOTE_ENV/LUCA.h5"
