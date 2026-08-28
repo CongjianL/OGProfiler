@@ -1,0 +1,1 @@
+proteinortho6.pl --project=B1_orthobench_Proteinortho6_rep1 --cpus=32 --singles INPUT/*.fa

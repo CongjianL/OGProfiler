@@ -1,0 +1,1 @@
+nextflow run dessimozlab/FastOMA -r v0.5.1 -profile conda --input INPUT_BUNDLE --species_tree SPECIES_TREE --omamer_db LUCA_H5 --output_folder OUTPUT

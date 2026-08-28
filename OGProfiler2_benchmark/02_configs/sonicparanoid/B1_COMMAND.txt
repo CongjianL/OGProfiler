@@ -1,0 +1,1 @@
+sonicparanoid -i INPUT -o OUTPUT -p B1_orthobench_SonicParanoid2_rep1 -t 32
