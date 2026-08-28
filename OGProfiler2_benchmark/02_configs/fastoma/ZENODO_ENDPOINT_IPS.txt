@@ -1,0 +1,9 @@
+# zenodo.org IPv4 addresses resolved from a trusted local DNS path on 2026-08-28.
+# Compute/login nodes map zenodo.org to 0.0.0.0, so curl --resolve preserves TLS
+# hostname verification while connecting to the official CERN service.
+137.138.153.219
+188.184.103.118
+188.185.43.153
+188.184.98.114
+137.138.52.235
+188.185.48.75
