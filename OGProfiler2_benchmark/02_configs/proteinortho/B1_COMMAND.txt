@@ -1,1 +1,1 @@
-proteinortho6.pl -project=B1_orthobench_Proteinortho6_rep1 -cpus=32 -singles INPUT/*.fa
+prepare_proteinortho_input.py --input INPUT --outdir PREPARED_INPUT --report input_preparation.tsv && proteinortho6.pl -project=B1_orthobench_Proteinortho6_rep1 -cpus=32 -singles PREPARED_INPUT/*.fa
