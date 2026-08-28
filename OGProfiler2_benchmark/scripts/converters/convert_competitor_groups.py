@@ -72,7 +72,7 @@ def main()->int:
  for pid in sorted(expected-seen):groups[f"{prefix}_UNASSIGNED_SINGLETON_{pid}"]=[pid]
  a.out.parent.mkdir(parents=True,exist_ok=True)
  with a.out.open("w",newline="",encoding="utf-8") as h:
-  w=csv.writer(h,delimiter="\t");w.writerow(["group_id","protein_id"])
+  w=csv.writer(h,delimiter="\t",lineterminator="\n");w.writerow(["group_id","protein_id"])
   for gid in sorted(groups):
    for pid in sorted(groups[gid]):w.writerow([gid,pid])
  errors=validate(read_groups(a.out),expected)

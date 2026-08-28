@@ -26,7 +26,7 @@ for ((i=0;i<N;i++)); do
  done_file=$PARTS/part-$tag.done; partial=$PARTS/download-$tag.partial; ip=${IPS[$((i % IP_COUNT))]}
  if [[ -f "$done_file" && $(stat -c %s "$done_file") -eq $expected ]]; then continue; fi
  (
-  curl --resolve "zenodo.org:443:$ip" -L --fail --retry 8 --retry-all-errors --connect-timeout 20 \
+  curl --resolve "zenodo.org:443:$ip" -L --fail --retry 8 --connect-timeout 20 \
    --range "$start-$end" -o "$partial" "$URL"
   actual=$(stat -c %s "$partial"); [[ "$actual" -eq "$expected" ]] || { echo "part $tag size $actual != $expected" >&2; exit 5; }
   mv "$partial" "$done_file"

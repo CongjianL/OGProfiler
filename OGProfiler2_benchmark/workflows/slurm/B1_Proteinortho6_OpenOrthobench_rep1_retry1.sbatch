@@ -37,7 +37,7 @@ CMD="cd '$OUT/work' && proteinortho6.pl -project=B1_orthobench_Proteinortho6_rep
 PRIMARY=$OUT/work/B1_orthobench_Proteinortho6_rep1.proteinortho.tsv; [[ -f "$PRIMARY" ]]
 "$MM" run -n ogprofiler python "$SRC/scripts/converters/convert_competitor_groups.py" --tool proteinortho --input "$PRIMARY" --fasta "$DATA" --out "$GROUPS_TSV"
 "$MM" run -n ogprofiler python "$SRC/scripts/converters/validate_groups.py" "$GROUPS_TSV" --fasta "$DATA" > "$OUT/validation.log"
-awk -F '\t' 'NR>1 {a[$1]=a[$1] " " $2} END {for (x in a) print x ":" a[x]}' "$GROUPS_TSV" | LC_ALL=C sort > "$OUT/prediction.txt"
+awk -F '\t' 'NR>1 {sub(/\r$/, "", $2); a[$1]=a[$1] " " $2} END {for (x in a) print x ":" a[x]}' "$GROUPS_TSV" | LC_ALL=C sort > "$OUT/prediction.txt"
 "$SRC/workflows/run_timed.sh" OpenOrthobench Proteinortho6 1 "$OUT/raw_official" -- "$MM" run -n ogprofiler python "$OB/BENCHMARKS/benchmark.py" "$OUT/prediction.txt"
 mkdir -p "$METRICS/by_method/Proteinortho6"
 "$MM" run -n ogprofiler python "$SRC/scripts/metrics/parse_open_orthobench_official.py" "$OUT/raw_official/stdout.log" --out "$METRICS/by_method/Proteinortho6/official.tsv"
