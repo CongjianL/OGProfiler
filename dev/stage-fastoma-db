@@ -19,8 +19,15 @@ for ((i=0;i<N;i++)); do
  done_file=$CACHE/parts/part-$tag.done; partial=$CACHE/parts/download-$tag.partial
  if [[ -f "$done_file" && $(stat -f %z "$done_file") -eq $expected ]]; then continue; fi
  (
-  curl -L --fail --retry 8 --connect-timeout 20 --range "$start-$end" -o "$partial" "$URL"
-  actual=$(stat -f %z "$partial"); [[ "$actual" -eq "$expected" ]] || { echo "part $tag size $actual != $expected" >&2; exit 5; }
+  while :; do
+   current=0; [[ -f "$partial" ]] && current=$(stat -f %z "$partial")
+   (( current <= expected )) || { echo "part $tag exceeds expected size" >&2; exit 5; }
+   (( current == expected )) && break
+   offset=$((start+current))
+   if ! curl -sS -L --fail --connect-timeout 20 --range "$offset-$end" "$URL" >> "$partial"; then
+    sleep 5
+   fi
+  done
   mv "$partial" "$done_file"
  ) & pids+=("$!")
 done
