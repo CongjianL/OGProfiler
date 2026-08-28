@@ -8,7 +8,7 @@ terminal partitions and are excluded from primary scoring.
 |---|---|---|
 | OrthoFinder 3.1.5 | `Orthogroups/Orthogroups.tsv` | One row is a conventional OrthoFinder orthogroup across all input species. Pairwise orthologues and node-specific HOG tables answer different questions. |
 | FastOMA 0.5.1 | `RootHOGs.tsv` | RootHOGs are the deepest/root-level gene families. `OrthologousGroups.tsv` contains strict marker-like groups with at most one representative per species; nested HOGs are taxonomic-level groups. |
-| SonicParanoid2 2.0.9 | run-level multi-species ortholog-group table | SonicParanoid merges pairwise clusters into an MCL-derived multi-species OG partition. Pairwise species tables are excluded. The exact observed filename will be recorded after smoke validation without changing this semantic choice. |
+| SonicParanoid2 2.0.9 | `runs/<run>/ortholog_groups/ortholog_groups.tsv` | SonicParanoid merges pairwise clusters into an MCL-derived multi-species OG partition. Pairwise species tables are excluded. Protein columns alternate with `avg_score_sp*` columns after four group metadata columns; the converter extracts only protein columns and removes optional per-protein confidence suffixes. |
 | Proteinortho 6.3.6 | `<project>.proteinortho.tsv` | Standard protein-group output. PoFF/synteny output is excluded because the benchmark supplies protein FASTA only. |
 
 `FASTOMA_PRIMARY_OUTPUT=RootHOGs.tsv`
