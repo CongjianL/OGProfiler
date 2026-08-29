@@ -24,7 +24,15 @@ for ((i=0;i<N;i++)); do
    (( current <= expected )) || { echo "part $tag exceeds expected size" >&2; exit 5; }
    (( current == expected )) && break
    offset=$((start+current))
-   if ! curl -sS -L --fail --connect-timeout 20 --range "$offset-$end" "$URL" >> "$partial"; then
+   segment=$CACHE/parts/segment-$tag.tmp; headers=$CACHE/parts/segment-$tag.headers
+   rm -f "$segment" "$headers"
+   if curl -sS -L --fail --connect-timeout 20 --range "$offset-$end" -D "$headers" -o "$segment" "$URL"; then
+    content_range=$(tr -d '\r' < "$headers" | awk 'tolower($1)=="content-range:" {v=$2 " " $3} END {print v}')
+    [[ "$content_range" == "bytes $offset-$end/$EXPECTED_SIZE" ]] || { echo "part $tag unexpected Content-Range: $content_range" >&2; exit 5; }
+    segment_size=$(stat -f %z "$segment"); [[ "$segment_size" -eq $((end-offset+1)) ]] || { echo "part $tag segment size mismatch" >&2; exit 5; }
+    cat "$segment" >> "$partial"; rm -f "$segment" "$headers"
+   else
+    rm -f "$segment" "$headers"
     sleep 5
    fi
   done
