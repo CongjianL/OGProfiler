@@ -11,6 +11,7 @@ EXPECTED_MD5=87a322a0a6381a8de0b539d62e277054
 CACHE=${FASTOMA_DB_CACHE_DIR:-/tmp/ogprofiler-fastoma-luca}
 REMOTE_ENV=/home/mselab/licj/project_data/OGProfiler/OGProfiler2_benchmark/00_env/fastoma-0.5.1
 N=8
+BLOCK_SIZE=$((64 * 1024 * 1024))
 mkdir -p "$CACHE/parts"
 chunk=$(( (EXPECTED_SIZE + N - 1) / N )); pids=()
 for ((i=0;i<N;i++)); do
@@ -24,12 +25,13 @@ for ((i=0;i<N;i++)); do
    (( current <= expected )) || { echo "part $tag exceeds expected size" >&2; exit 5; }
    (( current == expected )) && break
    offset=$((start+current))
+   request_end=$((offset+BLOCK_SIZE-1)); (( request_end > end )) && request_end=$end
    segment=$CACHE/parts/segment-$tag.tmp; headers=$CACHE/parts/segment-$tag.headers
    rm -f "$segment" "$headers"
-   if curl -sS -L --fail --connect-timeout 20 --range "$offset-$end" -D "$headers" -o "$segment" "$URL"; then
+   if curl -sS -L --fail --connect-timeout 20 --range "$offset-$request_end" -D "$headers" -o "$segment" "$URL"; then
     content_range=$(tr -d '\r' < "$headers" | awk 'tolower($1)=="content-range:" {v=$2 " " $3} END {print v}')
-    [[ "$content_range" == "bytes $offset-$end/$EXPECTED_SIZE" ]] || { echo "part $tag unexpected Content-Range: $content_range" >&2; exit 5; }
-    segment_size=$(stat -f %z "$segment"); [[ "$segment_size" -eq $((end-offset+1)) ]] || { echo "part $tag segment size mismatch" >&2; exit 5; }
+    [[ "$content_range" == "bytes $offset-$request_end/$EXPECTED_SIZE" ]] || { echo "part $tag unexpected Content-Range: $content_range" >&2; exit 5; }
+    segment_size=$(stat -f %z "$segment"); [[ "$segment_size" -eq $((request_end-offset+1)) ]] || { echo "part $tag segment size mismatch" >&2; exit 5; }
     cat "$segment" >> "$partial"; rm -f "$segment" "$headers"
    else
     rm -f "$segment" "$headers"
