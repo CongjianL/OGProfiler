@@ -11,7 +11,7 @@ EXPECTED_MD5=87a322a0a6381a8de0b539d62e277054
 CACHE=${FASTOMA_DB_CACHE_DIR:-/tmp/ogprofiler-fastoma-luca}
 REMOTE_ENV=/home/mselab/licj/project_data/OGProfiler/OGProfiler2_benchmark/00_env/fastoma-0.5.1
 N=8
-BLOCK_SIZE=$((64 * 1024 * 1024))
+BLOCK_SIZE=$((4 * 1024 * 1024))
 mkdir -p "$CACHE/parts"
 chunk=$(( (EXPECTED_SIZE + N - 1) / N )); pids=()
 for ((i=0;i<N;i++)); do
