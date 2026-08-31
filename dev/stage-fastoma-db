@@ -13,7 +13,7 @@ REMOTE_ENV=/home/mselab/licj/project_data/OGProfiler/OGProfiler2_benchmark/00_en
 N=8
 BLOCK_SIZE=$((4 * 1024 * 1024))
 mkdir -p "$CACHE/parts"
-chunk=$(( (EXPECTED_SIZE + N - 1) / N )); pids=()
+chunk=$(( (EXPECTED_SIZE + N - 1) / N )); pids=""
 for ((i=0;i<N;i++)); do
  start=$((i*chunk)); end=$((start+chunk-1)); if (( end >= EXPECTED_SIZE )); then end=$((EXPECTED_SIZE-1)); fi
  expected=$((end-start+1)); printf -v tag '%02d' "$i"
@@ -39,9 +39,9 @@ for ((i=0;i<N;i++)); do
    fi
   done
   mv "$partial" "$done_file"
- ) & pids+=("$!")
+ ) & pids="$pids $!"
 done
-status=0; for pid in "${pids[@]}"; do wait "$pid" || status=1; done; [[ "$status" -eq 0 ]] || exit 6
+status=0; for pid in $pids; do wait "$pid" || status=1; done; [[ "$status" -eq 0 ]] || exit 6
 ASSEMBLY=$CACHE/LUCA.h5
 : > "$ASSEMBLY"
 for ((i=0;i<N;i++)); do printf -v tag '%02d' "$i"; cat "$CACHE/parts/part-$tag.done" >> "$ASSEMBLY"; done
