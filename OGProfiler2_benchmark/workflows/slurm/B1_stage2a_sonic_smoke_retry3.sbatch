@@ -11,7 +11,7 @@ OB=/home/mselab/licj/project_data/OGProfiler/Open_Orthobench-master
 DATA=$OB/BENCHMARKS/Input
 MM=/home/mselab/licj/micromamba/bin/micromamba
 PFAM=/home/mselab/licj/micromamba/envs/sonicparanoid-2.0.9/lib/python3.12/site-packages/sonicparanoid/pfam_files/profile_db/pfama.mmseqs.idx
-PREP=$ROOT/03_runs/B1_orthobench/environment_preparation/sonicparanoid-2.0.9_pfam_index_split2
+PREP=$ROOT/03_runs/B1_orthobench/environment_preparation/sonicparanoid-2.0.9_pfam_index_split3
 OUT=$ROOT/03_runs/B1_orthobench/competitor_smoke_stage2a/sonicparanoid-2.0.9_slurm4
 
 [[ ! -e "$OUT" ]] || { echo "Refusing existing smoke retry directory: $OUT" >&2; exit 3; }
@@ -32,7 +32,7 @@ done
 cat > "$OUT/RETRY_MANIFEST.tsv" <<EOF
 retry_of_slurm_job_id	1404284
 failure	unsplit_Pfam_index_OOM_plus_empty_alignment_in_tiny_smoke
-environment_preparation_slurm_job_id	1404342
+environment_preparation_slurm_job_id	1404345
 environment_change	verified_split_index_of_the_identical_bundled_Pfam_database
 input_change	the_same_two_species_as_retry2_using_their_complete_frozen_Open_Orthobench_FASTA_files
 selection_policy	explicit_species_names_independent_of_RefOG_labels
