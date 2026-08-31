@@ -9,6 +9,7 @@ __pycache__/
 build/
 dist/
 .provenance/
+.benchmark_cache/
 
 
 dev/remote.env

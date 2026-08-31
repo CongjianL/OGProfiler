@@ -8,7 +8,7 @@ source "${OGP_REMOTE_ENV_FILE:-$HERE/remote.env}"
 URL='https://zenodo.org/records/20814376/files/LUCA.h5?download=1'
 EXPECTED_SIZE=9918199250
 EXPECTED_MD5=87a322a0a6381a8de0b539d62e277054
-CACHE=${FASTOMA_DB_CACHE_DIR:-/tmp/ogprofiler-fastoma-luca}
+CACHE=${FASTOMA_DB_CACHE_DIR:-$ROOT/.benchmark_cache/fastoma-luca}
 REMOTE_ENV=/home/mselab/licj/project_data/OGProfiler/OGProfiler2_benchmark/00_env/fastoma-0.5.1
 N=8
 BLOCK_SIZE=$((4 * 1024 * 1024))
