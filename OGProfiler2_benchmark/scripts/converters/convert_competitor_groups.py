@@ -28,7 +28,13 @@ def parse_wide(path:Path,skip_columns:int=1)->dict[str,list[str]]:
  return out
 
 def parse_sonicparanoid(path:Path)->dict[str,list[str]]:
- """Parse the scored, interleaved schema of SonicParanoid ortholog_groups.tsv."""
+ """Parse supported SonicParanoid ``ortholog_groups.tsv`` schemas.
+
+ SonicParanoid 2.0.9 can emit either an older scored/interleaved layout or a
+ compact layout containing four metadata columns followed by one column per
+ species.  Its compact ``group_id`` values are not unique (in observed output
+ they equal the group size), so the stable row ordinal is the partition ID.
+ """
  out={}
  with path.open(newline="",encoding="utf-8") as h:
   reader=csv.reader(h,delimiter="\t")
@@ -36,18 +42,21 @@ def parse_sonicparanoid(path:Path)->dict[str,list[str]]:
   except StopIteration:return out
   if header[:4] != ["group_id","group_size","sp_in_grp","seed_ortholog_cnt"]:
    raise ValueError(f"unexpected SonicParanoid header: {header[:4]}")
-  if len(header)<7 or header[-1]!="conflict" or (len(header)-5)%2:
+  if len(header)>=5 and header[-1]!="conflict" and not any(x.startswith("avg_score_sp") for x in header[4:]):
+   gene_columns=list(range(4,len(header)))
+  elif len(header)>=7 and header[-1]=="conflict" and not (len(header)-5)%2:
+   gene_columns=list(range(4,len(header)-1,2))
+   score_columns=list(range(5,len(header)-1,2))
+   if any(not header[i].startswith("avg_score_sp") for i in score_columns):
+    raise ValueError("unexpected SonicParanoid score columns")
+  else:
    raise ValueError(f"unexpected SonicParanoid column layout ({len(header)} columns)")
-  gene_columns=list(range(4,len(header)-1,2))
-  score_columns=list(range(5,len(header)-1,2))
-  if any(not header[i].startswith("avg_score_sp") for i in score_columns):
-   raise ValueError("unexpected SonicParanoid score columns")
-  for row in reader:
+  for row_number,row in enumerate(reader,1):
    if not row:continue
    if len(row)!=len(header):raise ValueError(f"SonicParanoid row has {len(row)} columns; expected {len(header)}")
-   gid=row[0].strip();members=[]
+   members=[]
    for i in gene_columns:members.extend(sonic_tokens(row[i]))
-   if gid and members:out[f"SONICPARANOID_{gid}"]=members
+   if members:out[f"SONICPARANOID_{row_number:08d}"]=members
  return out
 
 def parse_proteinortho(path:Path)->dict[str,list[str]]:
