@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=b1-sonic-pfam-index-r2
-#SBATCH --cpus-per-task=32
-#SBATCH --mem=128G
+#SBATCH --cpus-per-task=56
+#SBATCH --mem=200G
 #SBATCH --time=24:00:00
 set -euo pipefail
 
@@ -32,7 +32,8 @@ method	MMseqs_createindex_with_eight_explicit_equal_partitions
 explicit_split_count	8
 kmer	5
 sensitivity	7.0
-threads	32
+threads	56
+resource_change	56_CPU_200_GB_per_explicit_user_direction
 slurm_job_id	${SLURM_JOB_ID:?}
 git_commit	${DEV_GIT_COMMIT:?}
 source_sha256	${DEV_SOURCE_HASH:?}
@@ -40,7 +41,7 @@ EOF
 
 "$SRC/workflows/run_timed.sh" MMseqs2 SonicParanoidPfamIndex 3 "$OUT/timing" -- \
  "$MMSEQS" createindex "$PROFILE" "$OUT/mmseqs_tmp" -k 5 -s 7.0 \
- --threads 32 -v 3 --split 8
+ --threads 56 -v 3 --split 8
 
 [[ -f "$PROFILE.idx" && -f "$PROFILE.idx.index" && -f "$PROFILE.idx.dbtype" ]]
 find "$ENV/lib/python3.12/site-packages/sonicparanoid/pfam_files/profile_db" \
