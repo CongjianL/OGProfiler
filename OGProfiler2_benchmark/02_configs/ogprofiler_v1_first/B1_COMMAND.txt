@@ -1,0 +1,12 @@
+python prepare_ogprofiler_v1_input.py --input FROZEN_INPUT --out RUN_LOCAL_INPUT --map ID_MAP
+python OGProfiler.py -i RUN_LOCAL_INPUT -o RUN_LOCAL_OUTPUT_GRAPH -s diamond -e 1e-5 -t 32 -d lrb -w NBS -m rber -a 32 -g 1.0 --so 0
+
+The input is copied into the immutable run directory because this historical
+implementation writes WorkingDirectory and pyfasta index files beneath it.
+The adapter changes identifiers bijectively to ``OGPV1_NN|ORIGINAL_ID`` because
+the historical pairwise-output phase requires a pipe-delimited identifier; the
+converter restores every original ID before validation and scoring. Sequences,
+file membership, and the original frozen dataset are unchanged.
+All scientific parameters are the defaults of commit
+729675fee0dabc02f63ae5c2cda7571748751deb; only both thread counts are raised
+from 8 to the benchmark-wide allocation of 32.

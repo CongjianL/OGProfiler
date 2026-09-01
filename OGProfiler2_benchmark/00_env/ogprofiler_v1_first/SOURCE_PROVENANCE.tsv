@@ -1,0 +1,9 @@
+key	value
+definition	first historical repository version
+git_commit	729675fee0dabc02f63ae5c2cda7571748751deb
+git_commit_date	2022-04-02
+git_subject	Initial commit add script
+source_path	OGProfiler.py
+source_sha256	65ec43d269b410956fadc4f8215a3e0a0772eac8bcc1060ab011b090823cca41
+source_export	git show 729675fee0dabc02f63ae5c2cda7571748751deb:OGProfiler.py
+semantic_release_tag	none present in repository history

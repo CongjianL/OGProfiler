@@ -99,15 +99,61 @@ def parse_proteinortho(path:Path)->dict[str,list[str]]:
    if members:out[f"PROTEINORTHO_{n:08d}"]=members
  return out
 
+def parse_ogprofiler_v1(path:Path)->dict[str,list[str]]:
+ """Parse the first historical OGProfiler terminal-family output.
+
+ Each headerless row is ``group_id, species_count, gene_count, members``.
+ Members are whitespace-separated original input protein identifiers.
+ """
+ out={}
+ with path.open(newline="",encoding="utf-8") as h:
+  for row_number,row in enumerate(csv.reader(h,delimiter="\t"),1):
+   if not row:continue
+   if len(row)!=4:raise ValueError(f"OGProfiler v1 row {row_number} has {len(row)} columns; expected 4")
+   gid=row[0].strip();members=tokens(row[3])
+   if not gid:raise ValueError(f"OGProfiler v1 row {row_number} has an empty group ID")
+   if gid in out:raise ValueError(f"duplicate OGProfiler v1 group ID at row {row_number}: {gid}")
+   if not members:raise ValueError(f"OGProfiler v1 row {row_number} has no members: {gid}")
+   try:
+    expected_count=int(row[2])
+   except ValueError as exc:
+    raise ValueError(f"OGProfiler v1 row {row_number} has an invalid gene count: {row[2]}") from exc
+   if expected_count!=len(members):
+    raise ValueError(f"OGProfiler v1 row {row_number} declares {expected_count} genes but lists {len(members)}")
+   out[gid]=members
+ return out
+
+def apply_id_map(groups:dict[str,list[str]],path:Path)->dict[str,list[str]]:
+ mapping={}
+ with path.open(newline="",encoding="utf-8") as h:
+  reader=csv.reader(h,delimiter="\t")
+  try:header=next(reader)
+  except StopIteration:raise ValueError("empty ID map")
+  if header!=["adapted_id","original_id"]:raise ValueError(f"unexpected ID-map header: {header}")
+  for row_number,row in enumerate(reader,2):
+   if len(row)!=2:raise ValueError(f"ID-map row {row_number} has {len(row)} columns; expected 2")
+   if row[0] in mapping:raise ValueError(f"duplicate adapted ID in map: {row[0]}")
+   mapping[row[0]]=row[1]
+ out={}
+ for gid,members in groups.items():
+  missing=[pid for pid in members if pid not in mapping]
+  if missing:raise ValueError(f"OGProfiler v1 output IDs absent from map: {', '.join(missing[:20])}")
+  out[gid]=[mapping[pid] for pid in members]
+ return out
+
 def main()->int:
- p=argparse.ArgumentParser();p.add_argument("--tool",choices=["orthofinder","fastoma","sonicparanoid","proteinortho"],required=True);p.add_argument("--input",type=Path,required=True);p.add_argument("--fasta",type=Path,required=True);p.add_argument("--out",type=Path,required=True);a=p.parse_args()
- if a.tool=="proteinortho":groups=parse_proteinortho(a.input)
+ p=argparse.ArgumentParser();p.add_argument("--tool",choices=["orthofinder","fastoma","sonicparanoid","proteinortho","ogprofiler_v1"],required=True);p.add_argument("--input",type=Path,required=True);p.add_argument("--fasta",type=Path,required=True);p.add_argument("--out",type=Path,required=True);p.add_argument("--id-map",type=Path);a=p.parse_args()
+ if a.tool=="ogprofiler_v1":groups=parse_ogprofiler_v1(a.input)
+ elif a.tool=="proteinortho":groups=parse_proteinortho(a.input)
  elif a.tool=="sonicparanoid":groups=parse_sonicparanoid(a.input)
  elif a.tool=="fastoma":groups=parse_fastoma(a.input)
  else:groups=parse_wide(a.input)
+ if a.id_map:
+  if a.tool!="ogprofiler_v1":raise ValueError("--id-map is supported only for ogprofiler_v1")
+  groups=apply_id_map(groups,a.id_map)
  expected=fasta_ids(a.fasta);seen={x for members in groups.values() for x in members};unknown=seen-expected
  if unknown:raise ValueError(f"unknown input proteins ({len(unknown)}): {', '.join(sorted(unknown)[:20])}")
- prefix={"orthofinder":"ORTHOFINDER","fastoma":"FASTOMA","sonicparanoid":"SONICPARANOID","proteinortho":"PROTEINORTHO"}[a.tool]
+ prefix={"orthofinder":"ORTHOFINDER","fastoma":"FASTOMA","sonicparanoid":"SONICPARANOID","proteinortho":"PROTEINORTHO","ogprofiler_v1":"OGPROFILER1FIRST"}[a.tool]
  for pid in sorted(expected-seen):groups[f"{prefix}_UNASSIGNED_SINGLETON_{pid}"]=[pid]
  a.out.parent.mkdir(parents=True,exist_ok=True)
  with a.out.open("w",newline="",encoding="utf-8") as h:

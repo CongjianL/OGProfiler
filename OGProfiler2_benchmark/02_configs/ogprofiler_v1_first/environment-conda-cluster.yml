@@ -1,0 +1,13 @@
+name: ogprofiler-v1-first
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.9
+  - python-igraph=0.9.9
+  - leidenalg=0.8.10
+  - numpy=1.22.3
+  - scipy=1.8.0
+  - progressbar2=4.0.0
+  - pyfasta=0.5.2
+  - diamond=2.0.14

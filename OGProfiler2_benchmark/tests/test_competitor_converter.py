@@ -61,3 +61,28 @@ def test_fastoma_051_assignment_rows_ignore_omamer_annotation(tmp_path):
  assert "HOG:0000001\tp1" in rows and "HOG:0000001\tp2" in rows
  assert all("HOG:F0000010" not in row for row in rows)
  assert "FASTOMA_UNASSIGNED_SINGLETON_p3\tp3" in rows
+
+def test_ogprofiler_v1_and_unassigned(tmp_path):
+ f=tmp_path/"in.fa";fasta(f);raw=tmp_path/"OGFile_coalescence_SameGenome.txt"
+ raw.write_text("OG000001\t1\t2\tp1 p2\n")
+ out=tmp_path/"groups.tsv"
+ subprocess.run([sys.executable,SCRIPT,"--tool","ogprofiler_v1","--input",raw,"--fasta",f,"--out",out],check=True)
+ rows=out.read_text().splitlines()
+ assert "OG000001\tp1" in rows and "OG000001\tp2" in rows
+ assert "OGPROFILER1FIRST_UNASSIGNED_SINGLETON_p3\tp3" in rows
+
+def test_ogprofiler_v1_rejects_declared_gene_count_mismatch(tmp_path):
+ f=tmp_path/"in.fa";fasta(f);raw=tmp_path/"OGFile_coalescence_SameGenome.txt"
+ raw.write_text("OG000001\t1\t3\tp1 p2\n")
+ out=tmp_path/"groups.tsv"
+ result=subprocess.run([sys.executable,SCRIPT,"--tool","ogprofiler_v1","--input",raw,"--fasta",f,"--out",out],capture_output=True,text=True)
+ assert result.returncode!=0 and "declares 3 genes but lists 2" in result.stderr
+
+def test_ogprofiler_v1_restores_compatibility_ids(tmp_path):
+ f=tmp_path/"in.fa";fasta(f);raw=tmp_path/"OGFile_coalescence_SameGenome.txt"
+ raw.write_text("OG000001\t1\t2\tOGPV1_01|p1 OGPV1_01|p2\n")
+ mapping=tmp_path/"id_map.tsv"
+ mapping.write_text("adapted_id\toriginal_id\nOGPV1_01|p1\tp1\nOGPV1_01|p2\tp2\nOGPV1_01|p3\tp3\n")
+ out=tmp_path/"groups.tsv"
+ subprocess.run([sys.executable,SCRIPT,"--tool","ogprofiler_v1","--input",raw,"--id-map",mapping,"--fasta",f,"--out",out],check=True)
+ assert "OG000001\tp1" in out.read_text()
