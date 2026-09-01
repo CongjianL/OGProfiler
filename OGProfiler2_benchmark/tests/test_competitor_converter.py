@@ -40,3 +40,11 @@ def test_fastoma_roothog_header_is_not_a_group(tmp_path):
  raw.write_text("RootHOG\tMembers\nHOG:0001\tp1,p2\n")
  out=tmp_path/"groups.tsv";subprocess.run([sys.executable,SCRIPT,"--tool","fastoma","--input",raw,"--fasta",f,"--out",out],check=True)
  assert "HOG:0001\tp1" in out.read_text()
+
+def test_fastoma_header_only_primary_becomes_singletons(tmp_path):
+ f=tmp_path/"in.fa";fasta(f);raw=tmp_path/"RootHOGs.tsv"
+ raw.write_text("RootHOG\tProtein\tOMAmerRootHOG\n")
+ out=tmp_path/"groups.tsv";subprocess.run([sys.executable,SCRIPT,"--tool","fastoma","--input",raw,"--fasta",f,"--out",out],check=True)
+ rows=out.read_text().splitlines()
+ assert len(rows)==4
+ assert all(f"FASTOMA_UNASSIGNED_SINGLETON_p{i}\tp{i}" in rows for i in range(1,4))
