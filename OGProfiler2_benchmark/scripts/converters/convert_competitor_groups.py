@@ -27,6 +27,35 @@ def parse_wide(path:Path,skip_columns:int=1)->dict[str,list[str]]:
    if gid and members:out[gid]=members
  return out
 
+def parse_fastoma(path:Path)->dict[str,list[str]]:
+ """Parse the frozen FastOMA root-level family output.
+
+ FastOMA 0.5.1 emits one assignment per row as
+ ``RootHOG, Protein, OMAmerRootHOG``.  The third column is the source OMAmer
+ family annotation, not another protein.  Retain support for the two-column
+ ``RootHOG, Members`` layout used by earlier fixtures.
+ """
+ out=defaultdict(list)
+ with path.open(newline="",encoding="utf-8") as h:
+  reader=csv.reader(h,delimiter="\t")
+  try:header=next(reader)
+  except StopIteration:return {}
+  if header[:3]==["RootHOG","Protein","OMAmerRootHOG"]:
+   for row_number,row in enumerate(reader,2):
+    if not row:continue
+    if len(row)!=3:raise ValueError(f"FastOMA row {row_number} has {len(row)} columns; expected 3")
+    gid=row[0].strip();protein=row[1].strip()
+    if gid and protein:out[gid].append(protein)
+  elif header[:2]==["RootHOG","Members"]:
+   for row in reader:
+    if not row:continue
+    gid=row[0].strip()
+    if gid:
+     for cell in row[1:]:out[gid].extend(tokens(cell))
+  else:
+   raise ValueError(f"unexpected FastOMA header: {header}")
+ return dict(out)
+
 def parse_sonicparanoid(path:Path)->dict[str,list[str]]:
  """Parse supported SonicParanoid ``ortholog_groups.tsv`` schemas.
 
@@ -74,6 +103,7 @@ def main()->int:
  p=argparse.ArgumentParser();p.add_argument("--tool",choices=["orthofinder","fastoma","sonicparanoid","proteinortho"],required=True);p.add_argument("--input",type=Path,required=True);p.add_argument("--fasta",type=Path,required=True);p.add_argument("--out",type=Path,required=True);a=p.parse_args()
  if a.tool=="proteinortho":groups=parse_proteinortho(a.input)
  elif a.tool=="sonicparanoid":groups=parse_sonicparanoid(a.input)
+ elif a.tool=="fastoma":groups=parse_fastoma(a.input)
  else:groups=parse_wide(a.input)
  expected=fasta_ids(a.fasta);seen={x for members in groups.values() for x in members};unknown=seen-expected
  if unknown:raise ValueError(f"unknown input proteins ({len(unknown)}): {', '.join(sorted(unknown)[:20])}")

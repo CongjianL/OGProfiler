@@ -48,3 +48,16 @@ def test_fastoma_header_only_primary_becomes_singletons(tmp_path):
  rows=out.read_text().splitlines()
  assert len(rows)==4
  assert all(f"FASTOMA_UNASSIGNED_SINGLETON_p{i}\tp{i}" in rows for i in range(1,4))
+
+def test_fastoma_051_assignment_rows_ignore_omamer_annotation(tmp_path):
+ f=tmp_path/"in.fa";fasta(f);raw=tmp_path/"RootHOGs.tsv"
+ raw.write_text(
+  "RootHOG\tProtein\tOMAmerRootHOG\n"
+  "HOG:0000001\tp1\tHOG:F0000010\n"
+  "HOG:0000001\tp2\tHOG:F0000010\n"
+ )
+ out=tmp_path/"groups.tsv";subprocess.run([sys.executable,SCRIPT,"--tool","fastoma","--input",raw,"--fasta",f,"--out",out],check=True)
+ rows=out.read_text().splitlines()
+ assert "HOG:0000001\tp1" in rows and "HOG:0000001\tp2" in rows
+ assert all("HOG:F0000010" not in row for row in rows)
+ assert "FASTOMA_UNASSIGNED_SINGLETON_p3\tp3" in rows
