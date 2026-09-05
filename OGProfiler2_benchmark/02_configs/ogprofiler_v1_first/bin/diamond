@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+REAL=${OGPROFILER_V1_DIAMOND_REAL:?Set OGPROFILER_V1_DIAMOND_REAL}
+if [[ "${1:-}" == makedb ]]; then
+  exec "$REAL" "$@" --ignore-warnings
+fi
+exec "$REAL" "$@"

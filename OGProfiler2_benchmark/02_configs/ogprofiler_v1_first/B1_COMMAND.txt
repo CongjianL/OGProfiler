@@ -7,6 +7,10 @@ The adapter changes identifiers bijectively to ``OGPV1_NN|ORIGINAL_ID`` because
 the historical pairwise-output phase requires a pipe-delimited identifier; the
 converter restores every original ID before validation and scoring. Sequences,
 file membership, and the original frozen dataset are unchanged.
+The frozen DIAMOND 2.0.14 executable classifies two valid benchmark proteomes
+as nucleotide data during ``makedb``. The run-local launcher adds
+``--ignore-warnings`` to ``makedb`` only; search sensitivity, E-value, sequences,
+and all OGProfiler parameters remain unchanged.
 All scientific parameters are the defaults of commit
 729675fee0dabc02f63ae5c2cda7571748751deb; only both thread counts are raised
 from 8 to the benchmark-wide allocation of 32.
