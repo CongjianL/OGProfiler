@@ -10,6 +10,7 @@
 - Frozen OGProfiler result: `B1_orthobench_OGProfiler2_seed42_rep2`
 - Analysis source commit: `4fb6ecff9abc1c55b9b5d75d2a4ff3ff009efbb3`
 - Bootstrap: 10,000 RefOG-level resamples, seed `20260901`
+- Comparison scope: six methods, including `OGProfiler1First` from commit `729675fee0dabc02f63ae5c2cda7571748751deb`
 
 No OGProfiler algorithm source, parameter, or seed was changed in Stage 2A.
 
@@ -18,6 +19,7 @@ No OGProfiler algorithm source, parameter, or seed was changed in Stage 2A.
 | Method | Formal inference job | Postprocess job | Final status |
 |---|---:|---:|---|
 | OGProfiler2 | `1404237` | included | PASS (frozen baseline) |
+| OGProfiler1First | `1409360` | included | PASS |
 | OrthoFinder3 | `1404266` | `1404275` | PASS |
 | FastOMA | `1404543` | `1404570` | PASS |
 | SonicParanoid2 | `1404443` | included | PASS |
@@ -42,7 +44,7 @@ Failed attempts and their diagnoses remain preserved in `B1_STAGE2A_RETRIES.md` 
 - `07_figures/Fig2_candidate/Fig2_candidate.png`
 - `07_figures/Fig2_candidate/data/*.tsv`
 
-The Fig. 2 candidate is preliminary. B1 runtime and resources are descriptive because each method has one formal run.
+The Fig. 2 candidate contains all six methods. B1 runtime and resources are descriptive because each method has one formal run.
 
 ## Benchmark judgment
 

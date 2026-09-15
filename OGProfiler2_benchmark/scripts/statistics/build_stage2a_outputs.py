@@ -11,9 +11,10 @@ import numpy as np
 from scipy import stats
 
 
-METHODS = ["OGProfiler2", "OrthoFinder3", "FastOMA", "SonicParanoid2", "Proteinortho6"]
+METHODS = ["OGProfiler2", "OGProfiler1First", "OrthoFinder3", "FastOMA", "SonicParanoid2", "Proteinortho6"]
 VERSIONS = {
     "OGProfiler2": "2.0.0a1",
+    "OGProfiler1First": "729675f (first repository version)",
     "OrthoFinder3": "3.1.5",
     "FastOMA": "0.5.1",
     "SonicParanoid2": "2.0.9",
@@ -46,11 +47,20 @@ def f(values: list[dict[str, str]], field: str) -> np.ndarray:
 
 def wall_seconds(value: str) -> float:
     parts = [float(x) for x in value.split(":")]
+    if len(parts) == 1:
+        return parts[0]
     if len(parts) == 2:
         return parts[0] * 60 + parts[1]
     if len(parts) == 3:
         return parts[0] * 3600 + parts[1] * 60 + parts[2]
     raise ValueError(f"unexpected wall clock: {value}")
+
+
+def gib_from_bytes(value: str) -> float | str:
+    """Convert captured bytes to GiB while preserving explicitly missing data."""
+    if value.upper() == "NA":
+        return "NA"
+    return float(value) / 1024**3
 
 
 def holm(pvalues: list[float]) -> list[float]:
@@ -151,7 +161,7 @@ def main() -> None:
             "method": method, "wall_seconds": wall, "total_cpu_seconds": cpu,
             "effective_mean_cores": cpu / wall,
             "peak_rss_gib": float(metadata["peak_rss_kb"]) / 1024**2,
-            "disk_gib": float(metadata["run_disk_bytes"]) / 1024**3,
+            "disk_gib": gib_from_bytes(metadata["run_disk_bytes"]),
             "status": metadata["status"],
         })
 
@@ -250,6 +260,7 @@ def main() -> None:
             fp_long.append({"method": record["method"], "top_n": rank, "cumulative_FP_fraction": record[f"top{rank}_FP_fraction"]})
     write(args.figure_data / "fp_concentration_long.tsv", fp_long)
 
+    official_by = {r["method"]: r for r in official_summary}
     ext_by = {r["method"]: r for r in extended_summary}
     err_by = {r["method"]: r for r in error_summary}
     report = [
@@ -260,15 +271,16 @@ def main() -> None:
         "Official exact counts follow `benchmark.py`; strict exact counts require exact set identity in the common 70-RefOG implementation and are therefore reported separately.", "",
         "## C. Pairwise false-positive burden", "", md_table(error_summary, ["method", "top1_FP_fraction", "top5_FP_fraction", "top10_FP_fraction", "largest_predicted_family", "n_families_gt1000", "singleton_fraction"]), "",
         "## D. Paired statistics", "",
-        f"The Friedman test across five paired methods used 70 RefOGs (statistic={float(friedman.statistic):.6g}, p={float(friedman.pvalue):.6g}).",
-        "Pairwise Wilcoxon signed-rank and exact McNemar tests use Holm correction across the four pre-specified OGProfiler2 comparisons; bootstrap intervals use 10,000 RefOG-level resamples with seed 20260901.", "",
+        f"The Friedman test across six paired methods used 70 RefOGs (statistic={float(friedman.statistic):.6g}, p={float(friedman.pvalue):.6g}).",
+        "Pairwise Wilcoxon signed-rank and exact McNemar tests use Holm correction across the five pre-specified OGProfiler2 comparisons; bootstrap intervals use 10,000 RefOG-level resamples with seed 20260901.", "",
         md_table(stats_rows[1:], ["test", "comparison", "raw_p", "Holm_adjusted_p", "paired_median_difference", "rank_biserial_effect_size", "discordant_OGProfiler2_only", "discordant_competitor_only"]), "",
         "Positive paired median differences and rank-biserial effects favor OGProfiler2. See `B1_bootstrap_CI.tsv` for all percentile intervals.", "",
         "## E. Resource summary", "", md_table(resource_summary, ["method", "wall_seconds", "total_cpu_seconds", "effective_mean_cores", "peak_rss_gib", "disk_gib", "status"]), "",
         "Runtime and resources are descriptive only: each method has one formal run, so no performance inference is made.", "",
         "## F. Error-profile comparison", "",
-        f"OrthoFinder3 has the highest official F-score ({official_summary[1]['F_score']}%) and macro per-RefOG F1 ({float(ext_by['OrthoFinder3']['macro_best_group_F1']):.3f}).",
+        f"OrthoFinder3 has the highest official F-score ({official_by['OrthoFinder3']['F_score']}%) and macro per-RefOG F1 ({float(ext_by['OrthoFinder3']['macro_best_group_F1']):.3f}).",
         f"OGProfiler2 combines median split {float(ext_by['OGProfiler2']['median_split']):.3g}, median contamination {float(ext_by['OGProfiler2']['median_contamination']):.3g}, and median missing fraction {float(ext_by['OGProfiler2']['median_missing']):.3g}. Its error burden is heavy-tail concentrated: the largest family contains {err_by['OGProfiler2']['largest_predicted_family']} proteins and the top family accounts for {float(err_by['OGProfiler2']['top1_FP_fraction']):.1%} of pairwise false positives.",
+        f"- Versus OGProfiler1First, OGProfiler2 changes macro RefOG F1 from {float(ext_by['OGProfiler1First']['macro_best_group_F1']):.3f} to {float(ext_by['OGProfiler2']['macro_best_group_F1']):.3f}; the historical version has higher official precision but lower recall. This is a version contrast under the same frozen input, not a causal attribution to any single algorithmic change.",
         "- Versus OrthoFinder3, the OGProfiler2 deficit combines more splitting and missing assignments with a much larger heavy-tail family, despite slightly lower mean contamination.",
         "- Versus FastOMA, OGProfiler2 has less splitting and missingness and higher macro F1, but substantially greater contamination concentration; the methods fail in different directions.",
         "- Versus SonicParanoid2, splitting is similar, while OGProfiler2 has more mean contamination and missingness; both show concentrated pairwise false positives.",

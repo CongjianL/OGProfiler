@@ -13,8 +13,8 @@ official <- read.delim(file.path(data_dir, "official_precision_recall.tsv"), che
 refog <- read.delim(file.path(data_dir, "refog_F1_long.tsv"), check.names = FALSE)
 split_contam <- read.delim(file.path(data_dir, "split_contamination.tsv"), check.names = FALSE)
 fp <- read.delim(file.path(data_dir, "fp_concentration_long.tsv"), check.names = FALSE)
-methods <- c("OGProfiler2", "OrthoFinder3", "FastOMA", "SonicParanoid2", "Proteinortho6")
-palette <- c(OGProfiler2="#C44E52", OrthoFinder3="#4C78A8", FastOMA="#59A14F", SonicParanoid2="#B07AA1", Proteinortho6="#9C755F")
+methods <- c("OGProfiler2", "OGProfiler1First", "OrthoFinder3", "FastOMA", "SonicParanoid2", "Proteinortho6")
+palette <- c(OGProfiler2="#C44E52", OGProfiler1First="#E39C37", OrthoFinder3="#4C78A8", FastOMA="#59A14F", SonicParanoid2="#B07AA1", Proteinortho6="#9C755F")
 for (x in list(official, refog, split_contam, fp)) if (!all(unique(x$method) %in% methods)) stop("unknown method")
 official$method <- factor(official$method, methods)
 refog$method <- factor(refog$method, methods)
@@ -38,7 +38,7 @@ pB <- ggplot(refog, aes(x=method, y=F1, fill=method, colour=method)) +
   geom_jitter(width=0.13, height=0, size=0.65, alpha=0.55) +
   stat_summary(fun=median, geom="crossbar", width=0.5, linewidth=0.45, colour="black") +
   scale_fill_manual(values=palette) + scale_colour_manual(values=palette) +
-  scale_x_discrete(labels=c("OGProfiler\n2", "OrthoFinder\n3", "FastOMA", "SonicParanoid\n2", "Proteinortho\n6")) +
+  scale_x_discrete(labels=c("OGProfiler\n2", "OGProfiler\nv1 first", "OrthoFinder\n3", "FastOMA", "SonicParanoid\n2", "Proteinortho\n6")) +
   coord_cartesian(ylim=c(-0.03,1.03)) +
   labs(title="Paired RefOG performance reveals accuracy heterogeneity", x=NULL, y="Best-group F1 (70 RefOGs)", tag="B")
 

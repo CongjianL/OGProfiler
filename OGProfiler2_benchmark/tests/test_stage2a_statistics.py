@@ -25,3 +25,12 @@ def test_rank_biserial_direction_and_wall_clock():
     assert MODULE.rank_biserial(np.array([-1.0, -2.0, -3.0])) == -1.0
     assert MODULE.wall_seconds("1:36:14") == 5774
     assert MODULE.wall_seconds("47:50.31") == 2870.31
+    assert MODULE.wall_seconds("14189.0") == 14189
+    assert MODULE.gib_from_bytes("NA") == "NA"
+    assert MODULE.gib_from_bytes(str(1024**3)) == 1.0
+
+
+def test_six_method_contract_includes_first_ogprofiler_version():
+    assert len(MODULE.METHODS) == 6
+    assert MODULE.METHODS[:2] == ["OGProfiler2", "OGProfiler1First"]
+    assert "first repository version" in MODULE.VERSIONS["OGProfiler1First"]

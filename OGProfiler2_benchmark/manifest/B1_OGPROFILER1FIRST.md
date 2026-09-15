@@ -51,6 +51,9 @@ raised from 8 to the benchmark-wide 32-CPU allocation.
 | 1404590 | COMPLETED | The 12-species compatibility smoke, terminal-family conversion, reverse ID mapping, and standardized partition validation all passed in 65 seconds. | Formal submission gate passed. |
 | 1404591 | TIMEOUT | DIAMOND 2.0.14 rejected the complete human and mouse proteomes as nucleotide-like during `makedb`. Twenty-four directed searches were absent; two matrix workers then exited before reporting to the historical queue, leaving the main process waiting until the 72-hour limit. | Added a run-local DIAMOND launcher that supplies `--ignore-warnings` to `makedb` only. Historical OGProfiler source, sequences, search sensitivity, E-value, and downstream parameters remain unchanged. Retry starts from a fresh immutable run directory. |
 | 1407221 | FAILED | The retry prepended the launcher by replacing `PATH` inside `micromamba run`, which also removed the v1 environment's Python path; system Python then reported a missing `igraph` import. | Invoke the v1 environment's Python by absolute path and prepend both the launcher and the complete v1 environment `bin` directory. A dependency-import gate now runs before input preparation. |
+| 1409360 | COMPLETED | Formal retry completed with exit code 0 in 1:00:37; standardized partition validation and both official and extended scoring passed. | Freeze this run as the `OGProfiler1First` formal result and include it in the six-method comparison. |
 
-The formal run is submitted only after a complete smoke run, standardized
-partition conversion, and coverage validation succeed.
+The frozen formal result is `B1_orthobench_OGProfiler1First_rep1_retry2`
+(Slurm job `1409360`). The standardized group table passed validation, the
+dataset digest matched the frozen Open Orthobench digest, and all 70 RefOG
+rows were scored.
