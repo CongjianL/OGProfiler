@@ -8,7 +8,7 @@
 - OGProfiler version: `2.0.0a1`
 - OGProfiler algorithm commit: `a7838963de4882d867203e60ce641b5689bde45e`
 - Frozen OGProfiler result: `B1_orthobench_OGProfiler2_seed42_rep2`
-- Analysis source commit: `4fb6ecff9abc1c55b9b5d75d2a4ff3ff009efbb3`
+- Six-method analysis source commit: `82ed09d381690716918b54ef4fc9cf658737bc5f`
 - Bootstrap: 10,000 RefOG-level resamples, seed `20260901`
 - Comparison scope: six methods, including `OGProfiler1First` from commit `729675fee0dabc02f63ae5c2cda7571748751deb`
 
@@ -49,3 +49,8 @@ The Fig. 2 candidate contains all six methods. B1 runtime and resources are desc
 ## Benchmark judgment
 
 OrthoFinder3 has the highest official F-score and macro best-group RefOG F1. OGProfiler2 exceeds FastOMA and Proteinortho6 in macro RefOG F1 but trails OrthoFinder3; its largest weakness is the concentration of pairwise false positives in a small number of very large families, combined with more splitting and missingness than OrthoFinder3. These observations are benchmark findings only and did not trigger algorithm retuning.
+
+OGProfiler1First has official precision 78.1%, recall 45.5% and F-score
+57.5%. Its macro best-group RefOG F1 is 0.759, versus 0.770 for
+OGProfiler2; their paired Wilcoxon comparison is not significant after Holm
+correction (`p_adj=0.688`).

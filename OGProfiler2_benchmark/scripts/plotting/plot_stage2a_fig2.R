@@ -38,7 +38,7 @@ pB <- ggplot(refog, aes(x=method, y=F1, fill=method, colour=method)) +
   geom_jitter(width=0.13, height=0, size=0.65, alpha=0.55) +
   stat_summary(fun=median, geom="crossbar", width=0.5, linewidth=0.45, colour="black") +
   scale_fill_manual(values=palette) + scale_colour_manual(values=palette) +
-  scale_x_discrete(labels=c("OGProfiler\n2", "OGProfiler\nv1 first", "OrthoFinder\n3", "FastOMA", "SonicParanoid\n2", "Proteinortho\n6")) +
+  scale_x_discrete(labels=c("OGProfiler\n2", "OGProfiler\nv1 first", "OrthoFinder\n3", "FastOMA", "Sonic-\nParanoid 2", "Protein-\northo 6")) +
   coord_cartesian(ylim=c(-0.03,1.03)) +
   labs(title="Paired RefOG performance reveals accuracy heterogeneity", x=NULL, y="Best-group F1 (70 RefOGs)", tag="B")
 
