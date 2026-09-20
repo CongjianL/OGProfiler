@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=ogp2-ob-v2mod
-#SBATCH --cpus-per-task=32
-#SBATCH --mem=128G
+#SBATCH --cpus-per-task=56
+#SBATCH --mem=250G
 #SBATCH --time=72:00:00
 #SBATCH --output=/home/mselab/licj/project_data/OGProfiler/OGProfiler2_benchmark/03_runs/B1_orthobench/OGProfiler2/v2_modified_rep1/slurm-%j.out
 #SBATCH --error=/home/mselab/licj/project_data/OGProfiler/OGProfiler2_benchmark/03_runs/B1_orthobench/OGProfiler2/v2_modified_rep1/slurm-%j.err
@@ -21,8 +21,8 @@ mkdir -p "$OUT"
 python "$SOURCE_ROOT/OGProfiler2_benchmark/scripts/audit/audit_open_orthobench_input.py" --input "$DATA" --refogs /home/mselab/licj/project_data/OGProfiler/Open_Orthobench-master/BENCHMARKS/RefOGs --out "$ROOT/manifest/open_orthobench_run_input.tsv"
 DATASET_DIGEST=$(cat "$ROOT/manifest/OPEN_ORTHOBENCH_INPUT_DIGEST")
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
-export BENCHMARK_THREADS=32 BENCHMARK_SEED=42 BENCHMARK_GIT_COMMIT=${DEV_GIT_COMMIT:?}
-command=(env "PYTHONPATH=$SOURCE_ROOT/src" python -m ogprofiler run --proteomes "$DATA" --out "$OUT/run" --set search.threads=32 --set runtime.workers=32 --set hierarchy.seed=42)
-printf 'run_id\t%s\ntool\tOGProfiler2\ndataset\tOpenOrthobench\nseed\t42\nthreads\t32\nworkers\t32\nalgorithm_commit\t%s\nbenchmark_commit\t%s\nstart_time_utc\t%s\nhostname\t%s\nslurm_job_id\t%s\ndataset_digest\t%s\ncommand\t' "$RUN_ID" "$ALGORITHM_COMMIT" "$DEV_GIT_COMMIT" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(hostname)" "$SLURM_JOB_ID" "$DATASET_DIGEST" > "$OUT/RUN_MANIFEST.tsv"
+export BENCHMARK_THREADS=56 BENCHMARK_SEED=42 BENCHMARK_GIT_COMMIT=${DEV_GIT_COMMIT:?}
+command=(env "PYTHONPATH=$SOURCE_ROOT/src" python -m ogprofiler run --proteomes "$DATA" --out "$OUT/run" --set search.threads=56 --set runtime.workers=56 --set hierarchy.seed=42)
+printf 'run_id\t%s\ntool\tOGProfiler2\ndataset\tOpenOrthobench\nseed\t42\nthreads\t56\nworkers\t56\nalgorithm_commit\t%s\nbenchmark_commit\t%s\nstart_time_utc\t%s\nhostname\t%s\nslurm_job_id\t%s\ndataset_digest\t%s\ncommand\t' "$RUN_ID" "$ALGORITHM_COMMIT" "$DEV_GIT_COMMIT" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(hostname)" "$SLURM_JOB_ID" "$DATASET_DIGEST" > "$OUT/RUN_MANIFEST.tsv"
 printf '%q ' "${command[@]}" >> "$OUT/RUN_MANIFEST.tsv"; printf '\n' >> "$OUT/RUN_MANIFEST.tsv"
 "$SOURCE_ROOT/OGProfiler2_benchmark/workflows/run_timed.sh" OGProfiler2 OpenOrthobench 1 "$OUT/raw_ogprofiler" -- "${command[@]}"
