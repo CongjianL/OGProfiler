@@ -34,18 +34,25 @@ def retain_top_data(
     return top_lengths, top_scores
 
 
-def _fit_parameters(length_products: list[float], bit_scores: list[float]) -> tuple[float, float]:
+def _fit_parameters(
+    length_products: list[float],
+    bit_scores: list[float],
+    nbs_fallback: str,
+) -> tuple[float, float] | None:
     top_lengths, top_scores = retain_top_data(length_products, bit_scores)
-    fallback = (0.0, math.log10(max(bit_scores)))
-    if len(top_lengths) < 2 or len(set(float(value) for value in top_lengths)) < 2:
-        return fallback
+    # V1/OrthoFinder emit an all-zero matrix only when there are too few hits.
+    # Degenerate (all-identical) length products still get a fit there, so we
+    # fall back to a=0, b=log10(max) rather than dropping the hits.
+    v2_max = (0.0, math.log10(max(bit_scores)))
+    if len(top_lengths) < 2:
+        return v2_max if nbs_fallback == "v2_max" else None
     x_values = [math.log10(value) for value in top_lengths]
     y_values = [math.log10(value) for value in top_scores]
     x_mean = sum(x_values) / len(x_values)
     y_mean = sum(y_values) / len(y_values)
     denominator = sum((value - x_mean) ** 2 for value in x_values)
     if denominator <= 0:
-        return fallback
+        return v2_max
     a = (
         sum(
             (x_value - x_mean) * (y_value - y_mean)
@@ -54,27 +61,37 @@ def _fit_parameters(length_products: list[float], bit_scores: list[float]) -> tu
         / denominator
     )
     b = y_mean - a * x_mean
-    return (a, b) if math.isfinite(a) and math.isfinite(b) else fallback
+    return (a, b) if math.isfinite(a) and math.isfinite(b) else v2_max
 
 
-def legacy_nbs(hits: list[DirectionalHit], protein_lengths: dict[int, int]) -> list[NormalizedHit]:
+def legacy_nbs(
+    hits: list[DirectionalHit],
+    protein_lengths: dict[int, int],
+    nbs_fallback: str = "v1_zero",
+) -> list[NormalizedHit]:
     """Normalize each directed species-pair group using frozen V1 semantics."""
 
     usable = [hit for hit in hits if hit.query_id != hit.target_id and hit.bitscore > 0]
     groups: dict[tuple[int, int], list[DirectionalHit]] = defaultdict(list)
     for hit in usable:
         groups[(hit.query_species, hit.target_species)].append(hit)
-    parameters: dict[tuple[int, int], tuple[float, float]] = {}
+    parameters: dict[tuple[int, int], tuple[float, float] | None] = {}
     for key, group in groups.items():
         products = [
             float(protein_lengths[item.query_id] * protein_lengths[item.target_id])
             for item in group
         ]
-        parameters[key] = _fit_parameters(products, [item.bitscore for item in group])
+        parameters[key] = _fit_parameters(
+            products, [item.bitscore for item in group], nbs_fallback
+        )
 
     result: list[NormalizedHit] = []
     for hit in usable:
-        a, b = parameters[(hit.query_species, hit.target_species)]
+        params = parameters[(hit.query_species, hit.target_species)]
+        if params is None:
+            # Degenerate group: V1/OrthoFinder emit an all-zero matrix, i.e. drop the hit.
+            continue
+        a, b = params
         product = protein_lengths[hit.query_id] * protein_lengths[hit.target_id]
         denominator = (10**b) * (product**a)
         score = hit.bitscore / denominator if denominator > 0 else 0.0
@@ -83,10 +100,13 @@ def legacy_nbs(hits: list[DirectionalHit], protein_lengths: dict[int, int]) -> l
 
 
 def normalize_hits(
-    hits: list[DirectionalHit], protein_lengths: dict[int, int], method: str
+    hits: list[DirectionalHit],
+    protein_lengths: dict[int, int],
+    method: str,
+    nbs_fallback: str = "v1_zero",
 ) -> list[NormalizedHit]:
     if method == "legacy_nbs":
-        return legacy_nbs(hits, protein_lengths)
+        return legacy_nbs(hits, protein_lengths, nbs_fallback)
     usable = [hit for hit in hits if hit.query_id != hit.target_id and hit.bitscore > 0]
     if method == "raw_bitscore":
         return [NormalizedHit(hit, hit.bitscore) for hit in usable]

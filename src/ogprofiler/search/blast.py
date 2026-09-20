@@ -98,8 +98,11 @@ class BlastBackend:
                 if parameters.max_target_seqs
                 else ()
             ),
-            "-max_hsps",
-            "1",
+            *(
+                ("-max_hsps", str(parameters.max_hsps))
+                if parameters.max_hsps
+                else ()
+            ),
         )
         self._run(command)
         if not output_path.is_file():

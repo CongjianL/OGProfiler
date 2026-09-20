@@ -28,28 +28,31 @@ hits are removed. For each group, V2 reproduces frozen V1 behavior:
 5. calculate `normalized_score = bitscore / (10**b * length_product**a)`.
 
 The logarithmic model is linear, so V2 uses the closed-form least-squares
-solution rather than a nonlinear optimizer. With one usable point, degenerate
-length products, or a non-finite fit, the documented fallback is `a=0` and
-`b=log10(max_bitscore)`. This maps the group maximum to 1 instead of emitting
-the all-zero matrix produced by V1 for a one-hit group.
+solution rather than a nonlinear optimizer. Degenerate groups (one usable
+point, degenerate length products, or a non-finite fit) are controlled by
+`similarity.nbs_fallback`:
+
+- `v1_zero` (default): drop the group's hits, matching V1 and OrthoFinder3's
+  all-zero matrix for too-few-hit groups;
+- `v2_max`: `a=0`, `b=log10(max_bitscore)`, mapping the group maximum to 1.
 
 ## Coverage
 
 Coverage filtering occurs after NBS so changing coverage thresholds does not
-change the fitted normalization model. A direction is retained only if it
-satisfies all three configured limits:
+change the fitted normalization model. It is **disabled by default** to match
+V1 and OrthoFinder3, which never filter by coverage:
 
 ```yaml
 edges:
-  min_query_coverage: 50
-  min_target_coverage: 50
+  apply_coverage_filter: false
+  min_query_coverage: 0
+  min_target_coverage: 0
   min_bidirectional_coverage: 0
 ```
 
-V1 calculated coverage but did not apply it consistently. The V2 defaults are
-a deliberate 50% query/target coverage behavior change. Set both thresholds to
-zero for the closest V1-compatible behavior. `min_bidirectional_coverage`
-applies to `min(query_coverage, target_coverage)` for each directional hit.
+When `apply_coverage_filter` is enabled, a direction is retained only if it
+satisfies all three configured limits. `min_bidirectional_coverage` applies to
+`min(query_coverage, target_coverage)` for each directional hit.
 
 ## Best hits, RBH, and LRB
 
@@ -82,9 +85,11 @@ Each retained direction is joined under `u=min(query,target)` and
 `v=max(query,target)`. Missing directions have score zero. `score_uv` and
 `score_vu` therefore have stable meanings independent of input order.
 
-Supported weights are `max`, `min`, `mean`, and `geometric_mean`. The current
-default is `max` for continuity with the project configuration; it is not a
-claim of scientific optimality and remains subject to benchmark selection.
+Supported weights are `forward`, `max`, `min`, `mean`, and `geometric_mean`.
+The default is `forward`, matching OrthoFinder3's directional edge weight
+(`connect2 × B[i→j]`): use `score_uv` (u→v), falling back to `score_vu` when
+only the reverse direction is retained. `max`/`min`/`mean`/`geometric_mean`
+remain available and are subject to benchmark selection.
 
 The retained edge schema is:
 

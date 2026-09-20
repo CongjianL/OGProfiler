@@ -30,11 +30,17 @@ elif args[0] == "makedb":
     database.write_text("fake-db", encoding="utf-8")
 elif args[0] == "blastp":
     output = pathlib.Path(args[args.index("--out") + 1])
-    output.write_text(
-        "OGP2P000000000000\\tOGP2P000000000001\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
-        "OGP2P000000000001\\tOGP2P000000000000\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n",
-        encoding="utf-8",
-    )
+    query = pathlib.Path(args[args.index("--query") + 1])
+    db = pathlib.Path(args[args.index("--db") + 1])
+    q_species = query.name.split("_")[1].split(".")[0]
+    d_species = db.name.split("_")[1]
+    fields = []
+    if q_species == "0" and d_species == "1":
+        fields = ["OGP2P000000000000", "OGP2P000000000001", "80", "4", "4", "4", "1e-10", "50"]
+    elif q_species == "1" and d_species == "0":
+        fields = ["OGP2P000000000001", "OGP2P000000000000", "80", "4", "4", "4", "1e-10", "50"]
+    line = chr(9).join(fields) + chr(10) if fields else ""
+    output.write_text(line, encoding="utf-8")
 else:
     raise SystemExit(2)
 """,
@@ -57,10 +63,18 @@ elif args[0] == "createdb":
     pathlib.Path(args[2]).write_text("fake-db")
     pathlib.Path(args[2] + ".dbtype").write_text("0")
 elif args[0] == "easy-search":
-    pathlib.Path(args[3]).write_text(
-        "OGP2P000000000000\\tOGP2P000000000001\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
-        "OGP2P000000000001\\tOGP2P000000000000\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
-    )
+    query = pathlib.Path(args[1])
+    db = pathlib.Path(args[2])
+    output = pathlib.Path(args[3])
+    q_species = query.name.split("_")[1].split(".")[0]
+    d_species = db.name.split("_")[1]
+    fields = []
+    if q_species == "0" and d_species == "1":
+        fields = ["OGP2P000000000000", "OGP2P000000000001", "80", "4", "4", "4", "1e-10", "50"]
+    elif q_species == "1" and d_species == "0":
+        fields = ["OGP2P000000000001", "OGP2P000000000000", "80", "4", "4", "4", "1e-10", "50"]
+    line = chr(9).join(fields) + chr(10) if fields else ""
+    output.write_text(line)
     pathlib.Path(args[4]).mkdir(parents=True)
 else:
     raise SystemExit(2)
@@ -81,10 +95,18 @@ args = sys.argv[1:]
 if args[0] == "-version":
     print("blastp: 2.16.0+")
 else:
-    pathlib.Path(args[args.index("-out") + 1]).write_text(
-        "OGP2P000000000000\\tOGP2P000000000001\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
-        "OGP2P000000000001\\tOGP2P000000000000\\t80\\t4\\t4\\t4\\t1e-10\\t50\\n"
-    )
+    query = pathlib.Path(args[args.index("-query") + 1])
+    db = pathlib.Path(args[args.index("-db") + 1])
+    output = pathlib.Path(args[args.index("-out") + 1])
+    q_species = query.name.split("_")[1].split(".")[0]
+    d_species = db.name.split("_")[1]
+    fields = []
+    if q_species == "0" and d_species == "1":
+        fields = ["OGP2P000000000000", "OGP2P000000000001", "80", "4", "4", "4", "1e-10", "50"]
+    elif q_species == "1" and d_species == "0":
+        fields = ["OGP2P000000000001", "OGP2P000000000000", "80", "4", "4", "4", "1e-10", "50"]
+    line = chr(9).join(fields) + chr(10) if fields else ""
+    output.write_text(line)
 """,
         encoding="utf-8",
     )
@@ -183,7 +205,16 @@ def test_search_cli_produces_manifest_and_verified_resume(tmp_path: Path) -> Non
     assert manifest["hit_count"] == 2
     assert manifest["parameters"]["max_target_seqs"] == 0
     invocations = (tmp_path / "diamond-invocations.txt").read_text(encoding="utf-8").splitlines()
-    assert invocations == ["version", "makedb", "blastp", "version"]
+    assert invocations == [
+        "version",
+        "makedb",
+        "makedb",
+        "blastp",
+        "blastp",
+        "blastp",
+        "blastp",
+        "version",
+    ]
 
     hits_path.write_bytes(b"corrupt")
     assert main(command) == 0
@@ -192,14 +223,32 @@ def test_search_cli_produces_manifest_and_verified_resume(tmp_path: Path) -> Non
     assert invocations == [
         "version",
         "makedb",
+        "makedb",
+        "blastp",
+        "blastp",
+        "blastp",
         "blastp",
         "version",
         "version",
         "makedb",
+        "makedb",
+        "blastp",
+        "blastp",
+        "blastp",
         "blastp",
     ]
 
-    edge_command = ["edges", "--run", str(run), "--method", "lrb"]
+    edge_command = [
+        "edges",
+        "--run",
+        str(run),
+        "--method",
+        "lrb",
+        # Minimal fixture has one hit per species-pair group; keep v2_max so the
+        # group is not dropped (v1_zero default is covered by unit tests).
+        "--set",
+        "similarity.nbs_fallback=v2_max",
+    ]
     assert main(edge_command) == 0
     edge_path = run / "edges" / "retained_edges.parquet"
     edge_manifest_path = run / "edges" / "edge-manifest.json"

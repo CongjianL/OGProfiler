@@ -29,24 +29,32 @@ search:
   executable: diamond
   evalue: 0.001
   threads: 8
-  sensitivity: sensitive
+  sensitivity: more-sensitive
   max_target_seqs: 0
+  max_hsps: 0
+  mmseqs_sensitivity: sensitive
 ```
 
-`max_target_seqs: 0` means no OGProfiler target-count cap. DIAMOND receives an
-explicit zero; MMseqs2 and BLAST+ omit their positive-limit option. A positive
-value maps to DIAMOND `--max-target-seqs`, MMseqs2 `--max-seqs`, or BLAST+
-`-max_target_seqs`.
+`max_target_seqs` defaults to `0`, meaning the target-count flag is **omitted**
+so each backend uses its own default, matching OrthoFinder3/V1 (which do not
+pass the flag). A positive value maps to DIAMOND `--max-target-seqs`, MMseqs2
+`--max-seqs`, or BLAST+ `-max_target_seqs`.
 
-DIAMOND sensitivity names map directly to DIAMOND flags. MMseqs2 maps the same
-ordered names to `-s` values 2.0, 4.0, 5.7, 6.5, 7.5, and 8.5. BLAST+ has no
-direct equivalent and ignores this cross-backend convenience setting; it is
-not presented as the performance path.
+`max_hsps` defaults to `0` (do not pass the flag, matching OrthoFinder3/V1). A
+positive value maps to DIAMOND/BLAST+ `--max-hsps`; MMseqs2 has no direct
+equivalent.
+
+`sensitivity` is the DIAMOND sensitivity name and maps directly to DIAMOND
+flags (`more-sensitive` by default). MMseqs2 uses `mmseqs_sensitivity`
+(`sensitive` → `-s 5.7` by default, matching OrthoFinder3's untuned MMseqs2
+call) and ignores the shared `sensitivity`. BLAST+ has no direct equivalent and
+ignores these convenience settings.
 
 Every subprocess uses an argument vector with `check=True`; shell parsing and
-redirection are absent. One HSP/alignment is requested per query-target pair.
-MMseqs2 creates a unique temporary directory beside the raw hit output and
-removes it on both success and command failure.
+redirection are absent. `max_hsps` controls whether an HSP-limit flag is
+passed; by default (`0`) it is omitted, matching OrthoFinder3/V1. MMseqs2
+creates a unique temporary directory beside the raw hit output and removes it
+on both success and command failure.
 
 ## Standard directional hit table
 

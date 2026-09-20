@@ -118,3 +118,33 @@ Phase 15 release-readiness evidence is stored under
 the frozen dataset check, distribution hashes, and installed-wheel smoke tests.
 The annotated tag is intentionally deferred until the captured Phases 13–15
 working tree is committed as the release candidate.
+
+## S0 V1 ↔ V2 ↔ OrthoFinder3 parity regression
+
+The parity plan (`docs/v1-v2-result-parity-plan.md`) aligns the upstream stages
+(search + retained SSN edges) with OrthoFinder3. S0 runs the three
+implementations on `datasets/A_small_sanity/proteomes` and diffs their artifacts
+after remapping every gene to its original FASTA ID.
+
+The workflow is split into **four separate Slurm submissions** that share one
+results root (`$(dirname "$DEV_RUN_DIR")/s0_v1_v2_of_regression`):
+
+1. `slurm/s0a_v1_baseline.sh` — V1 full baseline (env `ogprofiler-v1-first`);
+2. `slurm/s0b_v2_edges.sh` — V2 `prepare/search/edges` (env `ogprofiler`);
+3. `slurm/s0c_orthofinder3.sh` — OrthoFinder3 full run (env `orthofinder-3.1.5`);
+4. `slurm/s0d_compare.sh` — run `benchmarks/compare_v1_v2_orthofinder.py` (env `ogprofiler`).
+
+Submit in order, waiting for each to finish:
+
+```bash
+./dev/slurm-submit slurm/s0a_v1_baseline.sh
+./dev/slurm-submit slurm/s0b_v2_edges.sh
+./dev/slurm-submit slurm/s0c_orthofinder3.sh
+./dev/slurm-submit slurm/s0d_compare.sh
+```
+
+The JSON report lands at
+`<shared-root>/results/A_small_sanity/comparison/report.json`. Compared artifacts:
+
+- search hits: V1 `BlastResults/*.out` ↔ V2 `search/hits.parquet` ↔ OrthoFinder `Blast*.txt`;
+- SSN edges: V1 `ssn.gml` ↔ V2 `edges/retained_edges.parquet` ↔ OrthoFinder MCL graph.

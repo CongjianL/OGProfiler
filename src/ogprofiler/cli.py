@@ -441,6 +441,7 @@ def _search(args: argparse.Namespace, command: list[str]) -> int:
         evalue=float(search_options["evalue"]),
         sensitivity=str(search_options["sensitivity"]),
         max_target_seqs=int(search_options["max_target_seqs"]),
+        max_hsps=int(search_options["max_hsps"]),
     )
     logger = configure_logging(
         args.run / "ogprofiler.log", level=config["runtime"]["log_level"]
@@ -471,6 +472,8 @@ def _edges(args: argparse.Namespace, command: list[str]) -> int:
     edge_config = EdgeBuildConfig(
         method=str(options["method"]),
         normalization=str(config["similarity"]["normalization"]),
+        nbs_fallback=str(config["similarity"]["nbs_fallback"]),
+        apply_coverage_filter=bool(options["apply_coverage_filter"]),
         min_query_coverage=float(options["min_query_coverage"]),
         min_target_coverage=float(options["min_target_coverage"]),
         min_bidirectional_coverage=float(options["min_bidirectional_coverage"]),

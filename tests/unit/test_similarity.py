@@ -6,6 +6,7 @@ import pytest
 
 from ogprofiler.similarity.engine import (
     EdgeBuildConfig,
+    _symmetrize,
     best_hit_keys,
     build_retained_edges,
     filter_coverage,
@@ -47,8 +48,12 @@ def test_legacy_nbs_reproduces_log_length_fit_and_small_sample_fallback() -> Non
     # The first group follows bit_score = 2 * sqrt(length_product).
     lengths = {0: 100, 1: 4, 2: 16, 3: 5}
     normalized = legacy_nbs(raw, lengths)
-    assert [item.normalized_score for item in normalized[:2]] == pytest.approx([1.0, 1.0])
-    assert normalized[2].normalized_score == pytest.approx(1.0)
+    assert len(normalized) == 2  # v1_zero default drops single-hit groups
+    assert [item.normalized_score for item in normalized] == pytest.approx([1.0, 1.0])
+
+    normalized_max = legacy_nbs(raw, lengths, nbs_fallback="v2_max")
+    assert len(normalized_max) == 3
+    assert normalized_max[2].normalized_score == pytest.approx(1.0)
 
 
 def test_v1_top_bin_logic_keeps_overlapping_95th_percentile_members() -> None:
@@ -113,7 +118,7 @@ def test_lrb_threshold_paralogs_reverse_only_and_no_rbh_fallback() -> None:
 
 @pytest.mark.parametrize(
     ("method", "expected"),
-    [("max", 9.0), ("min", 4.0), ("mean", 6.5), ("geometric_mean", 6.0)],
+    [("forward", 9.0), ("max", 9.0), ("min", 4.0), ("mean", 6.5), ("geometric_mean", 6.0)],
 )
 def test_symmetrization_is_order_invariant(method: str, expected: float) -> None:
     values = [hit(0, 1, 0, 1, 9.0), hit(1, 0, 1, 0, 4.0)]
@@ -123,3 +128,9 @@ def test_symmetrization_is_order_invariant(method: str, expected: float) -> None
     assert first == second
     assert first[0].weight == pytest.approx(expected)
     assert math.isfinite(first[0].weight)
+
+
+def test_forward_symmetrization_uses_forward_and_falls_back_to_reverse() -> None:
+    assert _symmetrize(9.0, 4.0, "forward") == pytest.approx(9.0)
+    assert _symmetrize(0.0, 4.0, "forward") == pytest.approx(4.0)
+    assert _symmetrize(0.0, 0.0, "forward") == 0.0

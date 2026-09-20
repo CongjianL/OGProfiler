@@ -33,7 +33,7 @@ DEFAULT_AXES: dict[str, list[dict[str, Any]]] = {
     ],
     "symmetrization": [
         {"edges.symmetrization": value}
-        for value in ("max", "min", "mean", "geometric_mean")
+        for value in ("forward", "max", "min", "mean", "geometric_mean")
     ],
     "leiden_method": [
         {"hierarchy.method": value} for value in ("rber", "rbcv", "cpm", "modularity")

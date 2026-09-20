@@ -45,6 +45,8 @@ def run_edge_stage(
     parameters = {
         "method": config.method,
         "normalization": config.normalization,
+        "nbs_fallback": config.nbs_fallback,
+        "apply_coverage_filter": config.apply_coverage_filter,
         "min_query_coverage": config.min_query_coverage,
         "min_target_coverage": config.min_target_coverage,
         "min_bidirectional_coverage": config.min_bidirectional_coverage,
@@ -74,8 +76,8 @@ def run_edge_stage(
     protein_rows = pq.read_table(proteins_path, columns=["protein_id", "length"]).to_pylist()
     lengths = {int(row["protein_id"]): int(row["length"]) for row in protein_rows}
     raw_hits = list(iter_directional_hits(hits_path))
-    normalized = normalize_hits(raw_hits, lengths, config.normalization)
-    coverage_filtered = filter_coverage(normalized, config)
+    normalized = normalize_hits(raw_hits, lengths, config.normalization, config.nbs_fallback)
+    coverage_filtered = filter_coverage(normalized, config) if config.apply_coverage_filter else normalized
     selected, edges = build_retained_edges(normalized, config)
     write_normalized_hits(normalized_path, normalized)
     write_retained_edges(output_path, edges)

@@ -72,7 +72,7 @@ def _perfect_run(root: Path) -> Path:
 
 def test_parameter_matrix_covers_every_required_axis(tmp_path: Path) -> None:
     runs = generate_ofat_matrix()
-    assert len(runs) == 16
+    assert len(runs) == 17
     assert runs[0].run_id == "baseline"
     assert {run.axis for run in runs} == {
         "baseline",
@@ -85,8 +85,8 @@ def test_parameter_matrix_covers_every_required_axis(tmp_path: Path) -> None:
         "seed",
     }
     manifest, table = write_matrix(tmp_path, runs)
-    assert json.loads(manifest.read_text())["run_count"] == 16
-    assert len(table.read_text().splitlines()) == 17
+    assert json.loads(manifest.read_text())["run_count"] == 17
+    assert len(table.read_text().splitlines()) == 18
 
 
 def test_scientific_metrics_cover_family_evolution_and_orthology(tmp_path: Path) -> None:

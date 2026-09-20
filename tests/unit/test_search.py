@@ -47,9 +47,37 @@ def test_diamond_backend_builds_explicit_argument_vectors(tmp_path: Path) -> Non
     assert search_command[search_command.index("--outfmt") + 2 :][: len(DIAMOND_FIELDS)] == (
         DIAMOND_FIELDS
     )
-    assert search_command[search_command.index("--max-target-seqs") + 1] == "0"
+    assert "--max-target-seqs" not in search_command
+    assert "--max-hsps" not in search_command
     assert "--very-sensitive" in search_command
     assert all("<" not in item and ">" not in item for command in commands for item in command)
+
+
+def test_diamond_passes_positive_target_and_hsp_limits(tmp_path: Path) -> None:
+    commands: list[tuple[str, ...]] = []
+
+    def runner(command: Sequence[str]) -> subprocess.CompletedProcess[str]:
+        captured = tuple(command)
+        commands.append(captured)
+        if "version" in captured:
+            return subprocess.CompletedProcess(captured, 0, "diamond version 2.test\n", "")
+        if "makedb" in captured:
+            database = Path(captured[captured.index("--db") + 1]).with_suffix(".dmnd")
+            database.write_text("db", encoding="utf-8")
+        if "blastp" in captured:
+            Path(captured[captured.index("--out") + 1]).write_text("", encoding="utf-8")
+        return subprocess.CompletedProcess(captured, 0, "", "")
+
+    backend = DiamondBackend("diamond-test", runner)
+    fasta = tmp_path / "proteins.faa"
+    fasta.write_text(">OGP2P000000000000\nAAAA\n", encoding="utf-8")
+    database = tmp_path / "database" / "proteins"
+    output = tmp_path / "hits.tsv"
+    command = backend.search(
+        fasta, database, output, SearchParameters(4, 1e-5, "more-sensitive", 25, 1)
+    )
+    assert command[command.index("--max-target-seqs") + 1] == "25"
+    assert command[command.index("--max-hsps") + 1] == "1"
 
 
 def test_diamond_failure_is_search_error() -> None:

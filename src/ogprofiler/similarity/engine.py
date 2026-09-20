@@ -13,11 +13,13 @@ from ogprofiler.similarity.models import NormalizedHit, RetainedEdge
 class EdgeBuildConfig:
     method: str = "lrb"
     normalization: str = "legacy_nbs"
-    min_query_coverage: float = 50.0
-    min_target_coverage: float = 50.0
+    nbs_fallback: str = "v1_zero"
+    apply_coverage_filter: bool = False
+    min_query_coverage: float = 0.0
+    min_target_coverage: float = 0.0
     min_bidirectional_coverage: float = 0.0
     best_hit_tolerance: float = 1e-3
-    symmetrization: str = "max"
+    symmetrization: str = "forward"
 
 
 def filter_coverage(hits: list[NormalizedHit], config: EdgeBuildConfig) -> list[NormalizedHit]:
@@ -104,6 +106,8 @@ def _select_directional(
 
 
 def _symmetrize(forward: float, reverse: float, method: str) -> float:
+    if method == "forward":
+        return forward if forward > 0 else reverse
     if method == "max":
         return max(forward, reverse)
     if method == "min":
@@ -118,7 +122,7 @@ def _symmetrize(forward: float, reverse: float, method: str) -> float:
 def build_retained_edges(
     normalized_hits: list[NormalizedHit], config: EdgeBuildConfig
 ) -> tuple[list[NormalizedHit], list[RetainedEdge]]:
-    filtered = filter_coverage(normalized_hits, config)
+    filtered = filter_coverage(normalized_hits, config) if config.apply_coverage_filter else normalized_hits
     selected = _select_directional(_deduplicate(filtered), config)
     grouped: dict[tuple[int, int], list[NormalizedHit]] = {}
     for item in selected:

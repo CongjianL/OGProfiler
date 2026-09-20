@@ -19,17 +19,20 @@ DEFAULT_CONFIG: dict[str, dict[str, Any]] = {
         "executable": "diamond",
         "evalue": 1e-3,
         "threads": 8,
-        "sensitivity": "sensitive",
+        "sensitivity": "more-sensitive",
         "max_target_seqs": 0,
+        "max_hsps": 0,
+        "mmseqs_sensitivity": "sensitive",
     },
-    "similarity": {"normalization": "legacy_nbs"},
+    "similarity": {"normalization": "legacy_nbs", "nbs_fallback": "v1_zero"},
     "edges": {
         "method": "lrb",
-        "min_query_coverage": 50.0,
-        "min_target_coverage": 50.0,
+        "apply_coverage_filter": False,
+        "min_query_coverage": 0.0,
+        "min_target_coverage": 0.0,
         "min_bidirectional_coverage": 0.0,
         "best_hit_tolerance": 1e-3,
-        "symmetrization": "max",
+        "symmetrization": "forward",
     },
     "components": {"edge_batch_size": 65_536, "max_open_files": 64},
     "hierarchy": {
@@ -77,6 +80,7 @@ DEFAULT_CONFIG: dict[str, dict[str, Any]] = {
 
 _ALLOWED_BACKENDS = {"diamond", "mmseqs", "blastp"}
 _ALLOWED_NORMALIZATION = {"legacy_nbs", "raw_bitscore", "length_scaled_bitscore"}
+_ALLOWED_NBS_FALLBACK = {"v1_zero", "v2_max"}
 _ALLOWED_DIAMOND_SENSITIVITY = {
     "fast",
     "mid-sensitive",
@@ -86,7 +90,7 @@ _ALLOWED_DIAMOND_SENSITIVITY = {
     "ultra-sensitive",
 }
 _ALLOWED_EDGE_METHODS = {"lrb", "rbh", "ar", "arb"}
-_ALLOWED_SYMMETRIZATION = {"max", "min", "mean", "geometric_mean"}
+_ALLOWED_SYMMETRIZATION = {"forward", "max", "min", "mean", "geometric_mean"}
 _ALLOWED_HIERARCHY_METHODS = {"rber", "rbcv", "cpm", "modularity"}
 _ALLOWED_RESOLUTION_STRATEGIES = {"adaptive", "log_grid"}
 _ALLOWED_STABILITY = {"fast", "robust", "publication"}
@@ -157,7 +161,9 @@ def validate_config(config: dict[str, Any]) -> None:
     choice("input", "illegal_character_policy", _ALLOWED_CHARACTER_POLICIES)
     choice("search", "backend", _ALLOWED_BACKENDS)
     choice("search", "sensitivity", _ALLOWED_DIAMOND_SENSITIVITY)
+    choice("search", "mmseqs_sensitivity", _ALLOWED_DIAMOND_SENSITIVITY)
     choice("similarity", "normalization", _ALLOWED_NORMALIZATION)
+    choice("similarity", "nbs_fallback", _ALLOWED_NBS_FALLBACK)
     choice("edges", "method", _ALLOWED_EDGE_METHODS)
     choice("edges", "symmetrization", _ALLOWED_SYMMETRIZATION)
     choice("hierarchy", "method", _ALLOWED_HIERARCHY_METHODS)
@@ -208,6 +214,12 @@ def validate_config(config: dict[str, Any]) -> None:
         or config["search"]["max_target_seqs"] < 0
     ):
         raise InputError("search.max_target_seqs must be a non-negative integer")
+    if (
+        not isinstance(config["search"]["max_hsps"], int)
+        or isinstance(config["search"]["max_hsps"], bool)
+        or config["search"]["max_hsps"] < 0
+    ):
+        raise InputError("search.max_hsps must be a non-negative integer")
     if not isinstance(config["runtime"]["workers"], int) or config["runtime"]["workers"] < 1:
         raise InputError("runtime.workers must be a positive integer")
     if (
@@ -286,6 +298,8 @@ def validate_config(config: dict[str, Any]) -> None:
     tolerance = config["edges"]["best_hit_tolerance"]
     if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or tolerance < 0:
         raise InputError("edges.best_hit_tolerance must be non-negative")
+    if not isinstance(config["edges"]["apply_coverage_filter"], bool):
+        raise InputError("edges.apply_coverage_filter must be boolean")
     overlap = config["evolution"]["network_overlap_threshold"]
     if not isinstance(overlap, (int, float)) or not 0 <= overlap <= 1:
         raise InputError("evolution.network_overlap_threshold must be between 0 and 1")

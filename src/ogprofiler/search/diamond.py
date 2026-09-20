@@ -119,10 +119,16 @@ class DiamondBackend:
             "--threads",
             str(parameters.threads),
             sensitivity_flag,
-            "--max-target-seqs",
-            str(parameters.max_target_seqs),
-            "--max-hsps",
-            "1",
+            *(
+                ("--max-target-seqs", str(parameters.max_target_seqs))
+                if parameters.max_target_seqs
+                else ()
+            ),
+            *(
+                ("--max-hsps", str(parameters.max_hsps))
+                if parameters.max_hsps
+                else ()
+            ),
         )
         self._run(command)
         if not output_path.is_file():

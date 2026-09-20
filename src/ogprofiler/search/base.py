@@ -13,6 +13,7 @@ class SearchParameters:
     evalue: float
     sensitivity: str
     max_target_seqs: int
+    max_hsps: int = 0
 
     def to_dict(self) -> dict[str, int | float | str]:
         return {
@@ -20,6 +21,7 @@ class SearchParameters:
             "evalue": self.evalue,
             "sensitivity": self.sensitivity,
             "max_target_seqs": self.max_target_seqs,
+            "max_hsps": self.max_hsps,
         }
 
 

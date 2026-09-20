@@ -34,10 +34,15 @@ class MmseqsBackend:
     name = "mmseqs"
 
     def __init__(
-        self, executable: str = "mmseqs", runner: CommandRunner = _default_runner
+        self,
+        executable: str = "mmseqs",
+        runner: CommandRunner = _default_runner,
+        *,
+        sensitivity: str = "sensitive",
     ) -> None:
         self.executable = executable
         self._runner = runner
+        self.sensitivity = sensitivity
 
     def _run(self, command: Sequence[str]) -> subprocess.CompletedProcess[str]:
         try:
@@ -78,9 +83,9 @@ class MmseqsBackend:
         parameters: SearchParameters,
     ) -> tuple[str, ...]:
         try:
-            sensitivity = _SENSITIVITY[parameters.sensitivity]
+            sensitivity = _SENSITIVITY[self.sensitivity]
         except KeyError as error:
-            raise SearchError(f"Unknown MMseqs2 sensitivity: {parameters.sensitivity}") from error
+            raise SearchError(f"Unknown MMseqs2 sensitivity: {self.sensitivity}") from error
         output_path.parent.mkdir(parents=True, exist_ok=True)
         temporary = output_path.parent / f".mmseqs-tmp-{uuid.uuid4().hex}"
         command: tuple[str, ...] = (
