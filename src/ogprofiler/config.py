@@ -32,7 +32,7 @@ DEFAULT_CONFIG: dict[str, dict[str, Any]] = {
         "min_target_coverage": 0.0,
         "min_bidirectional_coverage": 0.0,
         "best_hit_tolerance": 1e-3,
-        "symmetrization": "forward",
+        "symmetrization": "mean",
     },
     "components": {"edge_batch_size": 65_536, "max_open_files": 64},
     "hierarchy": {

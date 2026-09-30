@@ -1,9 +1,13 @@
-"""Frozen-V1-compatible normalized bit-score model."""
+"""OrthoFinder full-run normalized bit-score model."""
 
 from __future__ import annotations
 
 import math
 from collections import defaultdict
+
+import numpy as np
+from numpy.typing import NDArray
+from scipy.optimize import curve_fit
 
 from ogprofiler.similarity.models import DirectionalHit, NormalizedHit
 
@@ -11,7 +15,7 @@ from ogprofiler.similarity.models import DirectionalHit, NormalizedHit
 def retain_top_data(
     length_products: list[float], bit_scores: list[float]
 ) -> tuple[list[float], list[float]]:
-    """Reproduce V1 length sorting, bin widths, overlap, and 95th percentile."""
+    """OF bins: full, disjoint bins only; preserve matrix order for length ties."""
 
     ordered = sorted(zip(length_products, bit_scores, strict=True), key=lambda item: item[0])
     hit_count = len(ordered)
@@ -20,13 +24,9 @@ def retain_top_data(
     scale = 1000 if hit_count > 5000 else (200 if hit_count > 1000 else 20)
     top_lengths: list[float] = []
     top_scores: list[float] = []
-    for start in range(0, hit_count, scale):
-        chunk = ordered[start : start + scale + 1]
-        scores = sorted(item[1] for item in chunk)
-        position = 0.95 * (len(scores) - 1)
-        lower = math.floor(position)
-        upper = math.ceil(position)
-        cutoff = scores[lower] + (position - lower) * (scores[upper] - scores[lower])
+    for start in range(0, hit_count - scale + 1, scale):
+        chunk = ordered[start : start + scale]
+        cutoff = float(np.percentile([item[1] for item in chunk], 95))
         for length_product, bit_score in chunk:
             if bit_score >= cutoff:
                 top_lengths.append(length_product)
@@ -40,28 +40,30 @@ def _fit_parameters(
     nbs_fallback: str,
 ) -> tuple[float, float] | None:
     top_lengths, top_scores = retain_top_data(length_products, bit_scores)
-    # V1/OrthoFinder emit an all-zero matrix only when there are too few hits.
-    # Degenerate (all-identical) length products still get a fit there, so we
-    # fall back to a=0, b=log10(max) rather than dropping the hits.
     v2_max = (0.0, math.log10(max(bit_scores)))
     if len(top_lengths) < 2:
         return v2_max if nbs_fallback == "v2_max" else None
-    x_values = [math.log10(value) for value in top_lengths]
-    y_values = [math.log10(value) for value in top_scores]
-    x_mean = sum(x_values) / len(x_values)
-    y_mean = sum(y_values) / len(y_values)
-    denominator = sum((value - x_mean) ** 2 for value in x_values)
-    if denominator <= 0:
-        return v2_max
-    a = (
-        sum(
-            (x_value - x_mean) * (y_value - y_mean)
-            for x_value, y_value in zip(x_values, y_values, strict=True)
-        )
-        / denominator
-    )
-    b = y_mean - a * x_mean
-    return (a, b) if math.isfinite(a) and math.isfinite(b) else v2_max
+    # Use OF's solver even for equal length products. A max-score fallback in
+    # that case solves a different problem. Solver failures must surface.
+    parameters, _ = curve_fit(_loglinear, top_lengths, np.log10(top_scores))
+    return float(parameters[0]), float(parameters[1])
+
+
+def _loglinear(x: NDArray[np.float64], a: float, b: float) -> NDArray[np.float64]:
+    return np.asarray(a * np.log10(x) + b, dtype=np.float64)
+
+
+def max_bitscore_hits(hits: list[DirectionalHit]) -> list[DirectionalHit]:
+    """Max HSP per direction, then OF sparse row/column order for fitting."""
+    keyed: dict[tuple[int, int], DirectionalHit] = {}
+    for hit in hits:
+        if hit.query_id == hit.target_id or hit.bitscore <= 0:
+            continue
+        key = (hit.query_id, hit.target_id)
+        previous = keyed.get(key)
+        if previous is None or (hit.bitscore, -hit.evalue) > (previous.bitscore, -previous.evalue):
+            keyed[key] = hit
+    return [keyed[key] for key in sorted(keyed)]
 
 
 def legacy_nbs(
@@ -69,9 +71,9 @@ def legacy_nbs(
     protein_lengths: dict[int, int],
     nbs_fallback: str = "v1_zero",
 ) -> list[NormalizedHit]:
-    """Normalize each directed species-pair group using frozen V1 semantics."""
+    """Normalize max-HSP matrices using OF3 default full-run semantics."""
 
-    usable = [hit for hit in hits if hit.query_id != hit.target_id and hit.bitscore > 0]
+    usable = max_bitscore_hits(hits)
     groups: dict[tuple[int, int], list[DirectionalHit]] = defaultdict(list)
     for hit in usable:
         groups[(hit.query_species, hit.target_species)].append(hit)
@@ -81,20 +83,20 @@ def legacy_nbs(
             float(protein_lengths[item.query_id] * protein_lengths[item.target_id])
             for item in group
         ]
-        parameters[key] = _fit_parameters(
-            products, [item.bitscore for item in group], nbs_fallback
-        )
+        parameters[key] = _fit_parameters(products, [item.bitscore for item in group], nbs_fallback)
 
     result: list[NormalizedHit] = []
     for hit in usable:
         params = parameters[(hit.query_species, hit.target_species)]
         if params is None:
-            # Degenerate group: V1/OrthoFinder emit an all-zero matrix, i.e. drop the hit.
+            # Too few fit points: OF emits an all-zero matrix.
             continue
         a, b = params
-        product = protein_lengths[hit.query_id] * protein_lengths[hit.target_id]
-        denominator = (10**b) * (product**a)
-        score = hit.bitscore / denominator if denominator > 0 else 0.0
+        score = (
+            (10 ** (-b) * float(protein_lengths[hit.query_id]) ** (-a))
+            * hit.bitscore
+            * float(protein_lengths[hit.target_id]) ** (-a)
+        )
         result.append(NormalizedHit(hit, score if math.isfinite(score) else 0.0))
     return result
 
@@ -114,8 +116,7 @@ def normalize_hits(
         return [
             NormalizedHit(
                 hit,
-                hit.bitscore
-                / min(protein_lengths[hit.query_id], protein_lengths[hit.target_id]),
+                hit.bitscore / min(protein_lengths[hit.query_id], protein_lengths[hit.target_id]),
             )
             for hit in usable
         ]

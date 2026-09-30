@@ -22,7 +22,7 @@ from ogprofiler.similarity.io import (
 )
 from ogprofiler.similarity.normalization import normalize_hits
 
-EDGE_ALGORITHM_VERSION = "configurable-normalization-edge-v3"
+EDGE_ALGORITHM_VERSION = "of315-nbs-lrb-directional-mean-v4"
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -77,7 +77,9 @@ def run_edge_stage(
     lengths = {int(row["protein_id"]): int(row["length"]) for row in protein_rows}
     raw_hits = list(iter_directional_hits(hits_path))
     normalized = normalize_hits(raw_hits, lengths, config.normalization, config.nbs_fallback)
-    coverage_filtered = filter_coverage(normalized, config) if config.apply_coverage_filter else normalized
+    coverage_filtered = (
+        filter_coverage(normalized, config) if config.apply_coverage_filter else normalized
+    )
     selected, edges = build_retained_edges(normalized, config)
     write_normalized_hits(normalized_path, normalized)
     write_retained_edges(output_path, edges)

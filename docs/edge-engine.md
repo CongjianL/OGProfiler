@@ -15,26 +15,22 @@ edges/retained_edges.parquet
 edges/edge-manifest.json
 ```
 
-## Legacy NBS
+## Legacy NBS (OF3.1.5-aligned)
 
-Normalization is performed separately for every directed species pair. Self
-hits are removed. For each group, V2 reproduces frozen V1 behavior:
+The configuration name is retained, but the default model now follows OF3.1.5
+full-run scoring rather than frozen V1 bins:
 
-1. sort hits by query-length × target-length;
-2. for fewer than 100 hits, use the complete group;
-3. otherwise use V1 bin widths (20, 200, or 1000), inclusive `scale + 1`
-   slices, and the linearly interpolated 95th bitscore percentile;
-4. fit `log10(bitscore) = a * log10(length_product) + b`;
-5. calculate `normalized_score = bitscore / (10**b * length_product**a)`.
+1. Remove self hits and nonpositive scores; max-bitscore deduplicate each direction.
+2. Traverse hits in sparse query/target ID order, then stable-sort by length product.
+3. Below 100 hits, use all samples. Otherwise use disjoint full bins of width
+   20/200/1000, discard the incomplete tail, and keep scores at/above NumPy's 95th percentile.
+4. Fit `log10(bitscore) = a * log10(length_product) + b` with SciPy curve_fit.
+5. Normalize with the corresponding diagonal length scaling.
 
-The logarithmic model is linear, so V2 uses the closed-form least-squares
-solution rather than a nonlinear optimizer. Degenerate groups (one usable
-point, degenerate length products, or a non-finite fit) are controlled by
-`similarity.nbs_fallback`:
-
-- `v1_zero` (default): drop the group's hits, matching V1 and OrthoFinder3's
-  all-zero matrix for too-few-hit groups;
-- `v2_max`: `a=0`, `b=log10(max_bitscore)`, mapping the group maximum to 1.
+Equal length products also use curve_fit, not max-score normalization. Solver
+failures surface rather than silently changing the model. With fewer than two
+selected fit points, `similarity.nbs_fallback=v1_zero` (default) drops the group;
+explicit `v2_max` uses `a=0,b=log10(max_bitscore)` instead.
 
 ## Coverage
 
@@ -64,11 +60,12 @@ Same-species paralogs are best hits when their score reaches the query's best
 external-species score within the same tolerance. Reciprocal best hits require
 both directed best-hit keys and are restricted to different species.
 
-LRB assigns each query its lowest outgoing RBH score and retains every hit at
-or above that threshold, including qualifying same-species paralogs. The
-legacy no-RBH fallback is `best_external_score + 1e-6`; consequently a query
-with external hits but no RBH retains none of those external hits. A query
-with only same-species hits uses `1e-6`.
+LRB reproduces OF's cutoff, including repeated-query NumPy assignment: within
+each target-species RBH matrix the last target in CSR order supplies the score,
+then minima are taken across target species. This differs from taking the true
+minimum of all near-tied RBHs. Hits at/above that cutoff are retained, including
+same-species paralogs. The no-RBH fallback is `best_external_score + 1e-6`;
+a query with only same-species hits uses `1e-6`. OF's sentinel bounds are preserved.
 
 Compatibility modes are explicit:
 
@@ -82,14 +79,19 @@ bug rather than reproducing it.
 ## Canonicalization and symmetrization
 
 Each retained direction is joined under `u=min(query,target)` and
-`v=max(query,target)`. Missing directions have score zero. `score_uv` and
-`score_vu` therefore have stable meanings independent of input order.
+`v=max(query,target)`. For LRB, assemble complete directional
+`Wuv=(Cuv+Cvu)*Buv`, where C indicates cutoff passage and B is the complete
+normalized matrix. A direction that failed its own cutoff can still contribute
+through reverse C; truly absent hits have score zero. Both C directions passed
+means a multiplier of 2. `score_uv` and `score_vu` store W, not filtered B.
+Non-LRB experiment modes retain their selected-B assembly behavior.
 
-Supported weights are `forward`, `max`, `min`, `mean`, and `geometric_mean`.
-The default is `forward`, matching OrthoFinder3's directional edge weight
-(`connect2 × B[i→j]`): use `score_uv` (u→v), falling back to `score_vu` when
-only the reverse direction is retained. `max`/`min`/`mean`/`geometric_mean`
-remain available and are subject to benchmark selection.
+Supported projections are `forward`, `max`, `min`, `mean`, and `geometric_mean`.
+The default is `mean`: `(Wuv+Wvu)/2` for LRB. Leiden consumes an undirected
+graph, whereas OF MCL consumes directional W; this is a deliberate projection,
+not exact MCL equivalence. Mean uses full precision before projection, not OF
+writer's three-decimal text quantization. Explicit `forward` uses score_uv
+with reverse fallback; other projection choices remain available.
 
 The retained edge schema is:
 
@@ -105,3 +107,6 @@ The manifest binds algorithm version, parameters, input hashes, output hashes,
 and row counts. Identical verified artifacts are reused; changed inputs,
 parameters, or output hashes trigger reconstruction.
 
+
+The repaired version is `of315-nbs-lrb-directional-mean-v4`; pre-fix edge
+caches are invalidated even with unchanged inputs and explicit parameters.

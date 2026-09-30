@@ -26,6 +26,13 @@ class NormalizedHit:
 
 @dataclass(frozen=True, slots=True)
 class RetainedEdge:
+    """Canonical undirected edge.
+
+    For LRB, score_uv/score_vu are complete OF-assembled directional W,
+    including the connection multiplier; weight is their configured projection.
+    Other edge methods continue to store retained directional B scores.
+    """
+
     u: int
     v: int
     u_species: int

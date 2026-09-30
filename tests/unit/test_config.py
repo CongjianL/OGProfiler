@@ -8,6 +8,10 @@ from ogprofiler.config import load_config
 from ogprofiler.exceptions import InputError
 
 
+def test_default_leiden_weights_use_mean_projection() -> None:
+    assert load_config()["edges"]["symmetrization"] == "mean"
+
+
 def test_yaml_and_cli_override(tmp_path: Path) -> None:
     config_path = tmp_path / "config.yaml"
     config_path.write_text("search:\n  threads: 12\nhierarchy:\n  seed: 9\n", encoding="utf-8")

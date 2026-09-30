@@ -259,9 +259,18 @@ def test_search_cli_produces_manifest_and_verified_resume(tmp_path: Path) -> Non
     edge_manifest = json.loads(edge_manifest_path.read_text(encoding="utf-8"))
     assert len(edges) == 1
     assert edges[0]["u"] == 0 and edges[0]["v"] == 1
-    assert edges[0]["weight"] == pytest.approx(1.0)
+    assert edges[0]["weight"] == pytest.approx(2.0)  # both connect directions: W=2*B
     assert edge_manifest["counts"]["coverage_filtered_hits"] == 2
     assert edge_manifest["counts"]["retained_edges"] == 1
+
+    # A pre-fix SSN cache must be rebuilt even with identical inputs/settings.
+    edge_manifest["algorithm_version"] = "configurable-normalization-edge-v3"
+    edge_manifest_path.write_text(json.dumps(edge_manifest), encoding="utf-8")
+    assert main(edge_command) == 0
+    assert edge_path.stat().st_mtime_ns != first_edge_mtime
+    assert json.loads(edge_manifest_path.read_text())["algorithm_version"] != (
+        "configurable-normalization-edge-v3"
+    )
 
     component_command = [
         "components",

@@ -19,7 +19,7 @@ class EdgeBuildConfig:
     min_target_coverage: float = 0.0
     min_bidirectional_coverage: float = 0.0
     best_hit_tolerance: float = 1e-3
-    symmetrization: str = "forward"
+    symmetrization: str = "mean"
 
 
 def filter_coverage(hits: list[NormalizedHit], config: EdgeBuildConfig) -> list[NormalizedHit]:
@@ -73,6 +73,38 @@ def best_hit_keys(
     return selected
 
 
+def lrb_cutoffs(
+    hits: dict[tuple[int, int], NormalizedHit], tolerance: float = 1e-3
+) -> dict[int, float]:
+    """Reproduce OF GetMostDistant_s, including repeated-row assignment.
+
+    In each species-pair RBH matrix, CSR nonzero traversal is ordered by
+    query then target. Repeated query indexing keeps the last target's score,
+    evaluated against the cutoff from previous species, not an intra-pair min.
+    """
+    best = best_hit_keys(hits, tolerance)
+    external: dict[int, float] = {}
+    last_rbh: dict[tuple[int, int], float] = {}
+    for key in sorted(hits):
+        item = hits[key]
+        h = item.hit
+        if h.query_species == h.target_species:
+            continue
+        external[h.query_id] = max(external.get(h.query_id, 0.0), item.normalized_score)
+        if key in best and (key[1], key[0]) in best:
+            last_rbh[h.query_id, h.target_species] = item.normalized_score
+    cutoffs: dict[int, float] = {}
+    for (query, _), score in last_rbh.items():
+        cutoffs[query] = min(cutoffs.get(query, 1e9), score)
+    queries = {item.hit.query_id for item in hits.values()}
+    return {
+        query: (external.get(query, 0.0) + 1e-6)
+        if cutoffs.get(query, 1e9) > 1e8
+        else cutoffs[query]
+        for query in queries
+    }
+
+
 def _select_directional(
     hits: dict[tuple[int, int], NormalizedHit], config: EdgeBuildConfig
 ) -> list[NormalizedHit]:
@@ -87,17 +119,10 @@ def _select_directional(
     elif config.method == "ar":
         selected = {key for key in hits if (key[1], key[0]) in hits}
     elif config.method == "lrb":
-        rbh_scores: dict[int, list[float]] = {}
-        external_best: dict[int, float] = {}
-        for key, item in hits.items():
-            if item.hit.query_species != item.hit.target_species:
-                external_best[key[0]] = max(external_best.get(key[0], 0.0), item.normalized_score)
-            if key in rbh:
-                rbh_scores.setdefault(key[0], []).append(item.normalized_score)
-        thresholds = {query: min(scores) for query, scores in rbh_scores.items()}
+        thresholds = lrb_cutoffs(hits, config.best_hit_tolerance)
         selected = set()
         for key, item in hits.items():
-            threshold = thresholds.get(key[0], external_best.get(key[0], 0.0) + 1e-6)
+            threshold = thresholds[key[0]]
             if item.normalized_score >= threshold:
                 selected.add(key)
     else:
@@ -122,8 +147,13 @@ def _symmetrize(forward: float, reverse: float, method: str) -> float:
 def build_retained_edges(
     normalized_hits: list[NormalizedHit], config: EdgeBuildConfig
 ) -> tuple[list[NormalizedHit], list[RetainedEdge]]:
-    filtered = filter_coverage(normalized_hits, config) if config.apply_coverage_filter else normalized_hits
-    selected = _select_directional(_deduplicate(filtered), config)
+    filtered = (
+        filter_coverage(normalized_hits, config)
+        if config.apply_coverage_filter
+        else normalized_hits
+    )
+    complete = _deduplicate(filtered)
+    selected = _select_directional(complete, config)
     grouped: dict[tuple[int, int], list[NormalizedHit]] = {}
     for item in selected:
         u, v = sorted((item.hit.query_id, item.hit.target_id))
@@ -143,6 +173,14 @@ def build_retained_edges(
                 score_uv = max(score_uv, item.normalized_score)
             else:
                 score_vu = max(score_vu, item.normalized_score)
+        if config.method == "lrb":
+            # OF W=(C+C.T)*B uses COMPLETE B, not only selected directions.
+            # One direction passed: factor 1; both passed: factor 2.
+            factor = len(directions)
+            forward = complete.get((u, v))
+            reverse = complete.get((v, u))
+            score_uv = factor * forward.normalized_score if forward is not None else 0.0
+            score_vu = factor * reverse.normalized_score if reverse is not None else 0.0
         edge_type = config.method.upper()
         if species[u] == species[v]:
             edge_type = f"PARALOG_{edge_type}"

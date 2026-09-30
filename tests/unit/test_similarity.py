@@ -56,12 +56,47 @@ def test_legacy_nbs_reproduces_log_length_fit_and_small_sample_fallback() -> Non
     assert normalized_max[2].normalized_score == pytest.approx(1.0)
 
 
-def test_v1_top_bin_logic_keeps_overlapping_95th_percentile_members() -> None:
+def test_of_top_bins_are_nonoverlapping_and_exclude_incomplete_tail() -> None:
     lengths = [float(value) for value in range(1, 101)]
     scores = [float(value) for value in range(1, 101)]
     top_lengths, top_scores = retain_top_data(lengths, scores)
-    assert top_lengths == [20.0, 21.0, 40.0, 41.0, 60.0, 61.0, 80.0, 81.0, 100.0]
+    assert top_lengths == [20.0, 40.0, 60.0, 80.0, 100.0]
     assert top_scores == top_lengths
+    assert retain_top_data(lengths + [101.0], scores + [10000.0]) == (top_lengths, top_scores)
+
+
+def test_nbs_max_dedup_precedes_fit_and_equal_products_use_curve_fit() -> None:
+    raw = [hit(0, 2, 0, 1, 40).hit, hit(1, 3, 0, 1, 80).hit]
+    lengths = dict.fromkeys(range(4), 100)
+    normalized = legacy_nbs(raw + [hit(0, 2, 0, 1, 10).hit], lengths)
+    assert len(normalized) == 2
+    assert [h.normalized_score for h in normalized] == pytest.approx(
+        [1 / math.sqrt(2), math.sqrt(2)], rel=1e-4
+    )
+    assert normalized == legacy_nbs(list(reversed(raw)), lengths)
+
+
+def test_lrb_matches_of_near_tie_last_target_cutoff() -> None:
+    values = [hit(0, 2, 0, 1, 1), hit(0, 3, 0, 1, 1.0005), hit(2, 0, 1, 0, 1), hit(3, 0, 1, 0, 1)]
+    selected, _ = build_retained_edges(values, EdgeBuildConfig())
+    assert (0, 2) not in {(h.hit.query_id, h.hit.target_id) for h in selected}
+
+
+def test_lrb_mean_projects_complete_of_directional_weights() -> None:
+    values = [
+        hit(0, 2, 0, 1, 8),
+        hit(2, 0, 1, 0, 8),
+        hit(0, 3, 0, 2, 9),
+        hit(3, 0, 2, 0, 7),
+        hit(3, 5, 2, 0, 10),
+        hit(5, 3, 0, 2, 10),
+    ]
+    selected, edges = build_retained_edges(values, EdgeBuildConfig())
+    assert (3, 0) not in {(h.hit.query_id, h.hit.target_id) for h in selected}
+    by_pair = {(e.u, e.v): e for e in edges}
+    assert by_pair[0, 2].weight == 16
+    assert (by_pair[0, 3].score_uv, by_pair[0, 3].score_vu) == (9, 7)
+    assert by_pair[0, 3].weight == 8
 
 
 def test_coverage_filter_applies_directional_and_minimum_thresholds() -> None:
