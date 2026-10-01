@@ -85,8 +85,13 @@ ogprofiler edges --run run/ --method lrb
 ogprofiler components --run run/
 ogprofiler hierarchy-all --run run/ --set runtime.workers=4
 ogprofiler annotate-network --run run/
+ogprofiler orthogroups --run run/
 ogprofiler export --run run/
 ```
+
+The `orthogroups` stage writes V1-compatible component Parquet artifacts with
+verified resume. Final `export` still uses terminal families until the OG export
+integration is complete. See [OG extraction stage](docs/og-extraction-stage.md).
 
 DIAMOND is the production default. MMseqs2 and NCBI BLAST+ are interchangeable
 compatibility backends and emit the same directional Parquet schema:

@@ -15,6 +15,7 @@ WORKSPACE_DIRECTORIES = (
     "components",
     "hierarchy",
     "evolution",
+    "orthogroups",
     "results",
 )
 

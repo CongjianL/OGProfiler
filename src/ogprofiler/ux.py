@@ -25,6 +25,7 @@ PIPELINE_STAGES = (
     "components",
     "hierarchy",
     "annotate-network",
+    "orthogroups",
     "export",
 )
 
@@ -87,6 +88,7 @@ def _artifact_status(run_root: Path) -> tuple[StageStatus, ...]:
         ("components", run_root / "components/component-manifest.json"),
         ("hierarchy", run_root / "hierarchy/scheduler-manifest.json"),
         ("annotate-network", run_root / "evolution/network-event-manifest.json"),
+        ("orthogroups", run_root / "orthogroups/og-manifest.json"),
         ("export", run_root / "results/export-manifest.json"),
     )
     first_missing = False
@@ -94,6 +96,12 @@ def _artifact_status(run_root: Path) -> tuple[StageStatus, ...]:
     for stage, path in artifacts:
         if path.is_file():
             status = "DONE"
+            if stage == "orthogroups":
+                try:
+                    value = json.loads(path.read_text())["status"]
+                    status = value if value in {"DONE", "FAILED"} else "INVALID"
+                except (OSError, ValueError, KeyError, TypeError):
+                    status = "INVALID"
         elif first_missing:
             status = "PENDING"
         else:
@@ -118,8 +126,10 @@ def run_status(run_root: Path) -> dict[str, Any]:
                     tasks[str(status)] = int(count)
         except sqlite3.Error as error:
             raise CheckpointError(f"Failed to inspect {database}: {error}") from error
-    overall = "FAILED" if tasks["FAILED"] else (
-        "COMPLETE" if all(row.status == "DONE" for row in stages) else "IN_PROGRESS"
+    overall = (
+        "FAILED"
+        if tasks["FAILED"] or any(row.status == "FAILED" for row in stages)
+        else ("COMPLETE" if all(row.status == "DONE" for row in stages) else "IN_PROGRESS")
     )
     return {
         "run_root": str(run_root.resolve()),

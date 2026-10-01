@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
+from ogprofiler.exceptions import InputError
+
 V1Event = Literal["I", "II", "III-1", "III-2", "III-3"]
 
 
@@ -63,3 +65,21 @@ class OrthogroupResult:
     trace: tuple[SelectionTrace, ...]
     unassigned: tuple[UnassignedProtein, ...]
     remaining_cluster_ids: tuple[int, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class OrthogroupConfig:
+    strategy: str = "v1_compatible"
+    species_overlap_count: int = 0
+    refinement: bool = False
+
+    def __post_init__(self) -> None:
+        if self.strategy != "v1_compatible":
+            raise InputError("orthogroups.strategy must be v1_compatible")
+        value = self.species_overlap_count
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            raise InputError("orthogroups.species_overlap_count must be a non-negative integer")
+        if not isinstance(self.refinement, bool):
+            raise InputError("orthogroups.refinement must be boolean")
+        if self.refinement:
+            raise InputError("orthogroups.refinement=true is not implemented")

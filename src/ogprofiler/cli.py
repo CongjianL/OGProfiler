@@ -40,6 +40,7 @@ def build_parser() -> argparse.ArgumentParser:
             "components",
             "hierarchy",
             "annotate-network",
+            "orthogroups",
             "export",
         ),
         default="prepare",
@@ -53,6 +54,7 @@ def build_parser() -> argparse.ArgumentParser:
             "components",
             "hierarchy",
             "annotate-network",
+            "orthogroups",
             "export",
         ),
         default="export",
@@ -100,6 +102,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         metavar="KEY=VALUE",
     )
+
+    orthogroups = subparsers.add_parser(
+        "orthogroups", help="extract V1-compatible component OG artifacts"
+    )
+    orthogroups.add_argument("--run", required=True, type=Path)
+    orthogroups.add_argument("--config", type=Path)
+    orthogroups.add_argument("--set", dest="overrides", action="append", default=[])
 
     search = subparsers.add_parser(
         "search",
@@ -632,6 +641,24 @@ def _annotate_network(args: argparse.Namespace, command: list[str]) -> int:
     return 0
 
 
+def _orthogroups(args: argparse.Namespace, command: list[str]) -> int:
+    from ogprofiler.orthogroups.stage import OrthogroupConfig, run_orthogroup_stage
+
+    config_path = args.config
+    if config_path is None and (args.run / "run.yaml").is_file():
+        config_path = args.run / "run.yaml"
+    config = load_config(str(config_path) if config_path else None, args.overrides)
+    path, components, reused = run_orthogroup_stage(
+        args.run,
+        OrthogroupConfig(**config["orthogroups"]),
+        command,
+        workers=config["runtime"]["workers"],
+        retries=config["runtime"]["component_retries"],
+    )
+    print(f"orthogroups complete: components={components} reused={reused} manifest={path}")
+    return 0
+
+
 def _export(args: argparse.Namespace, command: list[str]) -> int:
     if args.kind == "graph":
         from ogprofiler.output.graph import export_component_graphml
@@ -872,6 +899,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _hierarchy_all(args, ["ogprofiler", *supplied])
         if args.command == "annotate-network":
             return _annotate_network(args, ["ogprofiler", *supplied])
+        if args.command == "orthogroups":
+            return _orthogroups(args, ["ogprofiler", *supplied])
         if args.command == "export":
             return _export(args, ["ogprofiler", *supplied])
         if args.command == "orthologs":

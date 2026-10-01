@@ -59,6 +59,7 @@ DEFAULT_CONFIG: dict[str, dict[str, Any]] = {
         "network_overlap_threshold": 0.0,
         "phylogenetic_refinement": False,
     },
+    "orthogroups": {"strategy": "v1_compatible", "species_overlap_count": 0, "refinement": False},
     "phylogeny": {
         "alignment_backend": "mafft",
         "alignment_executable": "mafft",
@@ -152,6 +153,10 @@ def load_config(path: str | None = None, overrides: list[str] | None = None) -> 
 
 
 def validate_config(config: dict[str, Any]) -> None:
+    from ogprofiler.orthogroups.models import OrthogroupConfig
+
+    OrthogroupConfig(**config["orthogroups"])
+
     def choice(section: str, key: str, allowed: set[str]) -> None:
         value = config[section][key]
         if value not in allowed:

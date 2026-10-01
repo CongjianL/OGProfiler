@@ -95,5 +95,6 @@
 另验证父 I 合并多个 terminal family、已消耗候选的来源 trace、无 SSN isolate 证据的 singleton
 保持 unassigned、成员 hash 身份、函数输入不变与重跑确定性，以及 3001 节点深层选择。
 
-本轮专用测试 83 passed；完整测试集 181 passed；Ruff 和新包 Mypy 通过。
-P3–P6 的配置、Parquet、resume、export、真实 hierarchy 回归及准确度仍待开发/验证。
+P0–P2 提交时专用测试 83 passed；完整测试集 181 passed。
+P3 已增加配置、Parquet、调度和 resume，见 `og-extraction-stage.md`。
+P4–P6 的 export、真实 hierarchy 回归及准确度仍待开发/验证。
