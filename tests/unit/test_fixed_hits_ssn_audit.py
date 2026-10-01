@@ -156,3 +156,34 @@ def test_repaired_pipeline_matches_of_and_mean_projection(tmp_path, reference_ro
     for pair in report["normalization_pairs"]:
         assert pair["fit_sample_only_v2"] == pair["fit_sample_only_of"] == 0
         assert pair["v2_parameters"] == pytest.approx(pair["of_parameters"])
+
+
+@pytest.mark.parametrize("weight, passed", [(2.0, True), (3.0, False)])
+def test_real_production_artifact_is_checked_not_just_rebuilt_graph(
+    tmp_path, reference_root, weight, passed
+):
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    artifact = tmp_path / "retained_edges.parquet"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                dict(u=0, v=2, weight=weight, score_uv=2.0, score_vu=2.0),
+                dict(u=1, v=3, weight=2.0, score_uv=2.0, score_vu=2.0),
+            ]
+        ),
+        artifact,
+    )
+    hits = [h(0, 2, 0, 1, 8), h(1, 3, 0, 1, 8), h(2, 0, 1, 0, 8), h(3, 1, 1, 0, 8)]
+    report = audit.run(
+        hits,
+        rows({0: 0, 1: 0, 2: 1, 3: 1}, {0: 100, 1: 200, 2: 100, 3: 200}),
+        reference_root,
+        tmp_path / "audit",
+        production_edges=artifact,
+    )
+    validation = audit.equivalence_validation(report, require_production=True)
+    assert validation["passed"] is passed
+    if not passed:
+        assert "production_mean_weights_vs_OF_mean" in validation["failed_checks"]

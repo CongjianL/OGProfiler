@@ -229,7 +229,80 @@ def graph_summary(matrix):
     )
 
 
-def run(hits, rows, reference_root, out, atol=1e-8, rtol=1e-6, sample_limit=20):
+def compare_production_edges(audit, path, W):
+    """Verify the real CLI artifact, not only an in-memory reconstruction."""
+    rr, cc, weights, scores = [], [], [], []
+    seen = set()
+    parquet = pq.ParquetFile(path)
+    for batch in parquet.iter_batches(columns=["u", "v", "weight", "score_uv", "score_vu"]):
+        for row in batch.to_pylist():
+            u, v = int(row["u"]), int(row["v"])
+            if u >= v or (u, v) in seen:
+                raise ValueError(f"Noncanonical or duplicate production edge: {u}/{v}")
+            seen.add((u, v))
+            values = [row[k] for k in ("weight", "score_uv", "score_vu")]
+            if not all(np.isfinite(x) and x >= 0 for x in values) or values[0] <= 0:
+                raise ValueError(f"Invalid production edge values: {u}/{v}")
+            rr.extend((audit.global_local[u], audit.global_local[v]))
+            cc.extend((audit.global_local[v], audit.global_local[u]))
+            weights.extend((values[0], values[0]))
+            scores.extend(values[1:])
+    persisted = sparse.csr_matrix((weights, (rr, cc)), shape=W.shape)
+    persisted_w = sparse.csr_matrix((scores, (rr, cc)), shape=W.shape)
+    audit.compare(
+        "production_directional_W_vs_OF_W", persisted_w, W, audit.global_ids, audit.global_ids
+    )
+    audit.compare(
+        "production_mean_weights_vs_OF_mean",
+        persisted,
+        (W + W.T) * 0.5,
+        audit.global_ids,
+        audit.global_ids,
+    )
+    return dict(path=str(path), canonical_edges=len(seen), graph=graph_summary(persisted))
+
+
+def equivalence_validation(report, require_production=False):
+    required = {
+        "max_bitscore_input_diagnostic",
+        "B",
+        "BH",
+        "RBH_cross_species",
+        "BH_sameB_control",
+        "RBH_sameB_control",
+        "cutoff",
+        "cutoff_sameB_control",
+        "connect",
+        "connect_sameB_control",
+        "directional_W_same_assembly_DIAGNOSTIC",
+        "OF_mean_projection_vs_V2_undirected",
+    }
+    if require_production:
+        required.update({"production_directional_W_vs_OF_W", "production_mean_weights_vs_OF_mean"})
+    totals = {row["stage"]: row for row in report["stage_totals"]}
+    failures = []
+    for stage in sorted(required):
+        row = totals.get(stage)
+        if row is None or row["outside_tolerance_count"] or row["only_v2"] or row["only_of"]:
+            failures.append(stage)
+    for row in report["normalization_pairs"]:
+        a, b = row["v2_parameters"], row["of_parameters"]
+        params_equal = (a is None and b is None) or (
+            a is not None and b is not None and np.allclose(a, b, **report["tolerances"])
+        )
+        if row["fit_sample_only_v2"] or row["fit_sample_only_of"] or not params_equal:
+            failures.append(f"NBS/{row['query_species']}->{row['target_species']}")
+    return dict(
+        passed=not failures,
+        failed_checks=failures,
+        required_stages=sorted(required),
+        production_artifact_required=require_production,
+    )
+
+
+def run(
+    hits, rows, reference_root, out, atol=1e-8, rtol=1e-6, sample_limit=20, production_edges=None
+):
     out.mkdir(parents=True, exist_ok=False)
     snapshot = out / "reference" / "orthofinder"
     for relative in (
@@ -473,6 +546,8 @@ def run(hits, rows, reference_root, out, atol=1e-8, rtol=1e-6, sample_limit=20):
             audit.global_ids,
             audit.global_ids,
         )
+    if production_edges is not None:
+        report["production_artifact"] = compare_production_edges(audit, production_edges, W)
     report["graph_objects"] = dict(
         V2_undirected=graph_summary(U),
         OF_directional_full_precision=graph_summary(W),
@@ -536,22 +611,34 @@ def main():
     parser.add_argument("--of-source", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--sample-limit", type=int, default=20)
+    parser.add_argument("--production-edges", type=Path)
+    parser.add_argument("--require-equivalence", action="store_true")
     args = parser.parse_args()
     if args.sample_limit < 0:
         parser.error("sample-limit must be nonnegative")
     hits_path = args.run / "search/hits.parquet"
     proteins_path = args.run / "input/proteins.parquet"
-    for path in (hits_path, proteins_path):
+    input_paths = [hits_path, proteins_path]
+    if args.production_edges is not None:
+        input_paths.append(args.production_edges)
+    for path in input_paths:
         if not path.is_file():
             parser.error(f"Missing fixed input: {path}")
     if args.out.exists():
         parser.error("Output must be a fresh directory")
-    checksums = {str(p): sha256(p) for p in (hits_path, proteins_path)}
+    checksums = {str(p): sha256(p) for p in input_paths}
     rows = pq.read_table(
         proteins_path, columns=["protein_id", "species_id", "original_id", "length"]
     ).to_pylist()
     hits = list(iter_directional_hits(hits_path))
-    report = run(hits, rows, args.of_source, args.out, sample_limit=args.sample_limit)
+    report = run(
+        hits,
+        rows,
+        args.of_source,
+        args.out,
+        sample_limit=args.sample_limit,
+        production_edges=args.production_edges,
+    )
     report["input_checksums"] = checksums
     report["input_run"] = str(args.run)
     report["scheduler_provenance"] = {
@@ -567,13 +654,17 @@ def main():
     report["completed"] = False
     report["input_integrity_verified"] = False
     (args.out / "report.json").write_text(json.dumps(report, indent=2))
-    for path in (hits_path, proteins_path):
+    for path in input_paths:
         if sha256(path) != checksums[str(path)]:
             raise ValueError(f"Input changed during audit: {path}")
     report["input_integrity_verified"] = True
     report["completed"] = True
+    report["validation"] = equivalence_validation(report, args.production_edges is not None)
     (args.out / "report.json").write_text(json.dumps(report, indent=2))
     print(json.dumps(report["graph_objects"], indent=2), flush=True)
+    print(json.dumps(report["validation"], indent=2), flush=True)
+    if args.require_equivalence and not report["validation"]["passed"]:
+        raise RuntimeError("SSN equivalence validation failed; see report.json validation")
 
 
 if __name__ == "__main__":
