@@ -9,8 +9,8 @@ ogprofiler run --out RUN_ROOT --from-stage orthogroups --until-stage orthogroups
 ```
 
 阶段顺序现在为 `SSN → hierarchy → annotate-network → orthogroups → export`。
-**本阶段只发布组件 OG 数据；最终 export 当前仍读取 terminal family，P4 才切换。**
-`run --until-stage orthogroups` 可用于单独验收，避免把旧 terminal 导出当成新 OG。
+**P3 发布组件 OG 数据；P4 已将默认最终 export 切换为新 OG membership。**
+`run --until-stage orthogroups` 可用于单独验收；完整最终导出契约见 `final-result-export.md`。
 
 配置默认值（支持 YAML 和 `--set`；省略 `--config` 时读取已有 `run.yaml`）：
 
@@ -64,7 +64,7 @@ worker 读取过滤后的组件 index/protein/isolate 数据，以及该组件�
 调度进程读取并校验全局轻量 metadata/index，不构造全局 igraph 或完整 hierarchy。
 
 `membership_hash` 使用 P2 的排序 `(species_id, original_id)` 契约，local_group_id 使用确定性选择顺序。
-串行和并发结果中两者及全部 Parquet 行一致；**最终全局 OG ID 的分配和导出仍在 P4**。
+串行和并发结果中两者及全部 Parquet 行一致；**P4 已实现最终全局 OG ID 的分配和导出，并完成跨阶段一致性验收**。
 本阶段没有重新定义终端 membership，也没有调整 SSN、Leiden、分裂或 pairwise 策略。
 
 ## 恢复与失败

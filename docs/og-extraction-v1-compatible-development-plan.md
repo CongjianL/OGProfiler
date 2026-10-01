@@ -1,6 +1,6 @@
 # OG 提取：V1 策略与 V2 架构的继续开发方案
 
-> 状态：**用户已批准；P0–P2 已完成；P3 接线及本地落盘恢复测试已完成，全局 ID 交叉验收待 P4；P4–P6 待开发/验证**。批准日期：2026-10-01（Asia/Shanghai）。
+> 状态：**用户已批准；P0–P4 已实现并通过本地验收，P5–P6 待真实数据/准确度验证**。批准日期：2026-10-01（Asia/Shanghai）。
 > 本文是后续开发的执行依据，不表示功能或科学验证已经完成。
 > 制定时仅新增文档；后续实现进度见第 9 节及 `og-extraction-v1-reference-contract.md`。
 
@@ -297,18 +297,20 @@ OG manifest 绑定：
 
 **退出条件：**落盘重读结果与 engine 一致；串行/并发输出成员及全局 ID 一致。
 
-P3 已验证 local_group_id、membership_hash 和全部组件产物一致；最终全局 OG 数字 ID
-依第 7 节在 P4 export 分配并验收，该项跨阶段退出条件仍待验证；本阶段不提前引入第二套全局编号。
+P3 已验证 local_group_id、membership_hash 和全部组件产物一致；P4 已按第 7 节
+完成全局 OG 数字 ID 分配、串行/并发及重编号验收，没有引入第二套默认全局编号。
 实现/恢复契约见 `og-extraction-stage.md`。
 
 ### P4：export 与下游
 
-- [ ] 最终 OG 输出读取新 membership；终端 family 单独保留。
-- [ ] 稳定 OG ID、TSV、FASTA 与统计表相互一致。
-- [ ] 更新 export cache、CLI --until-stage 与 pairwise 依赖契约。
-- [ ] 更新用户文档，区分 OG 与 terminal family。
+- [x] 最终 OG 输出读取新 membership；终端 family 单独保留。
+- [x] 稳定 OG ID、TSV、FASTA 与统计表相互一致。
+- [x] 更新 export cache、CLI --until-stage 与 pairwise 依赖契约。
+- [x] 更新用户文档，区分 OG 与 terminal family。
 
 **退出条件：**实际 CLI 产物通过端到端 fixture 检查，旧导出缓存失效。
+
+P4 本地验收已通过；最终交换表、诊断命名空间和独立下游依赖契约见 `final-result-export.md`。
 
 ### P5：固定 hierarchy 的真实数据回归
 

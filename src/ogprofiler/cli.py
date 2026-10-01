@@ -178,10 +178,15 @@ def build_parser() -> argparse.ArgumentParser:
     annotate.add_argument("--set", dest="overrides", action="append", default=[])
     export = subparsers.add_parser(
         "export",
-        help="write stable terminal-family and hierarchy exchange tables",
+        help="write stable orthogroups and terminal-family diagnostics",
     )
     export.add_argument("kind", nargs="?", choices=("results", "graph"), default="results")
     export.add_argument("--run", required=True, type=Path)
+    export.add_argument(
+        "--strategy", choices=("v1_compatible", "terminal"), default="v1_compatible"
+    )
+    export.add_argument("--config", type=Path)
+    export.add_argument("--set", dest="overrides", action="append", default=[])
     export.add_argument("--component", type=int, help="component ID for graph export")
     export.add_argument("--format", choices=("graphml",), default="graphml")
     export.add_argument(
@@ -195,7 +200,7 @@ def build_parser() -> argparse.ArgumentParser:
     export.add_argument(
         "--all-family-fasta",
         action="store_true",
-        help="explicitly export one FASTA file for every terminal family",
+        help="explicitly export one FASTA file for every selected group",
     )
     orthologs = subparsers.add_parser(
         "orthologs",
@@ -674,15 +679,21 @@ def _export(args: argparse.Namespace, command: list[str]) -> int:
 
     from ogprofiler.output.stage import run_export_stage
 
-    logger = configure_logging(args.run / "ogprofiler.log").bind(
-        stage="output", task="terminal-families"
-    )
-    logger.info("Exporting stable terminal-family result tables")
+    config_path = args.config
+    if config_path is None and (args.run / "run.yaml").is_file():
+        config_path = args.run / "run.yaml"
+    config = load_config(str(config_path) if config_path else None, args.overrides)
+    from ogprofiler.orthogroups.models import OrthogroupConfig
+
+    logger = configure_logging(args.run / "ogprofiler.log").bind(stage="output", task=args.strategy)
+    logger.info("Exporting %s result tables", args.strategy)
     path, reused, families = run_export_stage(
         args.run,
         command,
         fasta_families=tuple(args.fasta_families),
         all_family_fasta=bool(args.all_family_fasta),
+        strategy=args.strategy,
+        config=OrthogroupConfig(**config["orthogroups"]),
     )
     logger.info(
         "%s final result export: families=%d manifest=%s",

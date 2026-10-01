@@ -57,3 +57,14 @@ is reported after each output chunk.
 event, and protein checksums; algorithm parameters; output checksum; pair,
 chunk, component, and supporting-event counts. Matching runs reuse the verified
 compressed output, while corruption or changed inputs trigger atomic rebuild.
+
+
+## P4 grouping dependency contract
+
+The policy version is `hierarchy-cross-child-v2`. Pairwise candidates continue
+to consume the terminal hierarchy and `network_event`; the manifest records
+`grouping_dependency=none` and the event algorithm version. OG memberships,
+OG coverage, and `v1_event` are not pair-generation inputs. In particular,
+cross-species membership within one OG does not imply a pairwise ortholog.
+The standard `run` pipeline appends this stage only with the explicit
+`output.emit_pairwise_orthologs=true` opt-in.

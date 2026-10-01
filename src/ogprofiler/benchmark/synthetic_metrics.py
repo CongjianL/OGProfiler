@@ -15,6 +15,7 @@ import pyarrow as pa
 from ogprofiler.benchmark.metrics import family_metrics
 from ogprofiler.core.manifest import sha256_file, write_json
 from ogprofiler.exceptions import InputError
+from ogprofiler.output.results import terminal_table_paths
 
 
 def _rows(path: Path) -> list[dict[str, str]]:
@@ -51,8 +52,9 @@ def _predicted_clades(
     run_root: Path,
 ) -> tuple[set[frozenset[str]], dict[frozenset[str], str]]:
     hierarchy = _rows(run_root / "results" / "hierarchy.tsv")
-    families = _rows(run_root / "results" / "families.tsv")
-    members = _rows(run_root / "results" / "members.tsv")
+    terminal_families, terminal_members = terminal_table_paths(run_root)
+    families = _rows(terminal_families)
+    members = _rows(terminal_members)
     events = _rows(run_root / "results" / "events.tsv")
     family_members: dict[str, set[str]] = defaultdict(set)
     for row in members:
@@ -79,9 +81,7 @@ def _predicted_clades(
             )
         return cache[key]
 
-    clades = {
-        frozenset(descendants(key)) for key in nodes if len(descendants(key)) >= 2
-    }
+    clades = {frozenset(descendants(key)) for key in nodes if len(descendants(key)) >= 2}
     event_by_clade: dict[frozenset[str], str] = {}
     for row in events:
         key = (int(row["component_id"]), int(row["cluster_id"]))
@@ -116,9 +116,7 @@ def _true_clades(
         return cache[node_id]
 
     clades = {
-        frozenset(descendants(node_id))
-        for node_id in events
-        if len(descendants(node_id)) >= 2
+        frozenset(descendants(node_id)) for node_id in events if len(descendants(node_id)) >= 2
     }
     event_clades = [
         (frozenset(descendants(node_id)), event)
@@ -174,9 +172,7 @@ def hierarchy_and_event_metrics(run_root: Path, dataset_root: Path) -> dict[str,
     }
 
 
-def synthetic_orthology_metrics(
-    run_root: Path, dataset_root: Path
-) -> dict[str, Any] | None:
+def synthetic_orthology_metrics(run_root: Path, dataset_root: Path) -> dict[str, Any] | None:
     predicted_path = run_root / "results" / "ortholog_pairs.tsv.zst"
     if not predicted_path.is_file():
         return None
@@ -186,7 +182,7 @@ def synthetic_orthology_metrics(
     }
     original_by_integer = {
         int(row["protein_id"]): row["original_id"]
-        for row in _rows(run_root / "results" / "members.tsv")
+        for row in _rows(terminal_table_paths(run_root)[1])
     }
     predicted: set[tuple[str, str]] = set()
     with pa.input_stream(str(predicted_path), compression="zstd") as stream:
@@ -195,9 +191,7 @@ def synthetic_orthology_metrics(
             right = original_by_integer[int(row["protein_b_id"])]
             predicted.add((left, right) if left < right else (right, left))
     intersection = len(predicted & truth)
-    precision = (
-        intersection / len(predicted) if predicted else float(not truth)
-    )
+    precision = intersection / len(predicted) if predicted else float(not truth)
     recall = intersection / len(truth) if truth else float(not predicted)
     return {
         "truth_pairs": len(truth),
@@ -226,6 +220,10 @@ def evaluate_synthetic_run(
         "scenario_id": manifest["scenario_id"],
         "scenario": manifest["scenario"],
         "input_checksums": {
+            **{
+                path.relative_to(run_root).as_posix(): sha256_file(path)
+                for path in terminal_table_paths(run_root)
+            },
             "dataset_manifest": sha256_file(dataset_root / "manifest.json"),
             "families.tsv": sha256_file(run_root / "results" / "families.tsv"),
             "members.tsv": sha256_file(run_root / "results" / "members.tsv"),
@@ -266,15 +264,9 @@ def aggregate_applicability(
         event_accuracy = item["events"]["end_to_end_accuracy"]
         orthology_f1 = (item.get("orthology") or {}).get("f1")
         family_applicable = family_f1 is not None and family_f1 >= family_f1_threshold
-        hierarchy_applicable = (
-            hierarchy_f1 is not None and hierarchy_f1 >= hierarchy_f1_threshold
-        )
-        event_applicable = (
-            event_accuracy is not None and event_accuracy >= event_accuracy_threshold
-        )
-        orthology_applicable = (
-            orthology_f1 is not None and orthology_f1 >= orthology_f1_threshold
-        )
+        hierarchy_applicable = hierarchy_f1 is not None and hierarchy_f1 >= hierarchy_f1_threshold
+        event_applicable = event_accuracy is not None and event_accuracy >= event_accuracy_threshold
+        orthology_applicable = orthology_f1 is not None and orthology_f1 >= orthology_f1_threshold
         rows.append(
             {
                 "scenario_id": item["scenario_id"],
@@ -322,21 +314,15 @@ def aggregate_applicability(
             "schema_version": "leiden-applicability-v1",
             "thresholds": thresholds,
             "evaluated_scenarios": len(rows),
-            "family_applicable_scenarios": sum(
-                bool(row["family_applicable"]) for row in rows
-            ),
+            "family_applicable_scenarios": sum(bool(row["family_applicable"]) for row in rows),
             "hierarchy_applicable_scenarios": sum(
                 bool(row["hierarchy_applicable"]) for row in rows
             ),
-            "event_applicable_scenarios": sum(
-                bool(row["event_applicable"]) for row in rows
-            ),
+            "event_applicable_scenarios": sum(bool(row["event_applicable"]) for row in rows),
             "orthology_applicable_scenarios": sum(
                 bool(row["orthology_applicable"]) for row in rows
             ),
-            "overall_applicable_scenarios": sum(
-                bool(row["overall_applicable"]) for row in rows
-            ),
+            "overall_applicable_scenarios": sum(bool(row["overall_applicable"]) for row in rows),
             "rows": rows,
         },
     )
@@ -373,9 +359,7 @@ def aggregate_applicability(
         {"schema_version": "synthetic-axis-summary-v1", "rows": axis_rows},
     )
     axis_fields = list(axis_rows[0]) if axis_rows else ["axis", "value"]
-    with (output / "axis-summary.tsv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (output / "axis-summary.tsv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, axis_fields, delimiter="\t", lineterminator="\n")
         writer.writeheader()
         writer.writerows(axis_rows)

@@ -3,7 +3,7 @@
 OGProfiler 2 builds deterministic, hierarchical protein-family assignments from
 sequence-similarity networks. It combines a directional homology search,
 legacy-compatible normalized bit scores, sparse connected components,
-hierarchical Leiden subdivision, stable terminal-family IDs, and optional
+hierarchical Leiden subdivision, stable orthogroup and terminal-family IDs, and optional
 phylogenetic evidence. The implementation lives in `src/ogprofiler`; the frozen
 V1 reference remains under `legacy/` for regression comparison.
 
@@ -90,8 +90,11 @@ ogprofiler export --run run/
 ```
 
 The `orthogroups` stage writes V1-compatible component Parquet artifacts with
-verified resume. Final `export` still uses terminal families until the OG export
-integration is complete. See [OG extraction stage](docs/og-extraction-stage.md).
+verified resume. Default `export` reads this OG membership; terminal families
+remain separate diagnostics. `export --strategy terminal` writes historical
+terminal results into `results/terminal-families/`. See
+[OG extraction stage](docs/og-extraction-stage.md) and
+[final export](docs/final-result-export.md).
 
 DIAMOND is the production default. MMseqs2 and NCBI BLAST+ are interchangeable
 compatibility backends and emit the same directional Parquet schema:
@@ -120,8 +123,11 @@ The stable exchange tables under `run/results/` are:
 
 | File | Meaning |
 |---|---|
-| `families.tsv` | One row per terminal family with stable dataset-scoped OG ID |
-| `members.tsv` | Protein-to-family membership with species and original IDs |
+| `families.tsv` | One row per selected orthogroup with stable dataset-scoped OG ID |
+| `members.tsv` | Assigned protein-to-OG membership with species and original IDs |
+| `terminal_families.tsv` / `terminal_members.tsv` | TF-ID terminal partition diagnostics |
+| `unassigned.tsv` | Proteins not selected into an OG, with reasons |
+| `statistics.tsv` | OG counts and assigned/unassigned coverage |
 | `hierarchy.tsv` | Parent/child hierarchy nodes, resolution, quality, and stop reason |
 | `events.tsv` | Network-derived event labels and confidence |
 
@@ -133,7 +139,7 @@ opt-ins because they may be large or require external tools:
 ogprofiler export --run run/ --family-fasta OG000000123
 ogprofiler export graph --run run/ --component 0
 ogprofiler orthologs --run run/ --emit-pairwise-orthologs
-ogprofiler annotate --run run/ --phylogenetic-refinement --family OG000000123
+ogprofiler annotate --run run/ --phylogenetic-refinement --family TF000000123
 ```
 
 ## Scientific caveats

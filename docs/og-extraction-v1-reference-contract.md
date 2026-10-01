@@ -97,4 +97,5 @@
 
 P0–P2 提交时专用测试 83 passed；完整测试集 181 passed。
 P3 已增加配置、Parquet、调度和 resume，见 `og-extraction-stage.md`。
-P4–P6 的 export、真实 hierarchy 回归及准确度仍待开发/验证。
+P4 已实现最终 OG 导出并沿用冻结参考完成落盘/全局 ID 验收，见 `final-result-export.md`。
+P5–P6 的真实 hierarchy 回归及准确度仍待开发/验证。

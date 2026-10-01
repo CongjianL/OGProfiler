@@ -494,3 +494,50 @@ def run_orthogroup_stage(
         return _run_orthogroup_stage(run_root, config, command, workers=workers, retries=retries)
     except (OSError, ValueError, KeyError, TypeError, pa.ArrowException) as error:
         raise HierarchyError(f"OG stage storage/input error: {error}") from error
+
+
+def verified_orthogroup_inputs(
+    run_root: Path,
+    expected_config: OrthogroupConfig | None = None,
+) -> tuple[tuple[int, ...], tuple[Path, ...]]:
+    """Read-only consumer gate: check current source identity and complete artifacts."""
+    try:
+        root_manifest = run_root / "orthogroups/og-manifest.json"
+        manifest = json.loads(root_manifest.read_text())
+        if manifest["status"] != "DONE" or manifest["algorithm_version"] != OG_STAGE_VERSION:
+            raise HierarchyError("OG stage is not complete; run orthogroups before export")
+        config = OrthogroupConfig(**manifest["parameters"])
+        if expected_config is not None and config != expected_config:
+            raise HierarchyError("OG configuration changed; rerun orthogroups before export")
+        shared_names = (
+            "input/proteins.parquet",
+            "input/species.parquet",
+            "components/index.parquet",
+            "components/singleton_terminal_families.parquet",
+        )
+        shared = {name: sha256_file(run_root / name) for name in shared_names}
+        rows = pq.ParquetFile(run_root / "components/index.parquet").read().to_pylist()
+        components = tuple(sorted({int(row["component_id"]) for row in rows}))
+        if (
+            not components
+            or list(components) != manifest["component_ids"]
+            or set(manifest["component_manifests"]) != {str(c) for c in components}
+        ):
+            raise HierarchyError("OG component inventory changed; rerun orthogroups")
+        paths = {root_manifest, *(run_root / name for name in shared_names)}
+        for component in components:
+            output = _output(run_root, component)
+            identity = _identity(run_root, component, config, shared)
+            component_manifest = output / "og-manifest.json"
+            if sha256_file(component_manifest) != manifest["component_manifests"][
+                str(component)
+            ] or not _verified(output, identity):
+                raise HierarchyError(
+                    f"OG component {component} is stale or corrupt; rerun orthogroups"
+                )
+            paths.add(component_manifest)
+            paths.update(output / name for name in SCHEMAS)
+            paths.update(run_root / name for name in identity["input_checksums"])
+        return components, tuple(sorted(paths))
+    except (OSError, ValueError, TypeError, KeyError, pa.ArrowException) as error:
+        raise HierarchyError(f"Invalid OG artifacts; rerun orthogroups: {error}") from error

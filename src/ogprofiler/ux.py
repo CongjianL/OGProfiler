@@ -15,6 +15,7 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from ogprofiler import __version__
+from ogprofiler.config import load_config
 from ogprofiler.core.manifest import sha256_file, write_json
 from ogprofiler.exceptions import CheckpointError, InputError
 
@@ -73,10 +74,17 @@ def pipeline_commands(
         elif stage == "hierarchy":
             command = ["hierarchy-all", "--run", str(run_root), *common]
         elif stage == "export":
-            command = ["export", "--run", str(run_root)]
+            command = ["export", "--run", str(run_root), *common]
         else:
             command = [stage, "--run", str(run_root), *common]
         commands.append(tuple(command))
+    if until_stage == "export":
+        config_path = config
+        if config_path is None and (run_root / "run.yaml").is_file():
+            config_path = run_root / "run.yaml"
+        resolved = load_config(str(config_path) if config_path else None, list(overrides))
+        if resolved["output"]["emit_pairwise_orthologs"]:
+            commands.append(("orthologs", "--run", str(run_root), *common))
     return tuple(commands)
 
 
