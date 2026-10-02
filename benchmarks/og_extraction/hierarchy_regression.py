@@ -56,6 +56,15 @@ def validate_h4(run: Path, parallel: Path):
             for c in candidates
             if c["selected"]
         ),
+        fallback_evidence=all(
+            c.get("kway_eligible")
+            and not c.get("binary_eligible")
+            and not c.get("original_violations")
+            and c["child_count"] > 2
+            and c["phase"].startswith("FALLBACK_KWAY/")
+            for c in candidates
+            if c["selected"] and c.get("selection_kind") == "FALLBACK_KWAY"
+        ),
         serial_manifest=hierarchy_component_is_verified(run, 0, config),
         parallel_manifest=hierarchy_component_is_verified(parallel, 0, parallel_config),
         serial_parallel_equal=all(
@@ -66,9 +75,10 @@ def validate_h4(run: Path, parallel: Path):
     return dict(passed=all(checks.values()), checks=checks, hierarchy=summary)
 
 
-def migrate_config(previous):
+def migrate_config(previous, *, topology_policy="kway_v1"):
     config = deep_merge(DEFAULT_CONFIG, previous)
     config["hierarchy"].update(
+        topology_policy=topology_policy,
         admission_policy="nonempty_children_v1",
         resolution_strategy="bounded_adaptive_v2",
         min_family_size=None,
@@ -87,7 +97,8 @@ def summarize_hierarchy(run: Path, components=None):
     folders = sorted((run / "hierarchy/components").glob("component=*"))
     if components is not None:
         folders = [p for p in folders if int(p.name.split("=")[1]) in components]
-    counts, reasons, sizes = Counter(), Counter(), Counter()
+    counts, reasons, sizes, selections = Counter(), Counter(), Counter(), Counter()
+    refinement_truncated = 0
     roots, unresolved_proteins, calls, budget_passed = [], 0, 0, True
     for folder in folders:
         nodes = pq.ParquetFile(folder / "nodes.parquet").read().to_pylist()
@@ -98,6 +109,9 @@ def summarize_hierarchy(run: Path, components=None):
         calls += metrics["leiden_calls"]
         for node in nodes:
             counts[node["split_status"]] += 1
+            if node.get("selection_kind"):
+                selections[node["selection_kind"]] += 1
+            refinement_truncated += bool(node.get("refinement_truncated"))
             if node["terminal_reason"]:
                 reasons[node["terminal_reason"]] += 1
                 sizes[node["n_genes"]] += 1
@@ -120,6 +134,9 @@ def summarize_hierarchy(run: Path, components=None):
     return dict(
         components=len(folders),
         node_statuses=dict(counts),
+        selection_kinds=dict(selections),
+        fallback_count=selections["FALLBACK_KWAY"],
+        refinement_truncated_count=refinement_truncated,
         terminal_reasons=dict(reasons),
         structural_leaf_size_histogram=dict(sizes),
         roots=roots,
@@ -208,10 +225,13 @@ def main():
     parser.add_argument("--component", type=int)
     parser.add_argument("--out", type=Path)
     parser.add_argument("--parallel", type=Path)
+    parser.add_argument(
+        "--topology-policy", choices=("kway_v1", "soft_binary_24_v2"), default="kway_v1"
+    )
     args = parser.parse_args()
     if args.command == "migrate":
         previous = yaml.safe_load((args.origin / "repaired-mean/run.yaml").read_text())
-        migrated = migrate_config(previous)
+        migrated = migrate_config(previous, topology_policy=args.topology_policy)
         (args.run / "run.yaml").write_text(yaml.safe_dump(migrated, sort_keys=True))
         args.out.write_text(
             json.dumps(

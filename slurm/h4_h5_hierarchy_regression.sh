@@ -12,8 +12,10 @@ set -euo pipefail
 : "${DEV_RUN_DIR:?Missing independent run directory}"
 : "${DEV_CONDA:?Missing configured environment manager}"
 : "${DEV_CONDA_ENV:?Missing configured environment}"
-ORIGIN=${1:?Usage: h4_h5_hierarchy_regression.sh P6_RUN_ROOT PRIOR_H4_RUN_ROOT}
-BUDGET_BASELINE=${2:?Provide the previous frozen H4 run for iteration-only comparison}
+ORIGIN=${1:?Usage: h4_h5_hierarchy_regression.sh P6_RUN_ROOT PRIOR_H4_RUN_ROOT [kway_v1|soft_binary_24_v2]}
+BUDGET_BASELINE=${2:?Provide the previous frozen H4 run for controlled comparison}
+TOPOLOGY_POLICY=${3:-kway_v1}
+case "$TOPOLOGY_POLICY" in kway_v1|soft_binary_24_v2) ;; *) echo "Unknown topology policy" >&2; exit 2 ;; esac
 if [[ ${OGP_H4_H5_READY:-0} != 1 ]]; then
     exec "$DEV_CONDA" run -n "$DEV_CONDA_ENV" env OGP_H4_H5_READY=1 bash "$0" "$@"
 fi
@@ -21,6 +23,7 @@ export PYTHONPATH="$DEV_SOURCE_DIR/src:$DEV_SOURCE_DIR"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 export OGP_REGRESSION_ORIGIN="$ORIGIN"
 export OGP_BUDGET_BASELINE="$BUDGET_BASELINE"
+export OGP_TOPOLOGY_POLICY="$TOPOLOGY_POLICY"
 python - <<'PY'
 import json, os, shutil
 from pathlib import Path
@@ -54,7 +57,8 @@ benchmark = {str(p.relative_to(root/'benchmark')): sha256_file(p)
     source_sha256=os.environ['DEV_SOURCE_HASH']), indent=2))
 PY
 python -m benchmarks.og_extraction.hierarchy_regression migrate \
-    --run "$DEV_RUN_DIR/new-hierarchy" --origin "$ORIGIN" --out "$DEV_RUN_DIR/config-migration.json"
+    --run "$DEV_RUN_DIR/new-hierarchy" --origin "$ORIGIN" --out "$DEV_RUN_DIR/config-migration.json" \
+    --topology-policy "$TOPOLOGY_POLICY"
 python - <<'PY'
 import json, os, yaml
 from pathlib import Path
@@ -62,15 +66,25 @@ from ogprofiler.core.manifest import sha256_file
 root, baseline = Path(os.environ['DEV_RUN_DIR']), Path(os.environ['OGP_BUDGET_BASELINE'])
 old = yaml.safe_load((baseline/'new-hierarchy/run.yaml').read_text())
 new = yaml.safe_load((root/'new-hierarchy/run.yaml').read_text())
-assert old['hierarchy']['leiden_iterations'] == 2
+old['hierarchy'].setdefault('topology_policy', 'kway_v1')
+policy = os.environ['OGP_TOPOLOGY_POLICY']
 assert new['hierarchy']['leiden_iterations'] == 10
-old['hierarchy']['leiden_iterations'] = 10
-assert old == new, 'Unexpected parameter change beyond iteration budget'
+if policy == 'soft_binary_24_v2':
+    assert old['hierarchy']['leiden_iterations'] == 10
+    assert old['hierarchy']['topology_policy'] == 'kway_v1'
+    changed, previous, current = 'hierarchy.topology_policy', 'kway_v1', policy
+    old['hierarchy']['topology_policy'] = policy
+else:
+    assert old['hierarchy']['leiden_iterations'] == 2
+    changed, previous, current = 'hierarchy.leiden_iterations', 2, 10
+    old['hierarchy']['leiden_iterations'] = 10
+assert old == new, 'Unexpected parameter change beyond explicit controlled parameter'
 fixed = json.loads((root/'fixed-inputs.json').read_text())
 assert all(sha256_file(baseline/'new-hierarchy'/p) == h for p, h in fixed.items())
-(root/'iteration-only-control.json').write_text(json.dumps(dict(
-    baseline=str(baseline), baseline_job='1410775', fixed_inputs_equal=True,
-    changed_parameter='hierarchy.leiden_iterations', previous=2, current=10), indent=2))
+name = 'topology-only-control.json' if policy == 'soft_binary_24_v2' else 'iteration-only-control.json'
+(root/name).write_text(json.dumps(dict(
+    baseline=str(baseline), fixed_inputs_equal=True,
+    changed_parameter=changed, previous=previous, current=current), indent=2))
 PY
 "$DEV_CONDA" list -n "$DEV_CONDA_ENV" > "$DEV_RUN_DIR/environment.txt"
 echo '==> H4: fixed component 0, root and actual descendants'

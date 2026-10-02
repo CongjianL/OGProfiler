@@ -213,7 +213,7 @@ def run_hierarchy_scheduler(
         ),
     )
     manifest = {
-        "algorithm_version": "hierarchy-scheduler-v3",
+        "algorithm_version": "hierarchy-scheduler-v4",
         "hierarchy_status": "FAILED"
         if result.failed
         else "UNRESOLVED"

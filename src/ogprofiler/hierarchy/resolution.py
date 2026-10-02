@@ -15,6 +15,7 @@ from ogprofiler.hierarchy.leiden import LeidenCallCounter, LeidenResult, run_lei
 @dataclass(frozen=True, slots=True)
 class ResolutionSearchConfig:
     strategy: str = "bounded_adaptive_v2"
+    topology_policy: str = "kway_v1"
     admission_policy: str = "nonempty_children_v1"
     max_candidate_evaluations: int = 24
     max_coarse_candidates: int = 10
@@ -46,6 +47,14 @@ class ResolutionSearchConfig:
             and self.strategy != "bounded_adaptive_v2"
         ):
             raise HierarchyError("nonempty_children_v1 requires bounded_adaptive_v2")
+        if self.topology_policy not in {"kway_v1", "soft_binary_24_v2"}:
+            raise HierarchyError("Unknown topology policy")
+        if self.topology_policy == "soft_binary_24_v2" and (
+            self.strategy != "bounded_adaptive_v2"
+            or self.admission_policy != "nonempty_children_v1"
+            or self.max_candidate_evaluations > 24
+        ):
+            raise HierarchyError("soft_binary_24_v2 requires bounded nonempty policy and cap <= 24")
         if self.min_quality is not None and not math.isfinite(self.min_quality):
             raise HierarchyError("min_quality must be finite")
         if any(
@@ -100,6 +109,11 @@ class SplitCandidate:
     evaluation_index: int = 0
     evaluation_budget: int = 0
     stability_evaluated: bool = True
+    binary_eligible: bool | None = None
+    kway_eligible: bool | None = None
+    original_violations: tuple[str, ...] = ()
+    selection_kind: str | None = None
+    refinement_truncated: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -292,10 +306,19 @@ def search_resolution(
         result, stability, ari, nmi = _multi_seed(
             graph, gamma, method, weights, seed, stability_mode, config.publication_seeds, counter
         )
+        candidate = _candidate(graph, gamma, result, stability, ari, nmi, config)
         return replace(
-            _candidate(graph, gamma, result, stability, ari, nmi, config),
+            candidate,
+            binary_eligible=candidate.valid and candidate.child_count == 2,
+            kway_eligible=candidate.valid and candidate.child_count >= 2,
+            original_violations=candidate.violations,
             stability_evaluated=stability_mode != "fast",
         )
+
+    if config.topology_policy == "soft_binary_24_v2" and 3 <= graph.vcount() < 10000:
+        from ogprofiler.hierarchy.soft_search import search_soft_binary_24
+
+        return search_soft_binary_24(config, evaluate)
 
     if config.strategy == "bounded_adaptive_v2":
         exhausted = False
@@ -349,6 +372,10 @@ def search_resolution(
         selected = min(
             (item for item in ordered if item.valid), key=lambda item: item.gamma, default=None
         )
+        if selected is not None:
+            previous = selected
+            selected = replace(selected, selection_kind="KWAY")
+            ordered = tuple(selected if item is previous else item for item in ordered)
         status = (
             "ACCEPTED"
             if selected
@@ -391,6 +418,10 @@ def search_resolution(
             terminal_reason = "NO_SPLIT"
         else:
             terminal_reason = "GAMMA_LIMIT"
+    if selected is not None:
+        previous = selected
+        selected = replace(selected, selection_kind="KWAY")
+        ordered = tuple(selected if item is previous else item for item in ordered)
     return ResolutionSearchResult(
         selected, ordered, terminal_reason, "ACCEPTED" if selected else "REJECTED_ALL_TESTED"
     )

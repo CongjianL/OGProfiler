@@ -102,6 +102,8 @@ class HierarchyNode(SerializableModel):
     termination_kind: str | None = None
     failure_codes: tuple[str, ...] = ()
     selection_phase: str | None = None
+    selection_kind: str | None = None
+    refinement_truncated: bool = False
 
 
 @dataclass(frozen=True, slots=True)

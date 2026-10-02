@@ -30,8 +30,16 @@ def write_hierarchy_result(directory: Path, result: HierarchyResult) -> None:
             "terminal_reason": pa.array([node.terminal_reason for node in nodes], type=pa.string()),
             **{
                 key: pa.array([getattr(node, key) for node in nodes], type=pa.string())
-                for key in ("search_status", "termination_kind", "selection_phase")
+                for key in (
+                    "search_status",
+                    "termination_kind",
+                    "selection_phase",
+                    "selection_kind",
+                )
             },
+            "refinement_truncated": pa.array(
+                [node.refinement_truncated for node in nodes], type=pa.bool_()
+            ),
             "failure_codes": pa.array(
                 [node.failure_codes for node in nodes], type=pa.list_(pa.string())
             ),
@@ -92,6 +100,10 @@ def write_hierarchy_result(directory: Path, result: HierarchyResult) -> None:
             "violations": pa.array(
                 [candidate.violations for candidate in candidates], type=pa.list_(pa.string())
             ),
+            "original_violations": pa.array(
+                [c.original_violations for c in candidates], type=pa.list_(pa.string())
+            ),
+            "selection_kind": pa.array([c.selection_kind for c in candidates], type=pa.string()),
             "phase": pa.array([candidate.phase for candidate in candidates], type=pa.string()),
             "evaluation_budget": pa.array(
                 [candidate.evaluation_budget for candidate in candidates], type=pa.int32()
@@ -103,7 +115,14 @@ def write_hierarchy_result(directory: Path, result: HierarchyResult) -> None:
                 key: pa.array(
                     [getattr(candidate, key) for candidate in candidates], type=pa.bool_()
                 )
-                for key in ("structural_valid", "policy_valid", "stability_evaluated")
+                for key in (
+                    "structural_valid",
+                    "policy_valid",
+                    "stability_evaluated",
+                    "binary_eligible",
+                    "kway_eligible",
+                    "refinement_truncated",
+                )
             },
         }
     )

@@ -84,6 +84,11 @@ class ResolutionCandidateTrace:
     evaluation_index: int = 0
     evaluation_budget: int = 0
     stability_evaluated: bool = True
+    binary_eligible: bool | None = None
+    kway_eligible: bool | None = None
+    original_violations: tuple[str, ...] = ()
+    selection_kind: str | None = None
+    refinement_truncated: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -275,6 +280,11 @@ def infer_component_hierarchy(
                 evaluation_index=candidate.evaluation_index,
                 evaluation_budget=candidate.evaluation_budget,
                 stability_evaluated=candidate.stability_evaluated,
+                binary_eligible=candidate.binary_eligible,
+                kway_eligible=candidate.kway_eligible,
+                original_violations=candidate.original_violations,
+                selection_kind=candidate.selection_kind,
+                refinement_truncated=candidate.refinement_truncated,
             )
             for candidate in search.candidates
         )
@@ -297,6 +307,8 @@ def infer_component_hierarchy(
             nodes[work.cluster_id],
             resolution=selected.gamma,
             quality=selected.quality,
+            selection_kind=selected.selection_kind,
+            refinement_truncated=selected.refinement_truncated,
             child_count=len(ordered_groups),
             **node_outcome(None, config),
             selection_phase=selected.phase

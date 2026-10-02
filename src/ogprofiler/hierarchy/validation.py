@@ -72,3 +72,14 @@ def validate_hierarchy(component: Component, result: HierarchyResult) -> None:
             raise HierarchyError(f"Incorrect child_count for node {node.cluster_id}")
         if node.n_genes != len(descendants[node.cluster_id]):
             raise HierarchyError(f"Incorrect n_genes for node {node.cluster_id}")
+
+    for candidate in result.resolution_candidates:
+        if candidate.selected and candidate.selection_kind == "FALLBACK_KWAY":
+            if (
+                not candidate.kway_eligible
+                or candidate.binary_eligible
+                or candidate.original_violations
+                or candidate.child_count <= 2
+                or not candidate.phase.startswith("FALLBACK_KWAY/")
+            ):
+                raise HierarchyError("Fallback candidate lacks original-gated k-way evidence")

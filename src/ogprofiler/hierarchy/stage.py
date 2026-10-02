@@ -17,7 +17,7 @@ from ogprofiler.hierarchy.loader import ComponentGraphLoader
 from ogprofiler.hierarchy.validation import validate_hierarchy
 from ogprofiler.storage.hierarchy import write_hierarchy_result
 
-HIERARCHY_ALGORITHM_VERSION = "hierarchical-leiden-v3"
+HIERARCHY_ALGORITHM_VERSION = "hierarchical-leiden-v4"
 ARTIFACT_NAMES = ("nodes.parquet", "members.parquet", "candidates.parquet", "metrics.json")
 
 
@@ -68,7 +68,7 @@ def hierarchy_component_is_verified(
         checksums = {name: sha256_file(output / name) for name in ARTIFACT_NAMES}
         return bool(
             previous["algorithm_version"] == HIERARCHY_ALGORITHM_VERSION
-            and previous.get("schema_version") == 2
+            and previous.get("schema_version") == 3
             and previous.get("artifacts_written") is True
             and previous.get("structural_validation_passed") is True
             and previous.get("hierarchy_status") in {"RESOLVED", "UNRESOLVED"}
@@ -126,7 +126,9 @@ def run_hierarchy_component_stage(
                 "input_checksums": inputs,
                 "output_checksums": checksums,
                 "metrics": asdict(result.metrics),
-                "schema_version": 2,
+                "schema_version": 3,
+                "fallback_count": sum(n.selection_kind == "FALLBACK_KWAY" for n in result.nodes),
+                "refinement_truncated_count": sum(n.refinement_truncated for n in result.nodes),
                 "artifacts_written": True,
                 "structural_validation_passed": True,
                 "hierarchy_status": "UNRESOLVED"

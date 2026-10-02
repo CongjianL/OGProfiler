@@ -1,6 +1,10 @@
 # H4/H5：固定 repaired-mean SSN 的 hierarchy 回归
 
-状态：Slurm job `1410775` 已结束，FAILED / ExitCode 2:0；H4根准入修复得到真实数据支持，但完整resolved验收未通过，H5评分未启动。
+最新状态：ADR 0003 的重跑job `1410777` 已 COMPLETED / 0:0，H4完整验收和H5 parity通过；
+正式OG官方F1为40.0192%，仍低于历史完整V1的57.5075%。详见 `h4-h5-iterations10-regression.md`。
+
+下文保留job `1410775` 的2轮历史事实：FAILED / ExitCode 2:0；H4根准入修复得到真实数据支持，
+但完整resolved验收未通过，H5评分未启动。
 
 ## 固定条件
 
@@ -152,3 +156,10 @@ REJECTED_ALL_TESTED只说明有限已测点均失败，不证明所有gamma不�
 验收唯一完整成员覆盖、叶尺寸、所有选中候选稳定性和预算、robust调用计数与manifest。
 `h4-acceptance.json`全部通过才进入H5。两次运行分别保留time和日志；对照运行
 增加计算量，不改变既有Slurm资源申请。历史结果与原源快照保持不变。
+
+## ADR0004 生产 opt-in 的后续回归准备（2026-10-03）
+
+见 `soft-policy-production-regression.md`。脚本可选第3参数soft_binary_24_v2，
+须以冻结10轮kway H4作为对照，只允许topology政策不同；旧2→10默认路径仍保留。
+algorithm v4/schema3，重建hierarchy并验收fallback证据。当前只有五个小组件本地公共
+串行/双进程完整回放通过，尚未提交新H4/H5，未产生新的官方P/R/F1结论。

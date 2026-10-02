@@ -81,7 +81,7 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     assert "stability" in candidates.column_names
     assert "tiny_fragment_fraction" in candidates.column_names
     manifest = json.loads((output / "hierarchy-manifest.json").read_text(encoding="utf-8"))
-    assert manifest["algorithm_version"] == "hierarchical-leiden-v3"
+    assert manifest["algorithm_version"] == "hierarchical-leiden-v4"
 
     nodes_path.write_bytes(b"corrupt")
     assert main(command) == 0

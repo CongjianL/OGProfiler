@@ -82,6 +82,11 @@ class _Candidate:
     evaluation_index: int = 0
     evaluation_budget: int = 0
     stability_evaluated: bool = True
+    binary_eligible: bool | None = None
+    kway_eligible: bool | None = None
+    original_violations: tuple[str, ...] = ()
+    selection_kind: str | None = None
+    refinement_truncated: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -157,6 +162,11 @@ def _evaluate(task: _Task) -> _Outcome:
             candidate.evaluation_index,
             candidate.evaluation_budget,
             candidate.stability_evaluated,
+            candidate.binary_eligible,
+            candidate.kway_eligible,
+            candidate.original_violations,
+            candidate.selection_kind,
+            candidate.refinement_truncated,
         )
         for candidate in search.candidates
     )
@@ -254,6 +264,12 @@ def infer_component_hierarchy_parallel(
                 resolution=outcome.resolution,
                 quality=outcome.quality,
                 child_count=len(outcome.children),
+                selection_kind=next(
+                    (c.selection_kind for c in outcome.candidates if c.selected), None
+                ),
+                refinement_truncated=any(
+                    c.refinement_truncated for c in outcome.candidates if c.selected
+                ),
                 **node_outcome(outcome.terminal_reason, config),
                 selection_phase=next(
                     (item.phase for item in outcome.candidates if item.selected), None

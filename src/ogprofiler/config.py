@@ -43,6 +43,7 @@ DEFAULT_CONFIG: dict[str, dict[str, Any]] = {
         "seed": 42,
         "min_family_size": None,
         "admission_policy": "nonempty_children_v1",
+        "topology_policy": "kway_v1",
         "recursion_stop_size": 1,
         "max_candidate_evaluations": 24,
         "max_coarse_candidates": 10,
@@ -187,6 +188,7 @@ def validate_config(config: dict[str, Any]) -> None:
     choice("similarity", "nbs_fallback", _ALLOWED_NBS_FALLBACK)
     choice("edges", "method", _ALLOWED_EDGE_METHODS)
     choice("edges", "symmetrization", _ALLOWED_SYMMETRIZATION)
+    choice("hierarchy", "topology_policy", {"kway_v1", "soft_binary_24_v2"})
     choice("hierarchy", "method", _ALLOWED_HIERARCHY_METHODS)
     choice("hierarchy", "resolution_strategy", _ALLOWED_RESOLUTION_STRATEGIES)
     choice("hierarchy", "stability_mode", _ALLOWED_STABILITY)
@@ -360,6 +362,7 @@ def hierarchy_config(options: dict[str, Any]) -> HierarchyConfig:
         resolution=ResolutionSearchConfig(
             strategy=options["resolution_strategy"],
             admission_policy=policy,
+            topology_policy=options.get("topology_policy", "kway_v1"),
             gamma_min=options["gamma_min"],
             gamma_max=options["gamma_max"],
             growth_factor=options["gamma_growth"],

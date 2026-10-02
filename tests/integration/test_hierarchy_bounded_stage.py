@@ -19,7 +19,8 @@ from ogprofiler.orthogroups.models import OrthogroupConfig
 from ogprofiler.orthogroups.stage import run_orthogroup_stage, verified_orthogroup_inputs
 
 
-def test_h4_acceptance_gates_on_complete_serial_parallel_replay(tmp_path: Path):
+@pytest.mark.parametrize("topology", ["kway_v1", "soft_binary_24_v2"])
+def test_h4_acceptance_gates_on_complete_serial_parallel_replay(tmp_path: Path, topology):
     import shutil
 
     import yaml
@@ -29,6 +30,7 @@ def test_h4_acceptance_gates_on_complete_serial_parallel_replay(tmp_path: Path):
     run = _prepare_multicomponent_run(tmp_path)
     baseline = load_config(str(run / "run.yaml"))
     baseline["hierarchy"]["subtree_release_size"] = 1
+    baseline["hierarchy"]["topology_policy"] = topology
     (run / "run.yaml").write_text(yaml.safe_dump(baseline))
     parallel = tmp_path / "parallel"
     parallel.mkdir()
@@ -50,7 +52,11 @@ def test_h4_acceptance_gates_on_complete_serial_parallel_replay(tmp_path: Path):
         )
         == 0
     )
-    assert validate_h4(run, parallel)["passed"]
+    acceptance = validate_h4(run, parallel)
+    assert acceptance["passed"]
+    if topology == "soft_binary_24_v2":
+        assert acceptance["checks"]["fallback_evidence"]
+        assert acceptance["hierarchy"]["fallback_count"] > 0
     folder = parallel / "hierarchy/components/component=00000000"
     members = pq.ParquetFile(folder / "members.parquet").read()
     pq.write_table(members.slice(1), folder / "members.parquet")
@@ -77,8 +83,8 @@ def test_iteration_budget_is_recorded_and_invalidates_resume(tmp_path: Path):
     manifest_path = output / "hierarchy-manifest.json"
     manifest = json.loads(manifest_path.read_text())
     assert manifest["parameters"]["hierarchy"]["leiden_iterations"] == 10
-    assert manifest["algorithm_version"] == "hierarchical-leiden-v3"
-    assert manifest["schema_version"] == 2
+    assert manifest["algorithm_version"] == "hierarchical-leiden-v4"
+    assert manifest["schema_version"] == 3
     assert run_hierarchy_component_stage(run, 0, config, [])[1]
     manifest["algorithm_version"] = "hierarchical-leiden-v2"
     manifest_path.write_text(json.dumps(manifest))
@@ -166,3 +172,39 @@ def test_gate_invalidates_changed_baseline_config(tmp_path: Path):
         handle.write("\n# changed config provenance\n")
     with pytest.raises(HierarchyError, match="input checksum mismatch"):
         require_resolved_hierarchy(run)
+
+
+def test_soft_policy_parquet_resume_identity_and_schema(tmp_path: Path):
+    from dataclasses import replace
+
+    from ogprofiler.hierarchy.stage import hierarchy_component_is_verified
+
+    run = _prepare_multicomponent_run(tmp_path)
+    base = hierarchy_config(load_config()["hierarchy"])
+    soft = replace(base, resolution=replace(base.resolution, topology_policy="soft_binary_24_v2"))
+    run_hierarchy_component_stage(run, 0, base, [])
+    assert not hierarchy_component_is_verified(run, 0, soft)
+    output, resumed = run_hierarchy_component_stage(run, 0, soft, [])
+    assert not resumed
+    manifest_path = output / "hierarchy-manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    assert (
+        manifest["parameters"]["hierarchy"]["resolution"]["topology_policy"] == "soft_binary_24_v2"
+    )
+    nodes = pq.ParquetFile(output / "nodes.parquet").read().to_pylist()
+    candidates = pq.ParquetFile(output / "candidates.parquet").read().to_pylist()
+    fallback = [n for n in nodes if n["selection_kind"] == "FALLBACK_KWAY"]
+    assert fallback
+    assert manifest["fallback_count"] == len(fallback)
+    for node in fallback:
+        chosen = next(
+            c for c in candidates if c["cluster_id"] == node["cluster_id"] and c["selected"]
+        )
+        assert chosen["kway_eligible"] and not chosen["binary_eligible"]
+        assert chosen["original_violations"] == []
+        assert chosen["selection_kind"] == node["selection_kind"]
+    assert run_hierarchy_component_stage(run, 0, soft, [])[1]
+    assert not hierarchy_component_is_verified(run, 0, base)
+    manifest["schema_version"] = 2
+    manifest_path.write_text(json.dumps(manifest))
+    assert not hierarchy_component_is_verified(run, 0, soft)
