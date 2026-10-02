@@ -46,6 +46,7 @@ class SchedulerResult:
     failed: int
     singleton_components: int
     summaries: tuple[WorkerSummary, ...]
+    unresolved: int = 0
 
 
 _WORKER_RUN_ROOT: Path | None = None
@@ -70,7 +71,10 @@ def _run_worker(component_id: int) -> WorkerSummary:
         metrics = json.loads((output / "metrics.json").read_text(encoding="utf-8"))
         return WorkerSummary(
             component_id=component_id,
-            status="DONE",
+            status="UNRESOLVED"
+            if json.loads((output / "hierarchy-manifest.json").read_text())["hierarchy_status"]
+            == "UNRESOLVED"
+            else "DONE",
             output_path=str(output),
             reused=reused,
             hierarchy_nodes=int(metrics["hierarchy_node_count"]),
@@ -106,6 +110,7 @@ def run_hierarchy_scheduler(
     workers: int,
     retries: int,
     failed_only: bool = False,
+    retry_unresolved: bool = False,
 ) -> SchedulerResult:
     workspace = Workspace.create(run_root)
     store = CheckpointStore(workspace.database_path)
@@ -119,7 +124,12 @@ def run_hierarchy_scheduler(
         record = store.register(
             HIERARCHY_STAGE, str(component_id), identity, HIERARCHY_ALGORITHM_VERSION
         )
-        if record.status == "DONE":
+        if retry_unresolved and record.status == "UNRESOLVED":
+            output = run_root / "hierarchy" / "components" / f"component={component_id:08d}"
+            (output / "hierarchy-manifest.json").unlink(missing_ok=True)
+            store.invalidate(HIERARCHY_STAGE, str(component_id), "explicit unresolved retry")
+            record = store.get(HIERARCHY_STAGE, str(component_id)) or record
+        if record.status in {"DONE", "UNRESOLVED"}:
             if hierarchy_component_is_verified(run_root, component_id, config):
                 skipped += 1
                 continue
@@ -127,7 +137,13 @@ def run_hierarchy_scheduler(
             record = store.get(HIERARCHY_STAGE, str(component_id)) or record
         elif hierarchy_component_is_verified(run_root, component_id, config):
             output = run_root / "hierarchy" / "components" / f"component={component_id:08d}"
-            store.finish(HIERARCHY_STAGE, str(component_id), str(output))
+            status = json.loads((output / "hierarchy-manifest.json").read_text())[
+                "hierarchy_status"
+            ]
+            if status == "UNRESOLVED":
+                store.unresolved(HIERARCHY_STAGE, str(component_id), str(output))
+            else:
+                store.finish(HIERARCHY_STAGE, str(component_id), str(output))
             skipped += 1
             continue
         if _runnable(record, retries, failed_only):
@@ -149,8 +165,7 @@ def run_hierarchy_scheduler(
             initargs=(str(run_root), config, command),
         ) as executor:
             futures: dict[Future[WorkerSummary], int] = {
-                executor.submit(_run_worker, component_id): component_id
-                for component_id in current
+                executor.submit(_run_worker, component_id): component_id for component_id in current
             }
             for future in as_completed(futures):
                 component_id = futures[future]
@@ -158,10 +173,11 @@ def run_hierarchy_scheduler(
                     summary = future.result()
                 except Exception as error:
                     detail = "".join(traceback.format_exception_only(type(error), error)).strip()
-                    summary = WorkerSummary(
-                        component_id, "FAILED", None, False, 0, 0, 0.0, detail
-                    )
-                if summary.status == "DONE" and summary.output_path is not None:
+                    summary = WorkerSummary(component_id, "FAILED", None, False, 0, 0, 0.0, detail)
+                if summary.status == "UNRESOLVED" and summary.output_path is not None:
+                    store.unresolved(HIERARCHY_STAGE, str(component_id), summary.output_path)
+                    summaries.append(summary)
+                elif summary.status == "DONE" and summary.output_path is not None:
                     store.finish(HIERARCHY_STAGE, str(component_id), summary.output_path)
                     summaries.append(summary)
                 else:
@@ -191,14 +207,24 @@ def run_hierarchy_scheduler(
         failed=len(failed_ids),
         singleton_components=singleton_count,
         summaries=tuple(sorted(summaries, key=lambda summary: summary.component_id)),
+        unresolved=sum(
+            record.status == "UNRESOLVED" and int(record.task_id) in current_ids
+            for record in records
+        ),
     )
     manifest = {
-        "algorithm_version": "hierarchy-scheduler-v1",
+        "algorithm_version": "hierarchy-scheduler-v3",
+        "hierarchy_status": "FAILED"
+        if result.failed
+        else "UNRESOLVED"
+        if result.unresolved
+        else "RESOLVED",
         "command": command,
         "parameters": {
             "workers": workers,
             "retries": retries,
             "failed_only": failed_only,
+            "retry_unresolved": retry_unresolved,
             "hierarchy": asdict(config),
         },
         "parameters_sha256": sha256_json(
@@ -209,6 +235,7 @@ def run_hierarchy_scheduler(
             "completed": result.completed,
             "skipped": result.skipped,
             "failed": result.failed,
+            "unresolved": result.unresolved,
             "singleton_components": singleton_count,
         },
         "failed_component_ids": failed_ids,

@@ -31,7 +31,7 @@ from ogprofiler.orthogroups.engine import (
 from ogprofiler.orthogroups.legacy_events import V1_EVENT_ALGORITHM_VERSION, annotate_v1_events
 from ogprofiler.orthogroups.models import OrthogroupConfig as OrthogroupConfig
 
-OG_STAGE_VERSION = "component-orthogroups-parquet-v1"
+OG_STAGE_VERSION = "component-orthogroups-parquet-v2"
 SCHEMA_VERSION = 1
 SCHEMAS = {
     "groups.parquet": pa.schema(
@@ -107,6 +107,8 @@ def _identity(
     inputs = dict(shared)
     if hierarchy.is_dir():
         paths = [hierarchy / name for name in ("nodes.parquet", "members.parquet")]
+        if (hierarchy / "hierarchy-manifest.json").is_file():
+            paths.append(hierarchy / "hierarchy-manifest.json")
         paths.append(run_root / "evolution/components" / hierarchy.name / "events.parquet")
         for path in paths:
             inputs[path.relative_to(run_root).as_posix()] = (
@@ -320,6 +322,9 @@ def _run_orthogroup_stage(
     for key, value, minimum in (("workers", workers, 1), ("retries", retries, 0)):
         if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
             raise InputError(f"orthogroup {key} must be an integer >= {minimum}")
+    from ogprofiler.hierarchy.gate import require_resolved_hierarchy
+
+    require_resolved_hierarchy(run_root)
     workspace = Workspace.create(run_root)
     store = CheckpointStore(workspace.database_path)
     root = run_root / "orthogroups"
@@ -502,6 +507,9 @@ def verified_orthogroup_inputs(
 ) -> tuple[tuple[int, ...], tuple[Path, ...]]:
     """Read-only consumer gate: check current source identity and complete artifacts."""
     try:
+        from ogprofiler.hierarchy.gate import require_resolved_hierarchy
+
+        require_resolved_hierarchy(run_root)
         root_manifest = run_root / "orthogroups/og-manifest.json"
         manifest = json.loads(root_manifest.read_text())
         if manifest["status"] != "DONE" or manifest["algorithm_version"] != OG_STAGE_VERSION:

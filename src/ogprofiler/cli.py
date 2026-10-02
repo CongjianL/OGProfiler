@@ -168,6 +168,7 @@ def build_parser() -> argparse.ArgumentParser:
     hierarchy_all.add_argument("--run", required=True, type=Path)
     hierarchy_all.add_argument("--config", type=Path)
     hierarchy_all.add_argument("--failed-only", action="store_true")
+    hierarchy_all.add_argument("--retry-unresolved", action="store_true")
     hierarchy_all.add_argument("--set", dest="overrides", action="append", default=[])
     annotate = subparsers.add_parser(
         "annotate-network",
@@ -223,9 +224,7 @@ def build_parser() -> argparse.ArgumentParser:
     phylogeny.add_argument("--phylogenetic-refinement", action="store_true")
     phylogeny.add_argument("--family", dest="families", action="append", default=[])
     phylogeny.add_argument("--species-tree", type=Path)
-    phylogeny.add_argument(
-        "--rooting", choices=("midpoint", "species-tree-aware", "outgroup")
-    )
+    phylogeny.add_argument("--rooting", choices=("midpoint", "species-tree-aware", "outgroup"))
     phylogeny.add_argument("--outgroup")
     phylogeny.add_argument("--config", type=Path)
     phylogeny.add_argument("--set", dest="overrides", action="append", default=[])
@@ -357,8 +356,7 @@ def _inspect(args: argparse.Namespace) -> int:
 def _prototype_hierarchy(args: argparse.Namespace, command: list[str]) -> int:
     from ogprofiler.graph.components import extract_components
     from ogprofiler.graph.legacy import import_legacy_ssn
-    from ogprofiler.hierarchy.engine import HierarchyConfig, infer_component_hierarchy
-    from ogprofiler.hierarchy.resolution import ResolutionSearchConfig
+    from ogprofiler.hierarchy.engine import infer_component_hierarchy
     from ogprofiler.hierarchy.validation import validate_hierarchy
     from ogprofiler.storage.hierarchy import write_hierarchy_result
 
@@ -377,26 +375,9 @@ def _prototype_hierarchy(args: argparse.Namespace, command: list[str]) -> int:
     edge_table.write_parquet(workspace.root / "edges" / "legacy_ssn_edges.parquet")
     components = extract_components(edge_table)
     hierarchy_options = config["hierarchy"]
-    hierarchy_config = HierarchyConfig(
-        method=hierarchy_options["method"],
-        seed=hierarchy_options["seed"],
-        max_depth=hierarchy_options["max_depth"],
-        stability_mode=hierarchy_options["stability_mode"],
-        resolution=ResolutionSearchConfig(
-            strategy=hierarchy_options["resolution_strategy"],
-            gamma_min=hierarchy_options["gamma_min"],
-            gamma_max=hierarchy_options["gamma_max"],
-            growth_factor=hierarchy_options["gamma_growth"],
-            local_grid_points=hierarchy_options["local_grid_points"],
-            min_child_size=hierarchy_options["min_family_size"],
-            max_child_fraction=hierarchy_options["max_child_fraction"],
-            tiny_fragment_size=hierarchy_options["tiny_fragment_size"],
-            max_tiny_fragment_fraction=hierarchy_options["max_tiny_fragment_fraction"],
-            stability_threshold=hierarchy_options["stability_threshold"],
-            publication_seeds=hierarchy_options["publication_seeds"],
-            min_quality=hierarchy_options["min_split_quality"],
-        ),
-    )
+    from ogprofiler.config import hierarchy_config as build_hierarchy_config
+
+    hierarchy_config = build_hierarchy_config(hierarchy_options)
     summaries: list[dict[str, object]] = []
     for component in components:
         component.write(workspace.root / "components")
@@ -525,8 +506,6 @@ def _components(args: argparse.Namespace, command: list[str]) -> int:
 
 
 def _hierarchy(args: argparse.Namespace, command: list[str]) -> int:
-    from ogprofiler.hierarchy.engine import HierarchyConfig
-    from ogprofiler.hierarchy.resolution import ResolutionSearchConfig
     from ogprofiler.hierarchy.stage import run_hierarchy_component_stage
 
     default_config = args.config
@@ -534,28 +513,9 @@ def _hierarchy(args: argparse.Namespace, command: list[str]) -> int:
         default_config = args.run / "run.yaml"
     config = load_config(str(default_config) if default_config else None, args.overrides)
     options = config["hierarchy"]
-    hierarchy_config = HierarchyConfig(
-        method=options["method"],
-        seed=options["seed"],
-        max_depth=options["max_depth"],
-        stability_mode=options["stability_mode"],
-        subtree_workers=options["subtree_workers"],
-        subtree_release_size=options["subtree_release_size"],
-        resolution=ResolutionSearchConfig(
-            strategy=options["resolution_strategy"],
-            gamma_min=options["gamma_min"],
-            gamma_max=options["gamma_max"],
-            growth_factor=options["gamma_growth"],
-            local_grid_points=options["local_grid_points"],
-            min_child_size=options["min_family_size"],
-            max_child_fraction=options["max_child_fraction"],
-            tiny_fragment_size=options["tiny_fragment_size"],
-            max_tiny_fragment_fraction=options["max_tiny_fragment_fraction"],
-            stability_threshold=options["stability_threshold"],
-            publication_seeds=options["publication_seeds"],
-            min_quality=options["min_split_quality"],
-        ),
-    )
+    from ogprofiler.config import hierarchy_config as build_hierarchy_config
+
+    hierarchy_config = build_hierarchy_config(options)
     logger = configure_logging(
         args.run / "ogprofiler.log", level=config["runtime"]["log_level"]
     ).bind(stage="hierarchy", task=str(args.component_id), component=args.component_id)
@@ -564,13 +524,20 @@ def _hierarchy(args: argparse.Namespace, command: list[str]) -> int:
         args.run, args.component_id, hierarchy_config, command
     )
     logger.info("%s hierarchy artifacts: %s", "Reused verified" if reused else "Completed", path)
+    import json
+
+    from ogprofiler.exceptions import HierarchyError
+
+    if (
+        json.loads((path / "hierarchy-manifest.json").read_text())["hierarchy_status"]
+        == "UNRESOLVED"
+    ):
+        raise HierarchyError("Hierarchy UNRESOLVED; diagnostic artifacts retained")
     return 0
 
 
 def _hierarchy_all(args: argparse.Namespace, command: list[str]) -> int:
     from ogprofiler.exceptions import HierarchyError
-    from ogprofiler.hierarchy.engine import HierarchyConfig
-    from ogprofiler.hierarchy.resolution import ResolutionSearchConfig
     from ogprofiler.hierarchy.scheduler import run_hierarchy_scheduler
 
     default_config = args.config
@@ -578,28 +545,9 @@ def _hierarchy_all(args: argparse.Namespace, command: list[str]) -> int:
         default_config = args.run / "run.yaml"
     config = load_config(str(default_config) if default_config else None, args.overrides)
     options = config["hierarchy"]
-    hierarchy_config = HierarchyConfig(
-        method=options["method"],
-        seed=options["seed"],
-        max_depth=options["max_depth"],
-        stability_mode=options["stability_mode"],
-        subtree_workers=options["subtree_workers"],
-        subtree_release_size=options["subtree_release_size"],
-        resolution=ResolutionSearchConfig(
-            strategy=options["resolution_strategy"],
-            gamma_min=options["gamma_min"],
-            gamma_max=options["gamma_max"],
-            growth_factor=options["gamma_growth"],
-            local_grid_points=options["local_grid_points"],
-            min_child_size=options["min_family_size"],
-            max_child_fraction=options["max_child_fraction"],
-            tiny_fragment_size=options["tiny_fragment_size"],
-            max_tiny_fragment_fraction=options["max_tiny_fragment_fraction"],
-            stability_threshold=options["stability_threshold"],
-            publication_seeds=options["publication_seeds"],
-            min_quality=options["min_split_quality"],
-        ),
-    )
+    from ogprofiler.config import hierarchy_config as build_hierarchy_config
+
+    hierarchy_config = build_hierarchy_config(options)
     logger = configure_logging(
         args.run / "ogprofiler.log", level=config["runtime"]["log_level"]
     ).bind(stage="hierarchy", task="scheduler")
@@ -611,6 +559,7 @@ def _hierarchy_all(args: argparse.Namespace, command: list[str]) -> int:
         workers=int(config["runtime"]["workers"]),
         retries=int(config["runtime"]["component_retries"]),
         failed_only=bool(args.failed_only),
+        retry_unresolved=bool(args.retry_unresolved),
     )
     logger.info(
         "Hierarchy schedule complete: completed=%d skipped=%d failed=%d singletons=%d",
@@ -619,6 +568,10 @@ def _hierarchy_all(args: argparse.Namespace, command: list[str]) -> int:
         result.failed,
         result.singleton_components,
     )
+    if result.unresolved:
+        raise HierarchyError(
+            f"Hierarchy has {result.unresolved} UNRESOLVED components; diagnostics retained"
+        )
     if result.failed:
         raise HierarchyError(f"Hierarchy scheduler reported {result.failed} failed components")
     return 0
@@ -816,9 +769,7 @@ def _benchmark(args: argparse.Namespace) -> int:
         )
 
         if args.run is None or args.dataset_root is None:
-            raise OGProfilerError(
-                "benchmark synthetic-metrics requires --run and --dataset-root"
-            )
+            raise OGProfilerError("benchmark synthetic-metrics requires --run and --dataset-root")
         result = evaluate_synthetic_run(args.run, args.dataset_root, method=str(args.method))
         output = args.out / "synthetic-metrics.json" if args.out.suffix == "" else args.out
         write_synthetic_evaluation(output, result)
@@ -847,9 +798,7 @@ def _benchmark(args: argparse.Namespace) -> int:
         )
 
         if args.ground_truth is None or args.dataset is None:
-            raise OGProfilerError(
-                "benchmark metrics requires --ground-truth and --dataset"
-            )
+            raise OGProfilerError("benchmark metrics requires --ground-truth and --dataset")
         if args.legacy_normalized is not None:
             result = evaluate_legacy_membership(
                 args.legacy_normalized,
@@ -860,9 +809,7 @@ def _benchmark(args: argparse.Namespace) -> int:
             )
         else:
             if args.run is None:
-                raise OGProfilerError(
-                    "benchmark metrics requires --run or --legacy-normalized"
-                )
+                raise OGProfilerError("benchmark metrics requires --run or --legacy-normalized")
             result = evaluate_run(
                 args.run,
                 args.ground_truth,

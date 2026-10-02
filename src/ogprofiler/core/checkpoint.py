@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import sqlite3
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
 from ogprofiler.exceptions import CheckpointError
 
-TASK_STATUSES = {"PENDING", "RUNNING", "DONE", "FAILED", "INVALID"}
+TASK_STATUSES = {"PENDING", "RUNNING", "DONE", "FAILED", "INVALID", "UNRESOLVED"}
 
 
 def _now() -> str:
@@ -182,6 +182,19 @@ class CheckpointStore:
                 current.algorithm_version,
             ),
             "worker completed",
+        )
+
+    def unresolved(self, stage: str, task_id: str, output_path: str) -> None:
+        current = self._required(stage, task_id)
+        self._upsert(
+            replace(
+                current,
+                status="UNRESOLVED",
+                completed_at=_now(),
+                output_path=output_path,
+                error="hierarchy search unresolved",
+            ),
+            "diagnostics persisted; scientific completion pending",
         )
 
     def fail(self, stage: str, task_id: str, error: str) -> None:

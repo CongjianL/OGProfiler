@@ -27,7 +27,7 @@ from ogprofiler.output.results import (
     write_tsv,
 )
 
-EXPORT_ALGORITHM_VERSION = "orthogroup-and-terminal-diagnostic-export-v2"
+EXPORT_ALGORITHM_VERSION = "orthogroup-and-terminal-diagnostic-export-v3"
 TERMINAL_TABLE_FIELDS = {
     "families.tsv": [
         "family_id",
@@ -40,6 +40,11 @@ TERMINAL_TABLE_FIELDS = {
     ],
     "members.tsv": ["family_id", "protein_id", "species_id", "original_id"],
     "hierarchy.tsv": [
+        "split_status",
+        "search_status",
+        "termination_kind",
+        "failure_codes",
+        "selection_phase",
         "cluster_id",
         "parent_id",
         "component_id",
@@ -292,6 +297,10 @@ def run_export_stage(
     outputs = [output_root / name for name in fields] + fasta_outputs
     manifest = {
         "algorithm_version": EXPORT_ALGORITHM_VERSION,
+        "artifact_kind": "HIERARCHY_DIAGNOSTIC" if strategy == "terminal" else "ORTHOGROUPS",
+        "unresolved_nodes": sum(
+            row.get("split_status") == "UNRESOLVED" for row in rows_by_name["hierarchy.tsv"]
+        ),
         "command": command,
         "parameters": parameters,
         "parameters_sha256": sha256_json(parameters),

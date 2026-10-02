@@ -20,6 +20,8 @@ from ogprofiler.hierarchy.engine import (
     _peak_rss_bytes,
     _species_count,
     _terminal_reason,
+    infer_component_hierarchy,
+    node_outcome,
 )
 from ogprofiler.hierarchy.leiden import LeidenCallCounter
 from ogprofiler.hierarchy.resolution import search_resolution
@@ -32,8 +34,10 @@ class SubtreePath:
 
     @property
     def task_id(self) -> str:
-        suffix = "root" if not self.child_ordinals else ".".join(
-            f"{ordinal:06d}" for ordinal in self.child_ordinals
+        suffix = (
+            "root"
+            if not self.child_ordinals
+            else ".".join(f"{ordinal:06d}" for ordinal in self.child_ordinals)
         )
         return f"component-{self.component_id:08d}/{suffix}"
 
@@ -71,6 +75,13 @@ class _Candidate:
     rejection_reason: str | None
     valid: bool
     selected: bool
+    violations: tuple[str, ...] = ()
+    structural_valid: bool = True
+    policy_valid: bool = True
+    phase: str = "legacy"
+    evaluation_index: int = 0
+    evaluation_budget: int = 0
+    stability_evaluated: bool = True
 
 
 @dataclass(frozen=True, slots=True)
@@ -112,7 +123,7 @@ def _evaluate(task: _Task) -> _Outcome:
     if reason is not None:
         return _Outcome(task, reason, None, None, (), (), 0, _peak_rss_bytes())
 
-    counter = LeidenCallCounter()
+    counter = LeidenCallCounter(n_iterations=_CONFIG.leiden_iterations)
     search = search_resolution(
         graph,
         _CONFIG.resolution,
@@ -139,6 +150,13 @@ def _evaluate(task: _Task) -> _Outcome:
             candidate.rejection_reason,
             candidate.valid,
             selected is not None and candidate.gamma == selected.gamma,
+            candidate.violations,
+            candidate.structural_valid,
+            candidate.policy_valid,
+            candidate.phase,
+            candidate.evaluation_index,
+            candidate.evaluation_budget,
+            candidate.stability_evaluated,
         )
         for candidate in search.candidates
     )
@@ -191,6 +209,10 @@ def infer_component_hierarchy_parallel(
     """Release every accepted split's children as independent process tasks."""
     if workers < 2:
         raise ValueError("Parallel subtree scheduling requires at least two workers")
+    # A shared component cap uses deterministic DFS reservation, not per-worker caps.
+    if config.component_leiden_call_budget is not None:
+        return infer_component_hierarchy(component, config, species_by_protein, root_graph)
+    config.validate()
     started = time.perf_counter()
     root_ids = component.vertices
     root = _Task(SubtreePath(component.component_id), tuple(range(len(root_ids))))
@@ -232,8 +254,12 @@ def infer_component_hierarchy_parallel(
                 resolution=outcome.resolution,
                 quality=outcome.quality,
                 child_count=len(outcome.children),
-                split_status="TERMINAL" if outcome.terminal_reason else "SPLIT",
-                terminal_reason=outcome.terminal_reason,
+                **node_outcome(outcome.terminal_reason, config),
+                selection_phase=next(
+                    (item.phase for item in outcome.candidates if item.selected), None
+                )
+                if config.resolution.admission_policy != "legacy_strict"
+                else None,
             )
         )
         if outcome.terminal_reason:

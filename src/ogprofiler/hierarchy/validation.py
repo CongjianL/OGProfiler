@@ -42,6 +42,8 @@ def validate_hierarchy(component: Component, result: HierarchyResult) -> None:
             current = nodes[current.parent_id]
 
     membership = dict(result.terminal_membership)
+    if len(membership) != len(result.terminal_membership):
+        raise HierarchyError("Duplicate protein membership")
     if set(membership) != set(component.vertices):
         raise HierarchyError("Every component protein must have exactly one terminal membership")
     terminal_ids = {node.cluster_id for node in result.nodes if node.terminal_reason is not None}

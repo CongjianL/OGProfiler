@@ -7,6 +7,7 @@ import hashlib
 import os
 import tempfile
 import time
+from collections import Counter
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -93,10 +94,15 @@ def graph_from_fixture(spec: dict[str, Any]) -> tuple[igraph.Graph, igraph.Graph
     return graph, ssn
 
 
-def run_reference(spec: dict[str, Any], overlap_count: int | None = None) -> dict[str, Any]:
+def run_reference(
+    spec: dict[str, Any],
+    overlap_count: int | None = None,
+    *,
+    reference_env: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     if overlap_count is None:
         overlap_count = spec.get("overlap_count", 0)
-    env = load_reference()
+    env = load_reference() if reference_env is None else reference_env
     graph, ssn = graph_from_fixture(spec)
     obj = env["HHN"](ssn, graph)
     with tempfile.TemporaryDirectory(prefix="v1-og-reference-") as directory:
@@ -120,7 +126,8 @@ def run_reference(spec: dict[str, Any], overlap_count: int | None = None) -> dic
     all_genes = sorted(
         {g for v in spec["vertices"] for g in v["genes"]} | set(spec.get("isolates", []))
     )
-    counts = {gene: sum(gene in row["members"] for row in records) for gene in all_genes}
+    occurrences = Counter(gene for row in records for gene in set(row["members"]))
+    counts = {gene: occurrences[gene] for gene in all_genes}
     return dict(
         reference_sha256=REFERENCE_SHA256,
         raw_events=raw_events,

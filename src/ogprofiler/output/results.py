@@ -144,6 +144,11 @@ def assemble_export_tables(
                     "quality": node.get("quality"),
                     "child_count": int(node["child_count"]),
                     "terminal_reason": node.get("terminal_reason"),
+                    "split_status": node.get("split_status"),
+                    "search_status": node.get("search_status"),
+                    "termination_kind": node.get("termination_kind"),
+                    "failure_codes": ";".join(node.get("failure_codes") or ()),
+                    "selection_phase": node.get("selection_phase"),
                 }
             )
             event_rows.append(

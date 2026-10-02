@@ -28,6 +28,13 @@ def write_hierarchy_result(directory: Path, result: HierarchyResult) -> None:
             "child_count": pa.array([node.child_count for node in nodes], type=pa.int32()),
             "split_status": pa.array([node.split_status for node in nodes], type=pa.string()),
             "terminal_reason": pa.array([node.terminal_reason for node in nodes], type=pa.string()),
+            **{
+                key: pa.array([getattr(node, key) for node in nodes], type=pa.string())
+                for key in ("search_status", "termination_kind", "selection_phase")
+            },
+            "failure_codes": pa.array(
+                [node.failure_codes for node in nodes], type=pa.list_(pa.string())
+            ),
         }
     )
     pq.write_table(node_table, directory / "nodes.parquet", compression="zstd")
@@ -82,6 +89,22 @@ def write_hierarchy_result(directory: Path, result: HierarchyResult) -> None:
             ),
             "valid": pa.array([candidate.valid for candidate in candidates], type=pa.bool_()),
             "selected": pa.array([candidate.selected for candidate in candidates], type=pa.bool_()),
+            "violations": pa.array(
+                [candidate.violations for candidate in candidates], type=pa.list_(pa.string())
+            ),
+            "phase": pa.array([candidate.phase for candidate in candidates], type=pa.string()),
+            "evaluation_budget": pa.array(
+                [candidate.evaluation_budget for candidate in candidates], type=pa.int32()
+            ),
+            "evaluation_index": pa.array(
+                [candidate.evaluation_index for candidate in candidates], type=pa.int32()
+            ),
+            **{
+                key: pa.array(
+                    [getattr(candidate, key) for candidate in candidates], type=pa.bool_()
+                )
+                for key in ("structural_valid", "policy_valid", "stability_evaluated")
+            },
         }
     )
     pq.write_table(candidate_table, directory / "candidates.parquet", compression="zstd")
