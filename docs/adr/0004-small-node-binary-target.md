@@ -216,3 +216,12 @@ A缺少已测上边界时可能只探低侧，后续须另明确补上边界的�
 验收见 [生产 opt-in 回归](../soft-policy-production-regression.md)。五组件公共串行/双进程
 节点、成员、候选、调用数完全一致，三张Parquet表完全一致，数值/拓扑复现原冻结实验，
 V1 OG八项parity全部通过。此结果只批准生产opt-in接线，不代表全数据准确度恢复。
+
+## H4新证据（2026-10-03，job1410810）
+
+生产opt-in完整component0留下143个DEPTH_LIMIT/570蛋白，H5门禁阻断。
+见 `../depth-limit-binary-policy-audit.md`。路径变深来自binary与fallback日程共同作用；
+全部已选候选原门槛合格，但小组件5/5的成功不代表大组件完整resolved。
+ADR0005提出H4-only深度42资源对照，尚未接受生产预算变更。
+
+后续用户确认进入ADR0005的H4-only深度42实验；全局默认深度仍20，不自动进入H5。

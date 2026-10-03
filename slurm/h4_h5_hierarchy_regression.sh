@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Existing P6 resource envelope; one serial campaign, no job array or new search.
+# Existing P6 resource envelope; explicit controls, no job array.
 #SBATCH --job-name=ogp-h4-h5-hierarchy
 #SBATCH --partition=cu
 #SBATCH --account=mselab
@@ -12,9 +12,15 @@ set -euo pipefail
 : "${DEV_RUN_DIR:?Missing independent run directory}"
 : "${DEV_CONDA:?Missing configured environment manager}"
 : "${DEV_CONDA_ENV:?Missing configured environment}"
-ORIGIN=${1:?Usage: h4_h5_hierarchy_regression.sh P6_RUN_ROOT PRIOR_H4_RUN_ROOT [kway_v1|soft_binary_24_v2]}
+ORIGIN=${1:?Usage: h4_h5_hierarchy_regression.sh P6_RUN_ROOT PRIOR_H4_RUN_ROOT [kway_v1|soft_binary_24_v2] [full|depth42-h4-only]}
 BUDGET_BASELINE=${2:?Provide the previous frozen H4 run for controlled comparison}
 TOPOLOGY_POLICY=${3:-kway_v1}
+CAMPAIGN_MODE=${4:-full}
+case "$CAMPAIGN_MODE" in
+    full) ;;
+    depth42-h4-only) [[ "$TOPOLOGY_POLICY" == soft_binary_24_v2 ]] || exit 2 ;;
+    *) echo "Unknown campaign mode" >&2; exit 2 ;;
+esac
 case "$TOPOLOGY_POLICY" in kway_v1|soft_binary_24_v2) ;; *) echo "Unknown topology policy" >&2; exit 2 ;; esac
 if [[ ${OGP_H4_H5_READY:-0} != 1 ]]; then
     exec "$DEV_CONDA" run -n "$DEV_CONDA_ENV" env OGP_H4_H5_READY=1 bash "$0" "$@"
@@ -24,6 +30,7 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_TH
 export OGP_REGRESSION_ORIGIN="$ORIGIN"
 export OGP_BUDGET_BASELINE="$BUDGET_BASELINE"
 export OGP_TOPOLOGY_POLICY="$TOPOLOGY_POLICY"
+export OGP_CAMPAIGN_MODE="$CAMPAIGN_MODE"
 python - <<'PY'
 import json, os, shutil
 from pathlib import Path
@@ -56,9 +63,15 @@ benchmark = {str(p.relative_to(root/'benchmark')): sha256_file(p)
     git_commit=os.environ['DEV_GIT_COMMIT'], dirty=os.environ['DEV_GIT_DIRTY'],
     source_sha256=os.environ['DEV_SOURCE_HASH']), indent=2))
 PY
+if [[ "$CAMPAIGN_MODE" == depth42-h4-only ]]; then
+    python -m benchmarks.og_extraction.depth_budget_regression configure \
+        --baseline "$BUDGET_BASELINE" --current "$DEV_RUN_DIR" \
+        --out "$DEV_RUN_DIR/depth-only-control.json"
+else
 python -m benchmarks.og_extraction.hierarchy_regression migrate \
     --run "$DEV_RUN_DIR/new-hierarchy" --origin "$ORIGIN" --out "$DEV_RUN_DIR/config-migration.json" \
     --topology-policy "$TOPOLOGY_POLICY"
+fi
 python - <<'PY'
 import json, os, yaml
 from pathlib import Path
@@ -69,7 +82,12 @@ new = yaml.safe_load((root/'new-hierarchy/run.yaml').read_text())
 old['hierarchy'].setdefault('topology_policy', 'kway_v1')
 policy = os.environ['OGP_TOPOLOGY_POLICY']
 assert new['hierarchy']['leiden_iterations'] == 10
-if policy == 'soft_binary_24_v2':
+if os.environ['OGP_CAMPAIGN_MODE'] == 'depth42-h4-only':
+    assert old['hierarchy']['topology_policy'] == policy == 'soft_binary_24_v2'
+    assert old['hierarchy']['max_depth'] == 20 and new['hierarchy']['max_depth'] == 42
+    changed, previous, current = 'hierarchy.max_depth', 20, 42
+    old['hierarchy']['max_depth'] = 42
+elif policy == 'soft_binary_24_v2':
     assert old['hierarchy']['leiden_iterations'] == 10
     assert old['hierarchy']['topology_policy'] == 'kway_v1'
     changed, previous, current = 'hierarchy.topology_policy', 'kway_v1', policy
@@ -81,7 +99,9 @@ else:
 assert old == new, 'Unexpected parameter change beyond explicit controlled parameter'
 fixed = json.loads((root/'fixed-inputs.json').read_text())
 assert all(sha256_file(baseline/'new-hierarchy'/p) == h for p, h in fixed.items())
-name = 'topology-only-control.json' if policy == 'soft_binary_24_v2' else 'iteration-only-control.json'
+name = ('depth-parameter-control.json' if os.environ['OGP_CAMPAIGN_MODE'] == 'depth42-h4-only'
+        else 'topology-only-control.json' if policy == 'soft_binary_24_v2'
+        else 'iteration-only-control.json')
 (root/name).write_text(json.dumps(dict(
     baseline=str(baseline), fixed_inputs_equal=True,
     changed_parameter=changed, previous=previous, current=current), indent=2))
@@ -97,6 +117,11 @@ set -e
 printf '%s\n' "$H4_EXIT" > "$DEV_RUN_DIR/h4-exit-code.txt"
 python -m benchmarks.og_extraction.hierarchy_regression summary \
     --run "$DEV_RUN_DIR/new-hierarchy" --component 0 --out "$DEV_RUN_DIR/h4-summary.json"
+if [[ "$CAMPAIGN_MODE" == depth42-h4-only ]]; then
+    python -m benchmarks.og_extraction.depth_budget_regression validate \
+        --baseline "$BUDGET_BASELINE" --current "$DEV_RUN_DIR" \
+        --out "$DEV_RUN_DIR/depth-prefix-acceptance.json"
+fi
 if [[ "$H4_EXIT" != 0 ]]; then
     printf '{"h4_exit":%s,"h5_status":"BLOCKED_BY_H4","scoring_started":false}\n' "$H4_EXIT" > "$DEV_RUN_DIR/h4-h5-completion.json"
     exit "$H4_EXIT"
@@ -119,6 +144,10 @@ PY
 python -m benchmarks.og_extraction.hierarchy_regression validate-h4 \
     --run "$DEV_RUN_DIR/new-hierarchy" --parallel "$DEV_RUN_DIR/h4-parallel" \
     --out "$DEV_RUN_DIR/h4-acceptance.json"
+if [[ "$CAMPAIGN_MODE" == depth42-h4-only ]]; then
+    printf '{"h4_completed":true,"h4_accepted":true,"h5_status":"NOT_REQUESTED_H4_ONLY","scoring_started":false}\n' > "$DEV_RUN_DIR/h4-h5-completion.json"
+    exit 0
+fi
 echo '==> H5: all remaining components, same policy/SSN; reuse verified component 0'
 set +e
 /usr/bin/time -v -o "$DEV_RUN_DIR/h5-hierarchy.time" \
