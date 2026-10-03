@@ -41,3 +41,25 @@ binary及改变候选日程的fallback共同增加路径长度；不以降低停
 排除numeric ID/parent ID差异；同时检查额外节点854/调用30744上界与无DEPTH_LIMIT。
 若仍有其他UNRESOLVED，保留报告并阻止双进程/OG/评分；resolved后做H4完整双进程回放。
 H4验收完成即退出，不启动H5或官方评分。Slurm资源保持原56CPU/250G/72小时。
+
+## H4-only执行结果（2026-10-03，job1410845）
+
+源码801b68b、dirty=0；Slurm COMPLETED/0:0，耗时1:38:39。
+冻结报告验收通过：69,642蛋白完整唯一覆盖，unresolved=0，实际最大深度33。
+按成员集合对照job1410810的depth<20前缀98,429节点，节点字段/子分区/全部候选trace
+无差异（numeric ID除外）。新增777节点、15,189调用，均低于854/30,744上界。
+完整串行/双进程nodes/members/candidates完全一致，全部准入、fallback证据与预算检查通过。
+serial总调用1,797,261；命令墙时27:54.96，parallel墙时17:18.56。
+H5和评分未执行。此结果支持component0的深度预算修订，不自动迁移全局默认或推断准确度。
+小型验收JSON及日志保存于本地provenance的results；原表与大型SSN继续保留远端。
+
+## H5全组件实验范围批准（2026-10-03）
+
+用户在H4验收后显式批准soft+depth42的H5全组件实验，复用job1410845的component0。
+本节修订前述H4-only范围限制；仍不是全局默认预算迁移。
+新不可变run逐项核验H4/prefix报告与component0有效manifest，原字节复制run.yaml及
+component0产物，只读链接冻结输入，复制官方benchmark。scheduler对component0仅
+恢复DONE，attempts=0；H5后再次核验其hash未改变。
+其余组件完成后执行resolved gate、冻结manifest，再运行V1 OG parity与官方Orthobench。
+出现任何UNRESOLVED仍停止，不默默增深或放松阈值。OG/scorer算法保持原样。
+新脚本slurm/h5_soft_depth42.sh资源保持56CPU/250G/72小时，无array，不重做H4。
