@@ -63,3 +63,11 @@ component0产物，只读链接冻结输入，复制官方benchmark。scheduler�
 其余组件完成后执行resolved gate、冻结manifest，再运行V1 OG parity与官方Orthobench。
 出现任何UNRESOLVED仍停止，不默默增深或放松阈值。OG/scorer算法保持原样。
 新脚本slurm/h5_soft_depth42.sh资源保持56CPU/250G/72小时，无array，不重做H4。
+
+## H5全组件实验结果（2026-10-04，job1410868）
+
+显式soft+depth42实验完成，component0未重算；其余10,711组件resolved，全部unresolved=0。
+固定新hierarchy的V1 OG parity30,165组件全部通过，官方Orthobench已执行。
+相对job1410777同meanSSN kway，V1-compatible F1 40.0192%→49.5608%、R25.5911%→33.8220%。
+仍低于历史完整V1 F1 57.5075%；本实验不迁移全局默认，也不宣称所有低召回/污染已修复。
+详见 ../h5-soft-depth42-regression.md。OG/scorer、停止尺寸和稳定性阈值保持不变。
