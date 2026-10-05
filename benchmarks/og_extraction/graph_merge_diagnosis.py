@@ -36,6 +36,77 @@ def transitions(ids, reference, baseline):
     )
 
 
+def relative_strength(branch, edges):
+    """Within/cross densities include absent edges as zero, with no pseudocounts.
+
+    Within weight counts each undirected edge once. Per-child incident strength
+    counts its internal edges twice and its boundary edges once.
+    """
+    counts = Counter(branch.values())
+    internal, outgoing, between = defaultdict(list), defaultdict(list), defaultdict(list)
+    seen = set()
+    for u, v, w in edges:
+        if u not in branch or v not in branch or u >= v or (u, v) in seen:
+            raise ValueError("Invalid or duplicate canonical edge")
+        if not math.isfinite(w) or w < 0:
+            raise ValueError("Invalid weight")
+        seen.add((u, v))
+        a, b = branch[u], branch[v]
+        if a == b:
+            internal[a].append(w)
+        else:
+            between[tuple(sorted((a, b)))].append(w)
+            outgoing[a].append(w)
+            outgoing[b].append(w)
+    within = {c: math.fsum(internal[c]) for c in counts}
+    cross = {c: math.fsum(outgoing[c]) for c in counts}
+    wp = sum(choose2(n) for n in counts.values())
+    cp = choose2(len(branch)) - wp
+    ww = math.fsum(within.values())
+    cw = math.fsum(math.fsum(ws) for ws in between.values())
+    wd, cd = (ww / wp if wp else None), (cw / cp if cp else None)
+    pair_count = choose2(len(counts))
+    # Unobserved child pairs contribute zeros, without enumerating quadratic pairs.
+    densities = [math.fsum(ws) / (counts[a] * counts[b]) for (a, b), ws in between.items()]
+    mean = math.fsum(densities) / pair_count if pair_count else None
+    variance = (
+        (math.fsum((d - mean) ** 2 for d in densities) + (pair_count - len(densities)) * mean**2)
+        / pair_count
+        if pair_count
+        else None
+    )
+    return dict(
+        within_possible_pairs=wp,
+        cross_possible_pairs=cp,
+        within_weight=ww,
+        cross_weight=cw,
+        within_density=wd,
+        cross_density=cd,
+        cross_to_within_density=cd / wd if cd is not None and wd is not None and wd > 0 else None,
+        within_status="no_possible_pairs" if not wp else "zero_weight" if not ww else "positive",
+        cross_weight_fraction=cw / (cw + ww) if cw + ww else None,
+        child_pair_density_mean=mean,
+        child_pair_density_cv=math.sqrt(variance) / mean if mean is not None and mean > 0 else None,
+        zero_weight_child_pairs=pair_count - sum(d > 0 for d in densities),
+        child_strengths=[
+            dict(
+                child_id=c,
+                size=counts[c],
+                within_weight=within[c],
+                outgoing_weight=cross[c],
+                outgoing_density=cross[c] / (counts[c] * (len(branch) - counts[c]))
+                if counts[c] < len(branch)
+                else None,
+                within_density=within[c] / choose2(counts[c]) if counts[c] > 1 else None,
+                outgoing_strength_fraction=cross[c] / (cross[c] + 2 * within[c])
+                if cross[c] + 2 * within[c]
+                else None,
+            )
+            for c in sorted(counts)
+        ],
+    )
+
+
 def boundary_evidence(branch, edges):
     """Label-free positive cross-child edges. No-edge statistics remain explicit."""
     cross = [(u, v, w) for u, v, w in edges if branch[u] != branch[v] and w > 0]
@@ -53,6 +124,7 @@ def boundary_evidence(branch, edges):
     covered = Counter(branch[p] for p in touched)
     endpoint_shares = [math.fsum(v) / (2 * total) for v in incident.values()] if total else []
     return dict(
+        relative_strength=relative_strength(branch, edges),
         children=len(counts),
         boundary_edges=len(cross),
         boundary_weight=total,
