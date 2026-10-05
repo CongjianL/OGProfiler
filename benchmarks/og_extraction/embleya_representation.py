@@ -1,6 +1,6 @@
 """Frozen OF-reference representation audit; oracle output is never production OG.
 
-Three per-OG match levels plus a globally optimal complete-cut pair F1 oracle.
+Three per-OG match levels plus unrestricted and eligibility-constrained cut oracles.
 No Leiden, search, event relabeling, or production output files are written.
 """
 
@@ -194,6 +194,7 @@ def run_audit(run, reference_dir, out):
         forest.append(
             dict(
                 nodes=[dict(cluster_id=n["cluster_id"], parent_id=n["parent_id"]) for n in nodes],
+                eligible=eligible,
                 tp={c: sum(map(choose2, v.values())) for c, v in counts.items()},
                 pp={c: choose2(sum(v.values())) for c, v in counts.items()},
             )
@@ -201,24 +202,36 @@ def run_audit(run, reference_dir, out):
         locations.append((cid, membership))
     rp = sum(map(choose2, sizes.values()))
     oracle = pair_f1_oracle(forest, rp)
-    prediction = {}
-    selected = []
-    for tree, (cid, membership), cut in zip(forest, locations, oracle["cuts"], strict=True):
-        by_id, children, order = topology(tree["nodes"])
-        cut = set(cut)
-        owner = {}
-        for c in order:
-            owner[c] = c if c in cut else owner.get(by_id[c]["parent_id"])
-        for p, leaf in membership:
-            if owner[leaf] is None or p in prediction:
-                raise ValueError("Invalid non-overlapping complete cut")
-            prediction[p] = (cid, owner[leaf])
-        selected.extend(dict(component_id=cid, cluster_id=c) for c in sorted(cut))
-    if set(prediction) != set(species):
-        raise ValueError("Oracle cut lost proteins")
-    score = compare(ref, prediction, component)
-    if abs(score["pair_f1"] - oracle["pair_f1"]) > 1e-12:
-        raise ValueError("Oracle scoring mismatch")
+
+    def materialize(oracle):
+        prediction = {}
+        selected = []
+        for tree, (cid, membership), cut in zip(forest, locations, oracle["cuts"], strict=True):
+            by_id, children, order = topology(tree["nodes"])
+            cut = set(cut)
+            owner = {}
+            for c in order:
+                owner[c] = c if c in cut else owner.get(by_id[c]["parent_id"])
+            for p, leaf in membership:
+                if owner[leaf] is None or p in prediction:
+                    raise ValueError("Invalid non-overlapping complete cut")
+                prediction[p] = (cid, owner[leaf])
+            selected.extend(dict(component_id=cid, cluster_id=c) for c in sorted(cut))
+        if set(prediction) != set(species):
+            raise ValueError("Oracle cut lost proteins")
+        score = compare(ref, prediction, component)
+        if any(
+            score[k] != oracle[k]
+            for k in ("true_positive_pairs", "predicted_pairs", "reference_pairs")
+        ):
+            raise ValueError("Oracle scoring mismatch")
+        return prediction, selected, score
+
+    prediction, selected, score = materialize(oracle)
+    eligible_oracle = pair_f1_oracle(forest, rp, restrict_eligible=True)
+    eligible_prediction, eligible_selected, eligible_score = materialize(eligible_oracle)
+    if score["pair_f1"] + 1e-12 < eligible_score["pair_f1"]:
+        raise ValueError("Restricted cut exceeds unrestricted optimum")
     rows = []
     ref_components = defaultdict(set)
     for p, r in ref.items():
@@ -245,6 +258,10 @@ def run_audit(run, reference_dir, out):
     (out / "per-reference-og.json").write_text(json.dumps(rows, indent=2))
     (out / "oracle-cut-DIAGNOSTIC-ONLY.json").write_text(json.dumps(selected, indent=2))
 
+    (out / "eligible-oracle-cut-DIAGNOSTIC-ONLY.json").write_text(
+        json.dumps(eligible_selected, indent=2)
+    )
+
     def mean(field):
         return sum(r[field]["f1"] for r in rows) / len(rows)
 
@@ -270,6 +287,17 @@ def run_audit(run, reference_dir, out):
         cross_component_reference_ogs=sum(r["components"] > 1 for r in rows),
         actual=baseline["primary_assigned_only"],
         oracle_cut=score,
+        eligible_oracle_cut=eligible_score,
+        eligible_oracle_iterations=eligible_oracle["iterations"],
+        eligible_oracle_strata=strata(ref, eligible_prediction, species),
+        cut_family_comparison=dict(
+            unrestricted_minus_eligible_pair_f1=score["pair_f1"] - eligible_score["pair_f1"],
+            eligible_minus_actual_pair_f1=(
+                eligible_score["pair_f1"] - baseline["primary_assigned_only"]["pair_f1"]
+            ),
+            eligible_cut_is_not_active_view=True,
+            gaps_are_not_causal_attribution=True,
+        ),
         oracle_iterations=oracle["iterations"],
         actual_strata=strata(ref, actual, species),
         oracle_strata=strata(ref, prediction, species),

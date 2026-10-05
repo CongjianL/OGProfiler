@@ -208,6 +208,10 @@ def test_end_to_end_fixed_tree_oracle_and_manifest_gate(tmp_path):
     out = tmp_path / "audit"
     run_audit(run, ref, out)
     report = json.loads((out / "report.json").read_text())
+    assert report["eligible_oracle_cut"]["pair_f1"] == 0
+    assert report["eligible_oracle_strata"]["cross_species"]["recall"] == 0
+    assert report["cut_family_comparison"]["unrestricted_minus_eligible_pair_f1"] == 1
+    assert len(json.loads((out / "eligible-oracle-cut-DIAGNOSTIC-ONLY.json").read_text())) == 4
     assert report["oracle_cut"]["pair_f1"] == 1
     assert report["actual"]["pair_recall"] == 0
     assert report["positive_eligibility_gap"] == 1
@@ -217,3 +221,31 @@ def test_end_to_end_fixed_tree_oracle_and_manifest_gate(tmp_path):
     (folder / "members.parquet").write_bytes(b"corrupt")
     with pytest.raises(ValueError, match="Artifact mismatch"):
         run_audit(run, ref, tmp_path / "corrupt-audit")
+
+
+def test_eligible_oracle_matches_exhaustive_feasible_cuts():
+    forest = [
+        dict(nodes=NODES, tp={0: 2, 1: 1, 2: 1}, pp={0: 6, 1: 1, 2: 1}, eligible={0, 1, 2}),
+        dict(nodes=NODES, tp={0: 6, 1: 1, 2: 1}, pp={0: 6, 1: 1, 2: 1}, eligible={1, 2}),
+    ]
+    # Only the second root is disallowed; enumerate the two feasible forest cuts.
+    values = []
+    for cut in [(0,), (1, 2)]:
+        tp = sum(forest[0]["tp"][c] for c in cut) + 2
+        pp = sum(forest[0]["pp"][c] for c in cut) + 2
+        values.append(2 * tp / (pp + 8))
+    result = pair_f1_oracle(forest, 8, restrict_eligible=True)
+    assert result["cuts"] == [(1, 2), (1, 2)]
+    assert result["pair_f1"] == max(values) == pytest.approx(2 / 3)
+    assert pair_f1_oracle(forest, 8)["pair_f1"] == 1
+
+
+def test_eligible_oracle_rejects_missing_or_infeasible_eligibility():
+    tree = dict(nodes=NODES, tp={0: 2, 1: 1, 2: 1}, pp={0: 6, 1: 1, 2: 1})
+    with pytest.raises(ValueError, match="explicit eligible"):
+        pair_f1_oracle([tree], 2, restrict_eligible=True)
+    for allowed in [set(), {1}]:
+        with pytest.raises(ValueError, match="complete"):
+            pair_f1_oracle([dict(tree, eligible=allowed)], 2, restrict_eligible=True)
+    with pytest.raises(ValueError, match="Unknown eligible"):
+        pair_f1_oracle([dict(tree, eligible={99})], 2, restrict_eligible=True)

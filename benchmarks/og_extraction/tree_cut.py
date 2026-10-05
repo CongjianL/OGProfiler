@@ -96,13 +96,15 @@ def optimal_cut(nodes, keep_scores, split_scores=None, eligible=None):
     return Cut(tuple(selected), best[order[0]])
 
 
-def pair_f1_oracle(forest, reference_pairs, max_iterations=100):
+def pair_f1_oracle(forest, reference_pairs, max_iterations=100, *, restrict_eligible=False):
     """Exact finite fractional optimization over complete cuts, DIAGNOSTIC ONLY.
 
     Each tree supplies nodes and node-local tp/pp combinatorial counts. Maximize
     2*sum(tp)/(sum(pp)+reference_pairs) globally, not independent per-tree F1.
     Integer Dinkelbach comparisons avoid floating-point stopping ambiguity.
     This upper bound is specific to fixed-tree cuts and the supplied reference.
+    With restrict_eligible, every tree must explicitly supply its eligible nodes;
+    this remains a label-driven diagnostic, not the legacy active-view algorithm.
     """
     if reference_pairs <= 0:
         raise ValueError("Pair F1 oracle requires positive reference pair count")
@@ -110,13 +112,19 @@ def pair_f1_oracle(forest, reference_pairs, max_iterations=100):
     for iteration in range(1, max_iterations + 1):
         cuts, tp, pp = [], 0, 0
         for tree in forest:
+            if restrict_eligible and tree.get("eligible") is None:
+                raise ValueError("Restricted oracle requires explicit eligible nodes")
             for c in tree["tp"]:
                 if not 0 <= tree["tp"][c] <= tree["pp"][c]:
                     raise ValueError("Invalid pair counts")
             scores = {
                 c: 2 * t * denominator - numerator * tree["pp"][c] for c, t in tree["tp"].items()
             }
-            cut = optimal_cut(tree["nodes"], scores)
+            cut = optimal_cut(
+                tree["nodes"],
+                scores,
+                eligible=tree["eligible"] if restrict_eligible else None,
+            )
             cuts.append(cut.selected)
             tp += sum(tree["tp"][c] for c in cut.selected)
             pp += sum(tree["pp"][c] for c in cut.selected)
