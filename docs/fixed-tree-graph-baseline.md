@@ -66,3 +66,22 @@ python -m benchmarks.og_extraction.fixed_tree_graph \
   外部评估与正式 Slurm 批量入口仍待实现；禁止在登录节点运行全量分析。
 - 未来评估应先固定参数与相关家族块划分，保留 30637/8863 反例，同时报告
   precision、recall、同/跨物种指标、过合并/拆分及退化情况。
+
+## 冻结数据批量适配与首轮评估协议
+
+`frozen_graph_batch` 逐组件读冻结 Parquet，不改输入与生产目录。
+校验 hierarchy manifest、节点/成员/边文件 checksum、边分片清单一致性、
+组件成员身份和全蛋白唯一覆盖；结束后重校验全部消费的输入。
+singleton 组件显式生成单节点；非单例缺少边分片或未解决层级则中止。
+所有参数候选先完成并落盘预测，再用 OF 参考独立评估。
+产物包括每个候选 members.tsv、cuts.json、evaluation.json 和汇总 report.json，
+同时报告 assigned 主指标、unassigned singleton 敏感性、同/跨物种对和退化计数。
+
+首轮为探索性灵敏度诊断，不是保留集验收。预先固定绝对边权单位下的
+`pair_penalty = 0, 0.01, 0.1, 1, 10`：0 为根退化对照，其余为粗十倍尺度探针。
+这些数值未由 OF 优化，也不保证覆盖最佳尺度；完整报告全部候选，不自动挑选优胜者
+或修改默认。当前 13 基因组参考已反复查看，不声称独立泛化验证。
+
+使用 job1411104 的 current-soft42 和 reference；脚本
+`slurm/embleya_graph_baseline.sh`，单作业内顺序运行五候选，无 array，
+资源保持 2 CPU/8GB/2h。先跑小 fixture smoke，后执行全量；不可把提交成功等同结果改善。
