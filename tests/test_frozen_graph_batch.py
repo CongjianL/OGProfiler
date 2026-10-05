@@ -101,3 +101,18 @@ def test_bad_protocol_before_output(frozen, tmp_path, penalties):
     with pytest.raises(ValueError, match="penalties"):
         run_batch(run, ref, tmp_path / "bad", penalties)
     assert not (tmp_path / "bad").exists()
+
+
+def test_strength_batch_fixed_objective_and_reference_independence(frozen, tmp_path):
+    run, ref, _ = frozen
+    r = run_batch(run, ref, tmp_path / "strength", [None], strength_null=True)
+    assert r["protocol"]["algorithm"] == "fixed-tree-component-strength-null-v1"
+    assert r["protocol"]["resolution"] == 1
+    assert r["candidates"][0]["primary"]["pair_f1"] == 1
+    (ref / "Orthogroups.tsv").write_text("Orthogroup\ts0\ts1\ts2\nOG0\tp0\t\t\nOG1\t\tp1\t\n")
+    run_batch(run, ref, tmp_path / "perturbed", [None], strength_null=True)
+    assert (tmp_path / "strength/candidate-00/members.tsv").read_bytes() == (
+        tmp_path / "perturbed/candidate-00/members.tsv"
+    ).read_bytes()
+    with pytest.raises(ValueError, match="fixed resolution"):
+        run_batch(run, ref, tmp_path / "bad-strength", [0.1], strength_null=True)

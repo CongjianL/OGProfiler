@@ -19,7 +19,10 @@ from ogprofiler.core.manifest import sha256_file
 ALGORITHM = "fixed-tree-weighted-pair-penalty-v1"
 
 
-def graph_cut(nodes, membership, edges, *, pair_penalty):
+STRENGTH_ALGORITHM = "fixed-tree-component-strength-null-v1"
+
+
+def graph_cut(nodes, membership, edges, *, pair_penalty=None, strength_null=False):
     """Score one component. Edges are unique (u, v, weight), with u < v.
 
     Membership is (protein_id, structural_leaf_id), including isolated proteins.
@@ -28,7 +31,15 @@ def graph_cut(nodes, membership, edges, *, pair_penalty):
     Structural leaves remain indivisible even when their score is negative.
     Runtime O(nodes + edges * tree_height); no internal descendant lists.
     """
-    if isinstance(pair_penalty, bool) or not math.isfinite(pair_penalty) or pair_penalty < 0:
+    if strength_null:
+        if pair_penalty is not None:
+            raise ValueError("Strength-null has fixed resolution 1, no pair_penalty")
+    elif (
+        pair_penalty is None
+        or isinstance(pair_penalty, bool)
+        or not math.isfinite(pair_penalty)
+        or pair_penalty < 0
+    ):
         raise ValueError("pair_penalty must be finite and nonnegative")
     by_id, children, order = topology(nodes)
     leaf_by_protein, sizes = {}, Counter()
@@ -48,6 +59,7 @@ def graph_cut(nodes, membership, edges, *, pair_penalty):
 
     # Each edge contributes once at its LCA, then propagates upward by postorder.
     at_lca, seen_edges = defaultdict(list), set()
+    terminal_strength = defaultdict(list)
     for u, v, weight in edges:
         if u not in leaf_by_protein or v not in leaf_by_protein:
             raise ValueError("Edge endpoint outside membership")
@@ -57,6 +69,8 @@ def graph_cut(nodes, membership, edges, *, pair_penalty):
             raise ValueError("Edge weight must be finite and nonnegative")
         seen_edges.add((u, v))
         a, b = leaf_by_protein[u], leaf_by_protein[v]
+        terminal_strength[a].append(weight)
+        terminal_strength[b].append(weight)
         while depth[a] > depth[b]:
             a = by_id[a]["parent_id"]
         while depth[b] > depth[a]:
@@ -64,10 +78,24 @@ def graph_cut(nodes, membership, edges, *, pair_penalty):
         while a != b:
             a, b = by_id[a]["parent_id"], by_id[b]["parent_id"]
         at_lca[a].append(weight)
-    internal, scores = {}, {}
+    internal, scores, strength = {}, {}, {}
     for c in reversed(order):
         internal[c] = math.fsum([*at_lca[c], *(internal[u] for u in sorted(children[c]))])
-        scores[c] = internal[c] - pair_penalty * (sizes[c] * (sizes[c] - 1) // 2)
+        strength[c] = math.fsum(
+            [*terminal_strength[c], *(strength[u] for u in sorted(children[c]))]
+        )
+    total_weight = internal[order[0]]
+    if not math.isfinite(total_weight):
+        raise ValueError("Non-finite total weight")
+    for c in order:
+        if strength_null:
+            scores[c] = (
+                internal[c] / total_weight - (strength[c] / (2 * total_weight)) ** 2
+                if total_weight
+                else 0.0
+            )
+        else:
+            scores[c] = internal[c] - pair_penalty * (sizes[c] * (sizes[c] - 1) // 2)
     cut = optimal_cut([by_id[c] for c in sorted(by_id)], scores)
     chosen = set(cut.selected)
     owner = {}
@@ -79,17 +107,25 @@ def graph_cut(nodes, membership, edges, *, pair_penalty):
     if any(row["cluster_id"] is None for row in members):
         raise ValueError("Incomplete cut")
     return dict(
-        algorithm=ALGORITHM,
+        algorithm=STRENGTH_ALGORITHM if strength_null else ALGORITHM,
+        resolution=1.0 if strength_null else None,
+        component_total_weight=total_weight,
         reference_labels_used=False,
         ancestral_inference=False,
         pair_penalty=pair_penalty,
-        weight_normalization="none",
+        weight_normalization="component-total-weight objective" if strength_null else "none",
         tie_policy="keep_parent",
         selected=list(cut.selected),
         score=cut.score,
         members=members,
         node_scores=[
-            dict(cluster_id=c, n_genes=sizes[c], internal_weight=internal[c], keep_score=scores[c])
+            dict(
+                cluster_id=c,
+                n_genes=sizes[c],
+                internal_weight=internal[c],
+                node_strength=strength[c],
+                keep_score=scores[c],
+            )
             for c in sorted(by_id)
         ],
         diagnostics=dict(

@@ -136,3 +136,30 @@ def test_cli_provenance_and_output_protection(tmp_path):
     assert failure.returncode != 0
     assert b"no reference labels" in failure.stderr
     assert not (tmp_path / "bad.json").exists()
+
+
+def test_strength_null_complete_cut_and_scale_invariance():
+    # Two pairs have strength 8.5 each; total undirected weight is 8.5.
+    # Their complete cut has Q=8/8.5 - 2*(1/2)^2 = 15/34; root Q=0.
+    r = graph_cut(NODES, MEMBERS, EDGES, strength_null=True)
+    assert r["selected"] == [1, 2]
+    assert r["score"] == pytest.approx(15 / 34)
+    for scale in [0.01, 100]:
+        scaled = graph_cut(
+            NODES, MEMBERS, [(u, v, w * scale) for u, v, w in EDGES], strength_null=True
+        )
+        assert scaled["selected"] == r["selected"]
+        assert scaled["score"] == pytest.approx(r["score"])
+    assert r["resolution"] == 1 and r["pair_penalty"] is None
+    with pytest.raises(ValueError, match="no pair_penalty"):
+        graph_cut(NODES, MEMBERS, EDGES, strength_null=True, pair_penalty=0.1)
+
+
+def test_strength_null_singleton_children_dense_and_zero_graph():
+    nodes = [dict(cluster_id=0, parent_id=None)] + [
+        dict(cluster_id=i + 1, parent_id=0) for i in range(3)
+    ]
+    membership = [(i, i + 1) for i in range(3)]
+    r = graph_cut(nodes, membership, [(0, 1, 1.0), (0, 2, 1.0), (1, 2, 1.0)], strength_null=True)
+    assert r["selected"] == [0] and r["score"] == pytest.approx(0)
+    assert graph_cut(nodes, membership, [], strength_null=True)["selected"] == [0]

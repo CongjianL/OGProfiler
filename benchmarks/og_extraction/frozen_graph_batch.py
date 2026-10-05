@@ -13,12 +13,14 @@ import pyarrow.parquet as pq
 
 from benchmarks.og_extraction.embleya_reference import evaluate, read_of
 from benchmarks.og_extraction.embleya_representation import strata
-from benchmarks.og_extraction.fixed_tree_graph import ALGORITHM, graph_cut
+from benchmarks.og_extraction.fixed_tree_graph import ALGORITHM, STRENGTH_ALGORITHM, graph_cut
 from ogprofiler.core.manifest import sha256_file
 
 
-def run_batch(run, reference_dir, out, penalties):
-    if (
+def run_batch(run, reference_dir, out, penalties, *, strength_null=False):
+    if strength_null and penalties != [None]:
+        raise ValueError("Strength-null requires [None], fixed resolution 1")
+    if not strength_null and (
         not penalties
         or len(set(penalties)) != len(penalties)
         or any(isinstance(p, bool) or not math.isfinite(p) or p < 0 for p in penalties)
@@ -60,7 +62,8 @@ def run_batch(run, reference_dir, out, penalties):
     predictions = [{} for _ in penalties]
     diagnostics = [[] for _ in penalties]
     protocol = dict(
-        algorithm=ALGORITHM,
+        algorithm=STRENGTH_ALGORITHM if strength_null else ALGORITHM,
+        resolution=1.0 if strength_null else None,
         penalties=penalties,
         automatic_selection=False,
         production_default_changed=False,
@@ -116,7 +119,9 @@ def run_batch(run, reference_dir, out, penalties):
         if {p for p, _ in membership} != ids:
             raise ValueError("Hierarchy/index component mismatch")
         for i, penalty in enumerate(penalties):
-            cut = graph_cut(nodes, membership, edges, pair_penalty=penalty)
+            cut = graph_cut(
+                nodes, membership, edges, pair_penalty=penalty, strength_null=strength_null
+            )
             for row in cut["members"]:
                 p = row["protein_id"]
                 if p in predictions[i]:
@@ -194,9 +199,17 @@ def main():
     p.add_argument("--run", type=Path, required=True)
     p.add_argument("--reference-dir", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
-    p.add_argument("--penalties", type=float, nargs="+", required=True)
+    group = p.add_mutually_exclusive_group(required=True)
+    group.add_argument("--penalties", type=float, nargs="+")
+    group.add_argument("--strength-null", action="store_true")
     a = p.parse_args()
-    run_batch(a.run, a.reference_dir, a.out, a.penalties)
+    run_batch(
+        a.run,
+        a.reference_dir,
+        a.out,
+        [None] if a.strength_null else a.penalties,
+        strength_null=a.strength_null,
+    )
 
 
 if __name__ == "__main__":
