@@ -1,0 +1,84 @@
+input:
+  extensions:
+  - .faa
+  - .fa
+  - .fasta
+  - .fna
+  illegal_character_policy: error
+search:
+  backend: diamond
+  executable: diamond
+  evalue: 0.001
+  threads: 8
+  sensitivity: more-sensitive
+  max_target_seqs: 0
+  max_hsps: 0
+  mmseqs_sensitivity: sensitive
+similarity:
+  normalization: legacy_nbs
+  nbs_fallback: v1_zero
+edges:
+  method: lrb
+  apply_coverage_filter: false
+  min_query_coverage: 0.0
+  min_target_coverage: 0.0
+  min_bidirectional_coverage: 0.0
+  best_hit_tolerance: 0.001
+  symmetrization: mean
+components:
+  edge_batch_size: 65536
+  max_open_files: 64
+hierarchy:
+  method: rber
+  seed: 42
+  min_family_size: null
+  admission_policy: nonempty_children_v1
+  topology_policy: soft_binary_24_v2
+  recursion_stop_size: 1
+  max_candidate_evaluations: 24
+  max_coarse_candidates: 10
+  rescue_grid_points: 8
+  component_leiden_call_budget: null
+  leiden_iterations: 10
+  max_depth: 42
+  resolution_strategy: bounded_adaptive_v2
+  gamma_min: 0.01
+  gamma_max: 10.0
+  gamma_growth: 2.0
+  local_grid_points: 5
+  max_child_fraction: 0.95
+  tiny_fragment_size: 2
+  max_tiny_fragment_fraction: 1.0
+  stability_threshold: 0.9
+  publication_seeds: 5
+  min_split_quality: null
+  stability_mode: robust
+  subtree_workers: 1
+  subtree_release_size: 50000
+evolution:
+  network_overlap_threshold: 0.0
+  phylogenetic_refinement: false
+orthogroups:
+  strategy: v1_compatible
+  species_overlap_count: 0
+  refinement: false
+phylogeny:
+  alignment_backend: mafft
+  alignment_executable: mafft
+  tree_backend: fasttree
+  tree_executable: FastTree
+  threads: 1
+  rooting: midpoint
+  selection_events:
+  - AMBIGUOUS
+  - MIXED
+  large_family_size: 100
+  max_families: 100
+output:
+  compression: zstd
+  emit_pairwise_orthologs: false
+  ortholog_pair_chunk_size: 100000
+runtime:
+  workers: 1
+  component_retries: 1
+  log_level: INFO
