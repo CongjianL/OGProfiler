@@ -90,8 +90,10 @@ def compare(reference, prediction, components):
         component_pair_recall_ceiling=supported / rp if rp else None,
         reference_pairs_across_components=rp - supported,
         cross_component_predicted_pairs=cross_component_predictions,
-        top_splits=sorted(details, key=lambda d: d["lost_pairs"], reverse=True)[:30],
-        top_merges=sorted(contamination, key=lambda d: d["discordant_pairs"], reverse=True)[:30],
+        top_splits=sorted(details, key=lambda d: (-d["lost_pairs"], d["reference_og"]))[:30],
+        top_merges=sorted(contamination, key=lambda d: (-d["discordant_pairs"], d["predicted_og"]))[
+            :30
+        ],
     )
 
 
