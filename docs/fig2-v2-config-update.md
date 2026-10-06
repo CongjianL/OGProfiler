@@ -53,3 +53,9 @@ Rscript OGProfiler2_benchmark/scripts/plotting/plot_stage2a_fig2.R UPDATED_FIGUR
 - 复现脚本重新生成的四张数据表逐字节相同，provenance JSON语义相同。
 - 远端旧图副本创建成功；新版PNG/PDF、图注和六份data文件全部sha256sum校验OK。
 - 图与新指标目录已同步回OGProfiler2_benchmark；未覆盖原B1官方/统计表或原始运行。
+
+## 后续默认切换标记
+
+2026-10-06用户随后选择soft42为生产默认（ADR0007）。本次图2中V2 default
+仍指job1410777的**切换前默认**kway/depth20对照，V2 soft42对应现默认策略；
+图中运行结果与数字保持冻结，不因默认命名变化重写历史数据。

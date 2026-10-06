@@ -1,5 +1,6 @@
 # ADR0005：soft hierarchy 深度资源预算的显式对照
 
+> 2026-10-06：本文默认配置限制已被 [ADR0007](0007-soft42-production-default.md) 后续决定取代；下文保留历史实验范围与结果。
 - Status：**Accepted for H4-only experiment（2026-10-03用户“进入下一轮”）；全局默认仍20。**
 - Date：2026-10-03。
 - Would amend：ADR0002的深度资源预算取值，不改变DEPTH_LIMIT的UNRESOLVED语义。

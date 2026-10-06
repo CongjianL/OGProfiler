@@ -10,8 +10,9 @@ Embleya 13基因组方案。不晋升绝对图惩罚或组件强度零模型，�
 - `hierarchy.topology_policy=soft_binary_24_v2`，`hierarchy.max_depth=42`。
 - `orthogroups.strategy=v1_compatible`，refinement=false；其余参数见完整配置。
 - 此配置含原运行的线程/worker值；后续资源调整需显式记录，不能冒充原始运行。
-- 仓库通用DEFAULT_CONFIG仍为kway/depth20；使用本方案须显式加载该配置。
-  这不是将Embleya结论推广为所有数据集的通用默认。
+- 2026-10-06按用户新决定，仓库公共DEFAULT_CONFIG已设为soft42，逐项等于此preset。
+  search.threads=8、runtime.workers=1保持；无须显式加载preset即可使用该方案。
+  默认策略选择不等于证明所有数据集最优；见ADR0007。
 
 ## 已接受的表现
 

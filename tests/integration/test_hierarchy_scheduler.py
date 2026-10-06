@@ -58,6 +58,8 @@ def _command(run: Path, seed: int = 42) -> list[str]:
         "--set",
         "hierarchy.admission_policy=legacy_strict",
         "--set",
+        "hierarchy.topology_policy=kway_v1",
+        "--set",
         "hierarchy.resolution_strategy=adaptive",
         "--set",
         "hierarchy.gamma_max=0.1",

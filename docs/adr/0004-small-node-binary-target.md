@@ -1,5 +1,6 @@
 # ADR 0004：小节点binary优先与有限soft回退
 
+> 2026-10-06：本文默认配置限制已被 [ADR0007](0007-soft42-production-default.md) 后续决定取代；下文保留历史实验范围与结果。
 - Status：**Accepted for explicit opt-in（2026-10-03）；默认仍为 `kway_v1`，全数据验收待 H4/H5。**
 - Date：2026-10-02。
 - Amends（仅 opt-in）：ADR0001「Stable k-way splits are preserved」在小多物种节点上的适用范围，

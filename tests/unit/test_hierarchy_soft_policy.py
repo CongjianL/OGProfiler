@@ -1,4 +1,4 @@
-"""Public opt-in topology configuration and hierarchy search contract."""
+"""Public default topology configuration and hierarchy search contract."""
 
 from dataclasses import replace
 
@@ -11,9 +11,10 @@ from ogprofiler.hierarchy.leiden import LeidenCallCounter
 from ogprofiler.hierarchy.resolution import search_resolution
 
 
-def test_soft_policy_is_explicit_opt_in_and_incompatible_with_legacy():
+def test_soft_policy_is_default_and_incompatible_with_legacy():
     default = hierarchy_config(load_config()["hierarchy"])
-    assert default.resolution.topology_policy == "kway_v1"
+    assert default.resolution.topology_policy == "soft_binary_24_v2"
+    assert default.max_depth == 42
     soft = hierarchy_config(
         load_config(overrides=["hierarchy.topology_policy=soft_binary_24_v2"])["hierarchy"]
     )

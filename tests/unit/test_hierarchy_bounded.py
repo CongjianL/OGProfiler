@@ -146,6 +146,7 @@ def test_new_config_defaults_and_explicit_migration():
     legacy = load_config(
         overrides=[
             "hierarchy.admission_policy=legacy_strict",
+            "hierarchy.topology_policy=kway_v1",
             "hierarchy.resolution_strategy=adaptive",
             "hierarchy.min_family_size=3",
         ]
@@ -169,7 +170,8 @@ def test_legacy_yaml_omitted_budget_and_explicit_override(tmp_path):
 
     path = tmp_path / "legacy.yaml"
     path.write_text(
-        "hierarchy:\n  admission_policy: legacy_strict\n  resolution_strategy: adaptive\n"
+        "hierarchy:\n  admission_policy: legacy_strict\n"
+        "  topology_policy: kway_v1\n  resolution_strategy: adaptive\n"
     )
     assert hierarchy_config(load_config(str(path))["hierarchy"]).leiden_iterations == 2
     config = load_config(str(path), ["hierarchy.leiden_iterations=10"])

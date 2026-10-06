@@ -43,6 +43,8 @@ DEFAULT_AXES: dict[str, list[dict[str, Any]]] = {
         {
             "hierarchy.resolution_strategy": "log_grid",
             "hierarchy.admission_policy": "legacy_strict",
+            # Legacy search needs its compatible topology, not the soft42 default.
+            "hierarchy.topology_policy": "kway_v1",
             # Compare search policies at the same explicit optimization budget.
             "hierarchy.leiden_iterations": 10,
         },

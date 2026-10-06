@@ -180,7 +180,9 @@ def test_soft_policy_parquet_resume_identity_and_schema(tmp_path: Path):
     from ogprofiler.hierarchy.stage import hierarchy_component_is_verified
 
     run = _prepare_multicomponent_run(tmp_path)
-    base = hierarchy_config(load_config()["hierarchy"])
+    base = hierarchy_config(
+        load_config(overrides=["hierarchy.topology_policy=kway_v1"])["hierarchy"]
+    )
     soft = replace(base, resolution=replace(base.resolution, topology_policy="soft_binary_24_v2"))
     run_hierarchy_component_stage(run, 0, base, [])
     assert not hierarchy_component_is_verified(run, 0, soft)

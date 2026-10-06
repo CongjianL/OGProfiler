@@ -47,6 +47,18 @@ Confirm the installation with `ogprofiler --version`.
 
 ## Quick start
 
+V2 now defaults to the validated **soft42** configuration: soft-binary topology,
+maximum depth 42, seed 42, 10 Leiden iterations, and `v1_compatible` OG extraction.
+The full defaults match `presets/embleya-soft42.yaml`; runtime workers remain 1
+and search threads remain 8 unless explicitly overridden. This is the selected
+policy, not a claim of universal benchmark superiority. See
+[ADR0007](docs/adr/0007-soft42-production-default.md).
+
+To replay the previous kway/depth20 policy, explicitly set
+`hierarchy.topology_policy=kway_v1` and `hierarchy.max_depth=20`.
+Sparse configuration files inherit the new defaults for omitted fields; freeze
+these fields when replaying older runs. Existing result files are not rewritten.
+
 Run or resume the complete default workflow:
 
 ```bash

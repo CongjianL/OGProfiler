@@ -3,7 +3,9 @@ from ogprofiler.config import load_config
 
 
 def test_depth_config_changes_only_max_depth():
-    before = load_config(overrides=["hierarchy.topology_policy=soft_binary_24_v2"])
+    before = load_config(
+        overrides=["hierarchy.topology_policy=soft_binary_24_v2", "hierarchy.max_depth=20"]
+    )
     after = depth_config(before)
     assert before["hierarchy"]["max_depth"] == 20
     assert after["hierarchy"]["max_depth"] == 42
