@@ -11,6 +11,8 @@ set -euo pipefail
 QFO_ROOT=${1:?Provide QFO root}
 OF_ENV=${2:?Provide existing OrthoFinder environment name}
 V1_ENV=${3:?Provide existing frozen V1 environment name}
+RETRY_OF=${4:-}
+printf 'retry_of_job\t%s\nretry_reason\tsubset identity assumption corrected; all remains primary\n' "$RETRY_OF" > "$DEV_RUN_DIR/retry-provenance.tsv"
 if [[ ${QFO_PREFLIGHT_READY:-0} != 1 ]]; then
     exec "$DEV_CONDA" run -n "$DEV_CONDA_ENV" env QFO_PREFLIGHT_READY=1 bash "$0" "$@"
 fi

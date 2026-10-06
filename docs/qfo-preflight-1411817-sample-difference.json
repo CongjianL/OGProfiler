@@ -1,0 +1,21 @@
+{
+  "file": "UP000000425_122586.fasta",
+  "classification": "ID_DIFFERENCE",
+  "sha256": "95dbd8eb38fd525f1bc4dc9de6e93955f566f57a92342385bfe9373cc3911b39",
+  "main_sha256": "44e65ab28a7953f479bcb76200fab2c8387cff6e858db2e5722aa8df1707bd17",
+  "usable_as_identical_subcollection": false,
+  "subset_proteins": 2001,
+  "main_proteins": 2001,
+  "added_accessions": 0,
+  "missing_accessions": 0,
+  "changed_sequences": 0,
+  "changed_original_ids": 3,
+  "added_examples": [],
+  "missing_examples": [],
+  "changed_sequence_examples": [],
+  "changed_id_examples": [
+    "P0A0Z2",
+    "Q9JXS2",
+    "Q9K0J8"
+  ]
+}

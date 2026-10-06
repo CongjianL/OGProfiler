@@ -42,6 +42,75 @@ def inspect_file(path: Path):
     ), samples
 
 
+def sequence_map(path: Path):
+    """Accession-keyed sequence identity, independent of FASTA wrapping/description/order."""
+    result = {}
+    for record in parse_fasta(path):
+        parts = record.identifier.split("|")
+        if len(parts) != 3 or parts[0] not in ("sp", "tr") or not parts[1]:
+            raise ValueError(f"Unexpected UniProt ID: {record.identifier} in {path}")
+        accession = parts[1]
+        if accession in result:
+            raise ValueError(f"Duplicate UniProt accession {accession} in {path}")
+        result[accession] = (
+            record.identifier,
+            hashlib.sha256(record.sequence.encode()).hexdigest(),
+        )
+    return result
+
+
+def compare_subset_file(path: Path, main: Path | None):
+    before = sha256_file(path)
+    if main is None:
+        result = dict(
+            file=path.name,
+            classification="NOT_IN_ALL",
+            sha256=before,
+            main_sha256=None,
+            usable_as_identical_subcollection=False,
+        )
+    elif before == sha256_file(main):
+        result = dict(
+            file=path.name,
+            classification="BYTE_IDENTICAL",
+            sha256=before,
+            main_sha256=before,
+            usable_as_identical_subcollection=True,
+        )
+    else:
+        other, base = sequence_map(path), sequence_map(main)
+        common = other.keys() & base.keys()
+        added, missing = sorted(other.keys() - base.keys()), sorted(base.keys() - other.keys())
+        changed = sorted(a for a in common if other[a][1] != base[a][1])
+        id_changes = sorted(a for a in common if other[a][0] != base[a][0])
+        sequence_identical = not (added or missing or changed)
+        identical = sequence_identical and not id_changes
+        result = dict(
+            file=path.name,
+            classification="FORMAT_OR_DESCRIPTION_ONLY"
+            if identical
+            else "ID_DIFFERENCE"
+            if sequence_identical
+            else "SEQUENCE_SET_DIFFERENCE",
+            sha256=before,
+            main_sha256=sha256_file(main),
+            usable_as_identical_subcollection=identical,
+            subset_proteins=len(other),
+            main_proteins=len(base),
+            added_accessions=len(added),
+            missing_accessions=len(missing),
+            changed_sequences=len(changed),
+            changed_original_ids=len(id_changes),
+            added_examples=added[:10],
+            missing_examples=missing[:10],
+            changed_sequence_examples=changed[:10],
+            changed_id_examples=id_changes[:10],
+        )
+    if sha256_file(path) != before:
+        raise ValueError(f"Subset input changed during audit: {path}")
+    return result
+
+
 def audit(source: Path, out: Path):
     if out.exists():
         raise ValueError(f"Output already exists: {out}")
@@ -83,21 +152,28 @@ def audit(source: Path, out: Path):
                     (smoke / p.name).write_text(
                         "".join(f">{r.identifier}\n{r.sequence}\n" for r in samples)
                     )
-        subsets = {}
+        subsets, subset_diagnostics = {}, []
         for subset in ("bacteria", "eukaryota"):
             subset_paths = sorted((source / subset).glob("*.fasta"))
-            mismatches = [
-                p.name
-                for p in subset_paths
-                if p.name not in manifests or sha256_file(p) != manifests[p.name]["sha256"]
-            ]
-            if mismatches:
-                raise ValueError(f"Subset differs from all: {subset}: {mismatches}")
+            comparisons = []
+            for p in subset_paths:
+                main = frozen / p.name if p.name in manifests else None
+                comparisons.append(compare_subset_file(p, main))
+            subset_diagnostics.extend(dict(subset=subset, **r) for r in comparisons)
             subsets[subset] = dict(
                 files=[p.name for p in subset_paths],
                 n_species=len(subset_paths),
-                n_proteins=sum(manifests[p.name]["n_proteins"] for p in subset_paths),
+                n_proteins_in_all=sum(
+                    manifests[p.name]["n_proteins"] for p in subset_paths if p.name in manifests
+                ),
+                missing_species_in_all=[p.name for p in subset_paths if p.name not in manifests],
+                identical_subcollection=all(
+                    r["usable_as_identical_subcollection"] for r in comparisons
+                ),
+                comparison_classifications=dict(Counter(r["classification"] for r in comparisons)),
+                source_role="directory species list only; sequence input remains frozen all/",
             )
+        (out / "subset-comparison.json").write_text(json.dumps(subset_diagnostics, indent=2) + "\n")
         if set(subsets["bacteria"]["files"]) & set(subsets["eukaryota"]["files"]):
             raise ValueError("Overlapping supplied domain subsets")
         assigned = set(subsets["bacteria"]["files"]) | set(subsets["eukaryota"]["files"])
@@ -115,7 +191,11 @@ def audit(source: Path, out: Path):
             dataset_sha256=digest,
             original_ids_unique=True,
             accessions_unique=True,
-            subset_checks_passed=True,
+            subset_audit_completed=True,
+            subset_checks_passed=all(r["identical_subcollection"] for r in subsets.values()),
+            domain_stratification_scope=(
+                "species lists from supplied directories, using all sequences only"
+            ),
             subsets=subsets,
             other_species=sorted(set(manifests) - assigned),
             frozen_inputs=str(frozen),
