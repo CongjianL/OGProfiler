@@ -94,3 +94,36 @@ ID变更、主输入不被混入及快照提交号传递。
 此证据仅适用于该样本，其余文件由重试审计逐一核验；不外推所有细菌差异性质。
 样本hash与诊断归档 docs/qfo-preflight-1411817-sample-difference.json。
 修订后完整测试423 passed / 8 skipped（5项既有warning）。
+
+## bacteria 预检结果与方法验证（2026-10-07）
+
+job1411846：COMPLETED / 0:0，27秒，源05a5239，所有6项计时步骤退出0。
+独立细菌输入23物种、82507蛋白、26792356残基；SHA256：
+`703718a40b464a4193a79e5070777a63d768a39ccaceda2f4c7cfd4885c55fe4`。
+完整prepare 3.16秒、峰值151648KB；小样本search 8.26秒。
+这些数值仅用于预检，未表示完整方法计算所需时间/内存。
+
+方法入口：`slurm/qfo_bacteria_smoke.sh`（4CPU/16GB/2小时）与
+`slurm/qfo_bacteria_full.sh`（32CPU/128GB/72小时）。完整资源档沿用历史
+V1首次版本基准资源档，是新完整对照的显式请求，不是提高预检资源；
+单作业按V2/OF3/V1顺序运行，无数组、无参数搜索，三种方法不同时争用资源。
+参数均为 `PREFLIGHT_RUN EXPECTED_DIGEST OF_ENV V1_ENV`。
+方法smoke验证前不提交full；smoke沿用冻结3×20，绝非正式分数。
+
+`benchmarks.qfo.campaign`校验来源完成状态、bacteria标签、冻结摘要，
+完整模式核对文件hash与蛋白/物种数量，独立复制同一组输入。
+历史V1通用适配器拒绝UniProt竖线ID，因此专门生成
+`OGPV1_species|QFO_species_record`，用双射表恢复完整原始ID；
+不改变序列、物种成员或选择蛋白。回归测试涵盖原始ID恢复、
+V1现有converter契约、被修改输入拒绝及all来源拒绝。
+V1使用原首次版本SHA256 65ec43d269b410956fadc4f8215a3e0a0772eac8bcc1060ab011b090823cca41，
+环境前缀由已配置环境查询；沿用已验证的DIAMOND makedb兼容启动器。
+其CLI没有随机种子参数，明确记录unavailable，不把计时元数据seed42当成V1已控种子。
+V1参数固定为历史B1配置（evalue1e-5、lrb、NBS、rber、gamma1、so0）。
+V2加载冻结生产soft42配置，仅覆盖运行线程/worker数量，不调科学参数。
+OF3使用diamond，`-og`停止于OG划分，不启动树推断；这是OG对照而非正式orthology评价。
+所有方法及转换均经过run_timed，环境显式导出、源码快照和独立结果目录保留。
+OF3原始assigned分组路径单独保存；标准converter添加的unassigned单例仅用于
+完整覆盖验证，不用作OF3 assigned pairwise参考标签。
+`qfo-methods-completion.json`只记录方法执行，comparison_evaluated=false；
+实际一致性评分、split/merge与资源汇总留待完整输出检查后进行。
