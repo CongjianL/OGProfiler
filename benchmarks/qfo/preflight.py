@@ -111,15 +111,18 @@ def compare_subset_file(path: Path, main: Path | None):
     return result
 
 
-def audit(source: Path, out: Path):
+def audit(source: Path, out: Path, *, collection: str = "all"):
+    if collection not in {"all", "bacteria"}:
+        raise ValueError("Unknown QFO collection")
     if out.exists():
         raise ValueError(f"Output already exists: {out}")
     out.mkdir(parents=True)
-    frozen = out / "input/all"
+    frozen = out / "input" / collection
     frozen.mkdir(parents=True)
-    paths = sorted((source / "all").glob("*.fasta"))
+    primary = source / "all" if collection == "all" else source
+    paths = sorted(primary.glob("*.fasta"))
     if not paths:
-        raise ValueError("Missing all/*.fasta")
+        raise ValueError(f"Missing FASTA in selected collection: {primary}")
     manifests, rows, owners, accession_owners = {}, [], {}, {}
     smoke = out / "smoke-input"
     smoke.mkdir()
@@ -153,7 +156,7 @@ def audit(source: Path, out: Path):
                         "".join(f">{r.identifier}\n{r.sequence}\n" for r in samples)
                     )
         subsets, subset_diagnostics = {}, []
-        for subset in ("bacteria", "eukaryota"):
+        for subset in ("bacteria", "eukaryota") if collection == "all" else ():
             subset_paths = sorted((source / subset).glob("*.fasta"))
             comparisons = []
             for p in subset_paths:
@@ -174,9 +177,15 @@ def audit(source: Path, out: Path):
                 source_role="directory species list only; sequence input remains frozen all/",
             )
         (out / "subset-comparison.json").write_text(json.dumps(subset_diagnostics, indent=2) + "\n")
-        if set(subsets["bacteria"]["files"]) & set(subsets["eukaryota"]["files"]):
+        if collection == "all" and (
+            set(subsets["bacteria"]["files"]) & set(subsets["eukaryota"]["files"])
+        ):
             raise ValueError("Overlapping supplied domain subsets")
-        assigned = set(subsets["bacteria"]["files"]) | set(subsets["eukaryota"]["files"])
+        assigned = (
+            set(subsets["bacteria"]["files"]) | set(subsets["eukaryota"]["files"])
+            if collection == "all"
+            else set(manifests)
+        )
         digest = hashlib.sha256(
             json.dumps({k: v["sha256"] for k, v in manifests.items()}, sort_keys=True).encode()
         ).hexdigest()
@@ -185,16 +194,24 @@ def audit(source: Path, out: Path):
             source_root=str(source),
             release="UNIDENTIFIED",
             release_scope="supplied local QFO FASTA collection; release not inferred",
-            all_species=len(paths),
-            all_proteins=len(owners),
+            collection=collection,
+            primary_input=str(primary),
+            n_species=len(paths),
+            n_proteins=len(owners),
             total_residues=sum(r["n_residues"] for r in rows),
             dataset_sha256=digest,
             original_ids_unique=True,
             accessions_unique=True,
-            subset_audit_completed=True,
-            subset_checks_passed=all(r["identical_subcollection"] for r in subsets.values()),
+            subset_audit_completed=collection == "all",
+            subset_checks_passed=(
+                all(r["identical_subcollection"] for r in subsets.values())
+                if collection == "all"
+                else None
+            ),
             domain_stratification_scope=(
                 "species lists from supplied directories, using all sequences only"
+                if collection == "all"
+                else "single bacterial collection; no cross-directory inputs"
             ),
             subsets=subsets,
             other_species=sorted(set(manifests) - assigned),
@@ -204,6 +221,8 @@ def audit(source: Path, out: Path):
                 "requires reference/scoring package and validated orthology representation"
             ),
         )
+        if collection == "all":
+            report.update(all_species=len(paths), all_proteins=len(owners))
         (out / "qfo-input-audit.json").write_text(json.dumps(report, indent=2) + "\n")
         (out / "input-sha256.json").write_text(
             json.dumps({k: v["sha256"] for k, v in manifests.items()}, indent=2) + "\n"
@@ -228,8 +247,9 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--collection", choices=("all", "bacteria"), default="all")
     a = p.parse_args()
-    report = audit(a.source, a.out)
+    report = audit(a.source, a.out, collection=a.collection)
     print(
         json.dumps(
             {k: v for k, v in report.items() if k not in ("subsets", "other_species")}, indent=2

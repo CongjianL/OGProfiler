@@ -3,7 +3,33 @@
 用户明确要求继续使用 /home/mselab/licj/project_data/OGProfiler/QFO 做benchmark。
 本地源码权威，用户目录只读；所有全数据处理及计算通过Slurm。
 
-## 已检查事实
+## 当前执行范围：bacteria 独立数据集
+
+2026-10-06 用户决定停止 all，改用
+`/home/mselab/licj/project_data/OGProfiler/QFO/bacteria` 的 23 个物种。
+本节取代下文历史 all 计划；旧快照与结果保留，仅作归档。
+
+job **1411823** 经 sacct 核验为 **COMPLETED / 0:0**（2分18秒），
+审计、完整 prepare、3×20 search smoke 与两个方法环境检查均退出 0。
+`subset_checks_passed=false` 表示目录差异，不是作业失败；
+该作业尚未运行完整 V2/V1/OF3，也未产出正式 QFO 分数。
+
+新入口：`slurm/qfo_bacteria_preflight.sh BACTERIA_DIR OF_ENV V1_ENV [PREVIOUS_JOB]`。
+资源保持 **4 CPU / 16 GB / 2小时**。通过标准提交器冻结源码和 provenance，
+记录 supersedes_job=1411823 与用户指定的范围变更。
+输入审计使用 `--collection bacteria`，只读取所给细菌目录，
+不打开 all/eukaryota，也不做跨目录子集判断；单独生成内容摘要与 ID 映射。
+输出 `preflight/input/bacteria`、`prepared-bacteria`，报告采用
+`collection`、`n_species`、`n_proteins`、`dataset_sha256`，
+`subset_audit_completed=false`、`subset_checks_passed=null`（未进行此项审计）。
+使用生产 soft42 默认完成全细菌 prepare，并以确定性 3×20 子样本验证 search。
+预检完成后再依据实际规模准备独立完整 V2/V1/OF3 运行；
+所有比较限于相同冻结细菌输入，保留原有官方 QFO 评分门槛。
+
+本地新增回归测试：细菌目录独立存在，跨目录比较函数若被调用即失败；
+确认输入只快照到 bacteria，报告不含 all 专属统计。
+
+## 历史 all 计划与已检查事实（已被上节取代）
 
 - all 78 FASTA，约558MB；bacteria 23，约39MB；eukaryota 48，约491MB。
 - all是主输入，另外两组独立审计与all的字节、ID及序列差异；其余文件不臆断域标签。

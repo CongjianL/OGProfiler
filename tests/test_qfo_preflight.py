@@ -87,3 +87,24 @@ def test_accession_matching_does_not_hide_original_id_changes(tmp_path):
     assert result["classification"] == "ID_DIFFERENCE"
     assert result["changed_original_ids"] == 1
     assert not result["usable_as_identical_subcollection"]
+
+
+def test_bacteria_is_independent_collection_without_reading_all(tmp_path, monkeypatch):
+    source = tmp_path / "bacteria"
+    source.mkdir()
+    (source / "UP000000001_1.fasta").write_text(">sp|A001|ONE\nACDE\n")
+    # Neither all nor eukaryota directories exist. Cross-directory audit is forbidden.
+    monkeypatch.setattr(
+        "benchmarks.qfo.preflight.compare_subset_file",
+        lambda *args: pytest.fail("Unexpected cross-directory read"),
+    )
+    result = audit(source, tmp_path / "out", collection="bacteria")
+    assert result["input_ready"]
+    assert result["collection"] == "bacteria"
+    assert result["n_species"] == result["n_proteins"] == 1
+    assert not result["subset_audit_completed"]
+    assert result["subset_checks_passed"] is None
+    assert result["subsets"] == {} and result["other_species"] == []
+    assert (tmp_path / "out/input/bacteria/UP000000001_1.fasta").is_file()
+    assert not (tmp_path / "out/input/all").exists()
+    assert "all_proteins" not in result
