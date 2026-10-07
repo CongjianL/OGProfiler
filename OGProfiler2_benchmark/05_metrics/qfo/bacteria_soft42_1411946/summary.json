@@ -1,0 +1,952 @@
+{
+  "scope": "OG concordance against OF3 assigned partition; not biological truth or official QFO accuracy",
+  "dataset_sha256": "703718a40b464a4193a79e5070777a63d768a39ccaceda2f4c7cfd4885c55fe4",
+  "n_species": 23,
+  "n_proteins": 82507,
+  "of3_assigned": 62466,
+  "of3_unassigned": 20041,
+  "v1_id_restoration_verified": true,
+  "coverage": {
+    "V2": {
+      "proteins": 82507,
+      "groups": 37928,
+      "singleton_groups": 27150,
+      "largest_group": 158,
+      "of3_unassigned_proteins": 20041,
+      "of3_unassigned_attached_to_assigned": 1018
+    },
+    "V1": {
+      "proteins": 82507,
+      "groups": 33262,
+      "singleton_groups": 23914,
+      "largest_group": 285,
+      "of3_unassigned_proteins": 20041,
+      "of3_unassigned_attached_to_assigned": 1253
+    },
+    "OF3": {
+      "proteins": 82507,
+      "groups": 29869,
+      "singleton_groups": 20041,
+      "largest_group": 149,
+      "of3_unassigned_proteins": 20041,
+      "of3_unassigned_attached_to_assigned": 0
+    }
+  },
+  "metrics": {
+    "V2": {
+      "proteins": 62466,
+      "reference_groups": 9828,
+      "predicted_groups": 18941,
+      "missing_predictions": 0,
+      "excluded_predictions": 20041,
+      "true_positive_pairs": 209075,
+      "reference_pairs": 385205,
+      "predicted_pairs": 273080,
+      "discordant_pairs": 64005,
+      "lost_pairs": 176130,
+      "pair_precision": 0.7656181338801816,
+      "pair_recall": 0.5427629444062253,
+      "pair_f1": 0.6352111927204782,
+      "bcubed_precision": 0.8726439567764697,
+      "bcubed_recall": 0.6644429564527639,
+      "macro_best_f1": 0.7891260328656221,
+      "exact_reference_groups": 4382,
+      "split_reference_groups": 4373,
+      "merged_predicted_groups": 1884,
+      "component_pair_recall_ceiling": 0.9999402915330798,
+      "reference_pairs_across_components": 23,
+      "cross_component_predicted_pairs": 0,
+      "top_splits": [
+        {
+          "reference_og": "OG0000000",
+          "size": 149,
+          "fragments": 61,
+          "lost_pairs": 10009,
+          "best_f1": 0.4148936170212766
+        },
+        {
+          "reference_og": "OG0000001",
+          "size": 135,
+          "fragments": 72,
+          "lost_pairs": 8880,
+          "best_f1": 0.16326530612244897
+        },
+        {
+          "reference_og": "OG0000003",
+          "size": 103,
+          "fragments": 26,
+          "lost_pairs": 4309,
+          "best_f1": 0.5072463768115942
+        },
+        {
+          "reference_og": "OG0000007",
+          "size": 70,
+          "fragments": 33,
+          "lost_pairs": 2334,
+          "best_f1": 0.18181818181818182
+        },
+        {
+          "reference_og": "OG0000009",
+          "size": 64,
+          "fragments": 34,
+          "lost_pairs": 1956,
+          "best_f1": 0.17142857142857143
+        },
+        {
+          "reference_og": "OG0000011",
+          "size": 60,
+          "fragments": 25,
+          "lost_pairs": 1668,
+          "best_f1": 0.2857142857142857
+        },
+        {
+          "reference_og": "OG0000013",
+          "size": 53,
+          "fragments": 21,
+          "lost_pairs": 1212,
+          "best_f1": 0.463768115942029
+        },
+        {
+          "reference_og": "OG0000014",
+          "size": 51,
+          "fragments": 17,
+          "lost_pairs": 1077,
+          "best_f1": 0.5217391304347826
+        },
+        {
+          "reference_og": "OG0000016",
+          "size": 45,
+          "fragments": 16,
+          "lost_pairs": 893,
+          "best_f1": 0.35714285714285715
+        },
+        {
+          "reference_og": "OG0000017",
+          "size": 43,
+          "fragments": 18,
+          "lost_pairs": 836,
+          "best_f1": 0.3137254901960784
+        },
+        {
+          "reference_og": "OG0000019",
+          "size": 42,
+          "fragments": 10,
+          "lost_pairs": 716,
+          "best_f1": 0.4074074074074074
+        },
+        {
+          "reference_og": "OG0000024",
+          "size": 40,
+          "fragments": 20,
+          "lost_pairs": 707,
+          "best_f1": 0.43137254901960786
+        },
+        {
+          "reference_og": "OG0000020",
+          "size": 41,
+          "fragments": 14,
+          "lost_pairs": 689,
+          "best_f1": 0.4528301886792453
+        },
+        {
+          "reference_og": "OG0000015",
+          "size": 45,
+          "fragments": 18,
+          "lost_pairs": 686,
+          "best_f1": 0.704225352112676
+        },
+        {
+          "reference_og": "OG0000018",
+          "size": 42,
+          "fragments": 13,
+          "lost_pairs": 657,
+          "best_f1": 0.6451612903225806
+        },
+        {
+          "reference_og": "OG0000012",
+          "size": 57,
+          "fragments": 2,
+          "lost_pairs": 656,
+          "best_f1": 0.8118811881188119
+        },
+        {
+          "reference_og": "OG0000028",
+          "size": 39,
+          "fragments": 16,
+          "lost_pairs": 646,
+          "best_f1": 0.4074074074074074
+        },
+        {
+          "reference_og": "OG0000027",
+          "size": 39,
+          "fragments": 12,
+          "lost_pairs": 640,
+          "best_f1": 0.4528301886792453
+        },
+        {
+          "reference_og": "OG0000029",
+          "size": 38,
+          "fragments": 15,
+          "lost_pairs": 629,
+          "best_f1": 0.3829787234042553
+        },
+        {
+          "reference_og": "OG0000032",
+          "size": 37,
+          "fragments": 17,
+          "lost_pairs": 600,
+          "best_f1": 0.3384615384615385
+        },
+        {
+          "reference_og": "OG0000033",
+          "size": 37,
+          "fragments": 18,
+          "lost_pairs": 555,
+          "best_f1": 0.5769230769230769
+        },
+        {
+          "reference_og": "OG0000031",
+          "size": 38,
+          "fragments": 8,
+          "lost_pairs": 551,
+          "best_f1": 0.5384615384615384
+        },
+        {
+          "reference_og": "OG0000044",
+          "size": 34,
+          "fragments": 21,
+          "lost_pairs": 531,
+          "best_f1": 0.34146341463414637
+        },
+        {
+          "reference_og": "OG0000053",
+          "size": 33,
+          "fragments": 32,
+          "lost_pairs": 527,
+          "best_f1": 0.11428571428571428
+        },
+        {
+          "reference_og": "OG0000041",
+          "size": 35,
+          "fragments": 18,
+          "lost_pairs": 522,
+          "best_f1": 0.4090909090909091
+        },
+        {
+          "reference_og": "OG0000030",
+          "size": 38,
+          "fragments": 19,
+          "lost_pairs": 513,
+          "best_f1": 0.6896551724137931
+        },
+        {
+          "reference_og": "OG0000054",
+          "size": 33,
+          "fragments": 16,
+          "lost_pairs": 489,
+          "best_f1": 0.3076923076923077
+        },
+        {
+          "reference_og": "OG0000040",
+          "size": 35,
+          "fragments": 14,
+          "lost_pairs": 480,
+          "best_f1": 0.5660377358490566
+        },
+        {
+          "reference_og": "OG0000047",
+          "size": 34,
+          "fragments": 12,
+          "lost_pairs": 480,
+          "best_f1": 0.45454545454545453
+        },
+        {
+          "reference_og": "OG0000045",
+          "size": 34,
+          "fragments": 13,
+          "lost_pairs": 478,
+          "best_f1": 0.4897959183673469
+        }
+      ],
+      "top_merges": [
+        {
+          "predicted_og": "OG000023334",
+          "size": 158,
+          "reference_ogs": 3,
+          "discordant_pairs": 6209
+        },
+        {
+          "predicted_og": "OG000018242",
+          "size": 69,
+          "reference_ogs": 4,
+          "discordant_pairs": 1564
+        },
+        {
+          "predicted_og": "OG000005296",
+          "size": 64,
+          "reference_ogs": 3,
+          "discordant_pairs": 1073
+        },
+        {
+          "predicted_og": "OG000011679",
+          "size": 48,
+          "reference_ogs": 4,
+          "discordant_pairs": 782
+        },
+        {
+          "predicted_og": "OG000000773",
+          "size": 73,
+          "reference_ogs": 4,
+          "discordant_pairs": 771
+        },
+        {
+          "predicted_og": "OG000007705",
+          "size": 39,
+          "reference_ogs": 3,
+          "discordant_pairs": 482
+        },
+        {
+          "predicted_og": "OG000001666",
+          "size": 32,
+          "reference_ogs": 7,
+          "discordant_pairs": 404
+        },
+        {
+          "predicted_og": "OG000002455",
+          "size": 31,
+          "reference_ogs": 7,
+          "discordant_pairs": 341
+        },
+        {
+          "predicted_og": "OG000018146",
+          "size": 88,
+          "reference_ogs": 2,
+          "discordant_pairs": 336
+        },
+        {
+          "predicted_og": "OG000000858",
+          "size": 29,
+          "reference_ogs": 6,
+          "discordant_pairs": 335
+        },
+        {
+          "predicted_og": "OG000001166",
+          "size": 29,
+          "reference_ogs": 6,
+          "discordant_pairs": 315
+        },
+        {
+          "predicted_og": "OG000003218",
+          "size": 28,
+          "reference_ogs": 8,
+          "discordant_pairs": 304
+        },
+        {
+          "predicted_og": "OG000000229",
+          "size": 27,
+          "reference_ogs": 6,
+          "discordant_pairs": 296
+        },
+        {
+          "predicted_og": "OG000001742",
+          "size": 30,
+          "reference_ogs": 4,
+          "discordant_pairs": 280
+        },
+        {
+          "predicted_og": "OG000011664",
+          "size": 33,
+          "reference_ogs": 2,
+          "discordant_pairs": 272
+        },
+        {
+          "predicted_og": "OG000000318",
+          "size": 33,
+          "reference_ogs": 2,
+          "discordant_pairs": 266
+        },
+        {
+          "predicted_og": "OG000004139",
+          "size": 29,
+          "reference_ogs": 6,
+          "discordant_pairs": 257
+        },
+        {
+          "predicted_og": "OG000002288",
+          "size": 24,
+          "reference_ogs": 10,
+          "discordant_pairs": 254
+        },
+        {
+          "predicted_og": "OG000000160",
+          "size": 30,
+          "reference_ogs": 5,
+          "discordant_pairs": 253
+        },
+        {
+          "predicted_og": "OG000003677",
+          "size": 33,
+          "reference_ogs": 2,
+          "discordant_pairs": 252
+        },
+        {
+          "predicted_og": "OG000000971",
+          "size": 26,
+          "reference_ogs": 4,
+          "discordant_pairs": 243
+        },
+        {
+          "predicted_og": "OG000025452",
+          "size": 36,
+          "reference_ogs": 2,
+          "discordant_pairs": 243
+        },
+        {
+          "predicted_og": "OG000011660",
+          "size": 29,
+          "reference_ogs": 6,
+          "discordant_pairs": 241
+        },
+        {
+          "predicted_og": "OG000000303",
+          "size": 26,
+          "reference_ogs": 5,
+          "discordant_pairs": 236
+        },
+        {
+          "predicted_og": "OG000003683",
+          "size": 25,
+          "reference_ogs": 5,
+          "discordant_pairs": 233
+        },
+        {
+          "predicted_og": "OG000003147",
+          "size": 25,
+          "reference_ogs": 4,
+          "discordant_pairs": 225
+        },
+        {
+          "predicted_og": "OG000018145",
+          "size": 113,
+          "reference_ogs": 3,
+          "discordant_pairs": 223
+        },
+        {
+          "predicted_og": "OG000002289",
+          "size": 28,
+          "reference_ogs": 7,
+          "discordant_pairs": 219
+        },
+        {
+          "predicted_og": "OG000000037",
+          "size": 24,
+          "reference_ogs": 5,
+          "discordant_pairs": 212
+        },
+        {
+          "predicted_og": "OG000000487",
+          "size": 23,
+          "reference_ogs": 6,
+          "discordant_pairs": 208
+        }
+      ],
+      "bcubed_f1": 0.754442869275439,
+      "component_diagnostic_scope": "V2 retained graph components, including for V1 predictions"
+    },
+    "V1": {
+      "proteins": 62466,
+      "reference_groups": 9828,
+      "predicted_groups": 14501,
+      "missing_predictions": 0,
+      "excluded_predictions": 20041,
+      "true_positive_pairs": 271878,
+      "reference_pairs": 385205,
+      "predicted_pairs": 587593,
+      "discordant_pairs": 315715,
+      "lost_pairs": 113327,
+      "pair_precision": 0.46269781974938434,
+      "pair_recall": 0.7058008073623135,
+      "pair_f1": 0.5589608531267539,
+      "bcubed_precision": 0.7936454702417772,
+      "bcubed_recall": 0.7525305329622985,
+      "macro_best_f1": 0.7504153901273305,
+      "exact_reference_groups": 4291,
+      "split_reference_groups": 3705,
+      "merged_predicted_groups": 1697,
+      "component_pair_recall_ceiling": 0.9999402915330798,
+      "reference_pairs_across_components": 23,
+      "cross_component_predicted_pairs": 238,
+      "top_splits": [
+        {
+          "reference_og": "OG0000003",
+          "size": 103,
+          "fragments": 27,
+          "lost_pairs": 3836,
+          "best_f1": 0.6709677419354839
+        },
+        {
+          "reference_og": "OG0000009",
+          "size": 64,
+          "fragments": 31,
+          "lost_pairs": 1914,
+          "best_f1": 0.2465753424657534
+        },
+        {
+          "reference_og": "OG0000007",
+          "size": 70,
+          "fragments": 15,
+          "lost_pairs": 1699,
+          "best_f1": 0.6788990825688074
+        },
+        {
+          "reference_og": "OG0000011",
+          "size": 60,
+          "fragments": 22,
+          "lost_pairs": 1649,
+          "best_f1": 0.2857142857142857
+        },
+        {
+          "reference_og": "OG0000013",
+          "size": 53,
+          "fragments": 10,
+          "lost_pairs": 1012,
+          "best_f1": 0.6410256410256411
+        },
+        {
+          "reference_og": "OG0000016",
+          "size": 45,
+          "fragments": 15,
+          "lost_pairs": 911,
+          "best_f1": 0.26229508196721313
+        },
+        {
+          "reference_og": "OG0000001",
+          "size": 135,
+          "fragments": 7,
+          "lost_pairs": 789,
+          "best_f1": 0.9591078066914498
+        },
+        {
+          "reference_og": "OG0000012",
+          "size": 57,
+          "fragments": 6,
+          "lost_pairs": 740,
+          "best_f1": 0.8118811881188119
+        },
+        {
+          "reference_og": "OG0000014",
+          "size": 51,
+          "fragments": 8,
+          "lost_pairs": 695,
+          "best_f1": 0.7816091954022989
+        },
+        {
+          "reference_og": "OG0000024",
+          "size": 40,
+          "fragments": 16,
+          "lost_pairs": 664,
+          "best_f1": 0.5185185185185185
+        },
+        {
+          "reference_og": "OG0000019",
+          "size": 42,
+          "fragments": 4,
+          "lost_pairs": 571,
+          "best_f1": 0.5633802816901409
+        },
+        {
+          "reference_og": "OG0000031",
+          "size": 38,
+          "fragments": 6,
+          "lost_pairs": 532,
+          "best_f1": 0.5384615384615384
+        },
+        {
+          "reference_og": "OG0000053",
+          "size": 33,
+          "fragments": 28,
+          "lost_pairs": 517,
+          "best_f1": 0.18518518518518517
+        },
+        {
+          "reference_og": "OG0000018",
+          "size": 42,
+          "fragments": 9,
+          "lost_pairs": 501,
+          "best_f1": 0.782608695652174
+        },
+        {
+          "reference_og": "OG0000052",
+          "size": 34,
+          "fragments": 13,
+          "lost_pairs": 481,
+          "best_f1": 0.45454545454545453
+        },
+        {
+          "reference_og": "OG0000041",
+          "size": 35,
+          "fragments": 13,
+          "lost_pairs": 467,
+          "best_f1": 0.4307692307692308
+        },
+        {
+          "reference_og": "OG0000025",
+          "size": 39,
+          "fragments": 13,
+          "lost_pairs": 459,
+          "best_f1": 0.75
+        },
+        {
+          "reference_og": "OG0000028",
+          "size": 39,
+          "fragments": 7,
+          "lost_pairs": 457,
+          "best_f1": 0.6133333333333333
+        },
+        {
+          "reference_og": "OG0000020",
+          "size": 41,
+          "fragments": 6,
+          "lost_pairs": 454,
+          "best_f1": 0.5102040816326531
+        },
+        {
+          "reference_og": "OG0000045",
+          "size": 34,
+          "fragments": 10,
+          "lost_pairs": 440,
+          "best_f1": 0.5660377358490566
+        },
+        {
+          "reference_og": "OG0000004",
+          "size": 89,
+          "fragments": 3,
+          "lost_pairs": 424,
+          "best_f1": 0.691358024691358
+        },
+        {
+          "reference_og": "OG0000026",
+          "size": 39,
+          "fragments": 4,
+          "lost_pairs": 405,
+          "best_f1": 0.7213114754098361
+        },
+        {
+          "reference_og": "OG0000062",
+          "size": 31,
+          "fragments": 16,
+          "lost_pairs": 395,
+          "best_f1": 0.42105263157894735
+        },
+        {
+          "reference_og": "OG0000074",
+          "size": 30,
+          "fragments": 10,
+          "lost_pairs": 391,
+          "best_f1": 0.3783783783783784
+        },
+        {
+          "reference_og": "OG0000046",
+          "size": 34,
+          "fragments": 11,
+          "lost_pairs": 383,
+          "best_f1": 0.7169811320754716
+        },
+        {
+          "reference_og": "OG0000068",
+          "size": 30,
+          "fragments": 14,
+          "lost_pairs": 382,
+          "best_f1": 0.42105263157894735
+        },
+        {
+          "reference_og": "OG0000035",
+          "size": 37,
+          "fragments": 5,
+          "lost_pairs": 379,
+          "best_f1": 0.7540983606557377
+        },
+        {
+          "reference_og": "OG0000037",
+          "size": 36,
+          "fragments": 5,
+          "lost_pairs": 373,
+          "best_f1": 0.7586206896551724
+        },
+        {
+          "reference_og": "OG0000056",
+          "size": 33,
+          "fragments": 7,
+          "lost_pairs": 361,
+          "best_f1": 0.68
+        },
+        {
+          "reference_og": "OG0000088",
+          "size": 29,
+          "fragments": 9,
+          "lost_pairs": 360,
+          "best_f1": 0.29411764705882354
+        }
+      ],
+      "top_merges": [
+        {
+          "predicted_og": "OG000215",
+          "size": 274,
+          "reference_ogs": 59,
+          "discordant_pairs": 36652
+        },
+        {
+          "predicted_og": "OG000178",
+          "size": 270,
+          "reference_ogs": 46,
+          "discordant_pairs": 34559
+        },
+        {
+          "predicted_og": "OG000218",
+          "size": 227,
+          "reference_ogs": 44,
+          "discordant_pairs": 24728
+        },
+        {
+          "predicted_og": "OG000711",
+          "size": 170,
+          "reference_ogs": 18,
+          "discordant_pairs": 13141
+        },
+        {
+          "predicted_og": "OG000457",
+          "size": 144,
+          "reference_ogs": 15,
+          "discordant_pairs": 9193
+        },
+        {
+          "predicted_og": "OG000459",
+          "size": 121,
+          "reference_ogs": 21,
+          "discordant_pairs": 6259
+        },
+        {
+          "predicted_og": "OG011445",
+          "size": 154,
+          "reference_ogs": 3,
+          "discordant_pairs": 5949
+        },
+        {
+          "predicted_og": "OG000503",
+          "size": 118,
+          "reference_ogs": 14,
+          "discordant_pairs": 5873
+        },
+        {
+          "predicted_og": "OG000365",
+          "size": 106,
+          "reference_ogs": 17,
+          "discordant_pairs": 5148
+        },
+        {
+          "predicted_og": "OG000410",
+          "size": 104,
+          "reference_ogs": 17,
+          "discordant_pairs": 4717
+        },
+        {
+          "predicted_og": "OG000479",
+          "size": 96,
+          "reference_ogs": 16,
+          "discordant_pairs": 4098
+        },
+        {
+          "predicted_og": "OG000619",
+          "size": 94,
+          "reference_ogs": 16,
+          "discordant_pairs": 3982
+        },
+        {
+          "predicted_og": "OG000353",
+          "size": 91,
+          "reference_ogs": 16,
+          "discordant_pairs": 3777
+        },
+        {
+          "predicted_og": "OG000659",
+          "size": 171,
+          "reference_ogs": 4,
+          "discordant_pairs": 3550
+        },
+        {
+          "predicted_og": "OG000755",
+          "size": 89,
+          "reference_ogs": 11,
+          "discordant_pairs": 3499
+        },
+        {
+          "predicted_og": "OG000357",
+          "size": 85,
+          "reference_ogs": 14,
+          "discordant_pairs": 3016
+        },
+        {
+          "predicted_og": "OG000068",
+          "size": 82,
+          "reference_ogs": 15,
+          "discordant_pairs": 2978
+        },
+        {
+          "predicted_og": "OG000166",
+          "size": 81,
+          "reference_ogs": 14,
+          "discordant_pairs": 2855
+        },
+        {
+          "predicted_og": "OG000291",
+          "size": 76,
+          "reference_ogs": 23,
+          "discordant_pairs": 2624
+        },
+        {
+          "predicted_og": "OG000359",
+          "size": 77,
+          "reference_ogs": 10,
+          "discordant_pairs": 2523
+        },
+        {
+          "predicted_og": "OG000222",
+          "size": 76,
+          "reference_ogs": 12,
+          "discordant_pairs": 2438
+        },
+        {
+          "predicted_og": "OG000414",
+          "size": 71,
+          "reference_ogs": 24,
+          "discordant_pairs": 2334
+        },
+        {
+          "predicted_og": "OG000284",
+          "size": 71,
+          "reference_ogs": 17,
+          "discordant_pairs": 2313
+        },
+        {
+          "predicted_og": "OG000294",
+          "size": 68,
+          "reference_ogs": 15,
+          "discordant_pairs": 2089
+        },
+        {
+          "predicted_og": "OG006710",
+          "size": 73,
+          "reference_ogs": 5,
+          "discordant_pairs": 2083
+        },
+        {
+          "predicted_og": "OG000391",
+          "size": 71,
+          "reference_ogs": 12,
+          "discordant_pairs": 2076
+        },
+        {
+          "predicted_og": "OG001121",
+          "size": 68,
+          "reference_ogs": 12,
+          "discordant_pairs": 1944
+        },
+        {
+          "predicted_og": "OG000405",
+          "size": 65,
+          "reference_ogs": 14,
+          "discordant_pairs": 1857
+        },
+        {
+          "predicted_og": "OG006405",
+          "size": 125,
+          "reference_ogs": 6,
+          "discordant_pairs": 1615
+        },
+        {
+          "predicted_og": "OG000409",
+          "size": 59,
+          "reference_ogs": 12,
+          "discordant_pairs": 1542
+        }
+      ],
+      "bcubed_f1": 0.7725413503592323,
+      "component_diagnostic_scope": "V2 retained graph components, including for V1 predictions"
+    }
+  },
+  "resources": {
+    "V2": {
+      "tool": "OGProfiler2_soft42",
+      "dataset": "QFO_bacteria_full",
+      "replicate": "1",
+      "start_time_utc": "2026-10-07T04:54:32Z",
+      "end_time_utc": "2026-10-07T08:13:53Z",
+      "hostname": "cu03",
+      "cpu_count": "56",
+      "threads": "32",
+      "seed": "42",
+      "git_commit": "e8c26772c335ab9d18ee96578090a49791590e3e",
+      "exit_code": "0",
+      "status": "OK",
+      "peak_rss_kb": "2878140",
+      "wall_clock": "3:19:20",
+      "user_cpu_seconds": "7904.25",
+      "system_cpu_seconds": "690.49",
+      "disk_bytes": "20480"
+    },
+    "V1": {
+      "tool": "OGProfiler1First",
+      "dataset": "QFO_bacteria_full",
+      "replicate": "1",
+      "start_time_utc": "2026-10-07T04:55:48Z",
+      "end_time_utc": "2026-10-07T05:26:01Z",
+      "hostname": "cu05",
+      "cpu_count": "56",
+      "threads": "32",
+      "seed": "unavailable",
+      "git_commit": "e8c26772c335ab9d18ee96578090a49791590e3e",
+      "exit_code": "0",
+      "status": "OK",
+      "peak_rss_kb": "1756856",
+      "wall_clock": "30:12.37",
+      "user_cpu_seconds": "5138.86",
+      "system_cpu_seconds": "145.85",
+      "disk_bytes": "49152"
+    },
+    "OF3": {
+      "tool": "OrthoFinder3",
+      "dataset": "QFO_bacteria_full",
+      "replicate": "1",
+      "start_time_utc": "2026-10-07T04:55:04Z",
+      "end_time_utc": "2026-10-07T05:38:48Z",
+      "hostname": "cu04",
+      "cpu_count": "56",
+      "threads": "32",
+      "seed": "42",
+      "git_commit": "e8c26772c335ab9d18ee96578090a49791590e3e",
+      "exit_code": "0",
+      "status": "OK",
+      "peak_rss_kb": "524728",
+      "wall_clock": "43:43.31",
+      "user_cpu_seconds": "7364.97",
+      "system_cpu_seconds": "346.35",
+      "disk_bytes": "20480"
+    }
+  },
+  "campaign_method_span_seconds": 11961.0,
+  "source_runs": {
+    "V2": "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045553Z_e8c26772c335_32efeb60_54892",
+    "OF3": "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045622Z_e8c26772c335_32efeb60_59156",
+    "V1": "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045653Z_e8c26772c335_32efeb60_63403"
+  },
+  "artifact_sha256": {
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045553Z_e8c26772c335_32efeb60_54892/campaign/v2/results/members.tsv": "321d3864fc1172dd5e409976b7cf5b6e82a219db6bbb6bc140e6dc82aa2dbf4a",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045653Z_e8c26772c335_32efeb60_63403/campaign/v1-groups.tsv": "4f47a2eb41ae0a62fd1bb2965786d57d7d755a9503097f58e0eceb4a3e8e9eb2",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045622Z_e8c26772c335_32efeb60_59156/campaign/of3-groups.tsv": "41fa23fec072d356d4fe82176298e05f53943bbf7ae3a4c904fc39f3bb326595",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045622Z_e8c26772c335_32efeb60_59156/campaign/of3/Results_Oct07/Orthogroups/Orthogroups.tsv": "23e4873dab4ecf66aae1976cb1bf731f165e524074910c2c57066245d9d317b1",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045553Z_e8c26772c335_32efeb60_54892/campaign/v2-timing/metadata.tsv": "971b9cc3c64b19f193beaf9f1e26a41d2f5449440d887ff5267187625a2c7257",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045653Z_e8c26772c335_32efeb60_63403/campaign/v1-timing/metadata.tsv": "faa5e0505934b6ef8871551ca8662a1b2dcac515f820d0f5f21016fbd58dd22c",
+    "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045622Z_e8c26772c335_32efeb60_59156/campaign/of3-timing/metadata.tsv": "3e6fdcaba5a2a6ddf9b8d514e762b1dc1429b5805fb129cca1b943b91349bd6d"
+  },
+  "official_qfo_scores_produced": false
+}

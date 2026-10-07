@@ -209,3 +209,13 @@ OF3原生assigned主参考与完整覆盖分区分开，unassigned独立汇总�
 输出summary.json、metrics.tsv及产物SHA256；大结果树仍留远端。
 回归测试验证assigned限定评分、unassigned混合报告、双方法已知答案和
 被修改输入、缺失/重复预测、未知/重复OF3 ID的拒绝。
+
+## job1411946评分完成
+
+COMPLETED / 0:0，14秒。已取回紧凑summary.json与metrics.tsv，归档于
+OGProfiler2_benchmark/05_metrics/qfo/bacteria_soft42_1411946，REPORT.md解释范围与局限。
+三方法完整唯一覆盖82507蛋白；assigned主评分62466蛋白/9828 OG。
+V2 pairP/R/F1=76.5618/54.2763/63.5211%，V1=46.2698/70.5801/55.8961%；
+B-cubed F1 V2=75.4443%，V1=77.2541%。结论依指标不同，不宣称全面优胜。
+V2图组件仅丢23参考对，但最终丢176130对；需固定现有树诊断内部树边界与OG提取，
+未据此改变生产默认或添加过滤规则。完整方法及评分不再重复提交。
