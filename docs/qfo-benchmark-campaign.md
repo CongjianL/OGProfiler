@@ -127,3 +127,15 @@ OF3原始assigned分组路径单独保存；标准converter添加的unassigned�
 完整覆盖验证，不用作OF3 assigned pairwise参考标签。
 `qfo-methods-completion.json`只记录方法执行，comparison_evaluated=false；
 实际一致性评分、split/merge与资源汇总留待完整输出检查后进行。
+
+## job1411854小样本失败诊断
+
+2026-10-07核验：FAILED / 2:0，25秒。V2 prepare/search/edges/components均成功，
+60蛋白全部为单例，scheduler完成0个非单例组件且failed=0。
+network annotation误将“无非单例层级输出”视为缺失输入；OF3/V1尚未启动。
+这是全单例边界代码错误，不是资源问题。保留样本与科学参数，资源不增加。
+修正仅接受scheduler RESOLVED、零失败/未解决、单例数与index/proteins完全匹配的
+全单例数据集；生成零组件/零事件注释manifest。非单例遗漏或输入不一致仍报错。
+新增正例及缺scheduler、非单例index、缺单例表、缺蛋白负例回归。
+重试用新源码快照与RUN_ID，第五参数记录retry_of_job=1411854；
+完整方法运行仍需等待三方法smoke验证成功。

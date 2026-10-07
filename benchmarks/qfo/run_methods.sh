@@ -13,6 +13,7 @@ export BENCHMARK_THREADS="$SLURM_CPUS_PER_TASK" BENCHMARK_SEED=42
 B="$DEV_SOURCE_DIR/OGProfiler2_benchmark"
 TIMED="$B/workflows/run_timed.sh"
 cd "$DEV_RUN_DIR"
+printf 'retry_of_job\t%s\n' "${5:-}" > "$DEV_RUN_DIR/method-retry-provenance.tsv"
 ROOT="$DEV_RUN_DIR/campaign"
 DATASET="QFO_bacteria_${MODE}"
 "$TIMED" QFO_stage "$DATASET" 1 "$DEV_RUN_DIR/stage-timing" -- \
