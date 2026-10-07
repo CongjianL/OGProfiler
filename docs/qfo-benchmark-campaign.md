@@ -139,3 +139,20 @@ network annotation误将“无非单例层级输出”视为缺失输入；OF3/V
 新增正例及缺scheduler、非单例index、缺单例表、缺蛋白负例回归。
 重试用新源码快照与RUN_ID，第五参数记录retry_of_job=1411854；
 完整方法运行仍需等待三方法smoke验证成功。
+
+## job1411870：原版 V1 的全单例边界与验证集调整
+
+sacct FAILED / 1:0，49秒；V2端到端23.19秒退出0，OF3 12.11秒及转换退出0。
+V1 7.71秒退出1，ExtractOG访问空层级图的Event属性时KeyError。
+ssn.gml为60个节点/0条边，hm/hmm为空；所有物种对均无非自身有效hits，
+OF3也将60条全部列为unassigned。未产生V1分组，三方法完成标记未生成。
+这不是资源失败，不能把该作业说成三方法验证成功。
+保留历史V1源hash，不添加算法修补或把单例文件冒充V1成功输出。
+
+新增 `slurm/qfo_bacteria_smoke_proteomes.sh`：相同冻结输入的前三物种完整蛋白组，
+模式smoke-proteomes，独立dataset digest并记录完整23物种digest；
+4CPU/16GB/2h不变，retry_of_job=1411870。所有选中FASTA按字节复制，
+不合成序列、不按参考标签挑选同源家族。这是明确扩大验证集范围，
+不是调科学参数；已有3×20全单例结果继续保留。
+成功后还需检查有效跨物种连接与三方法分组/ID完整性，
+再提交23物种完整对照。回归覆盖前三物种选择、完整序列复制及独立digest。

@@ -15,7 +15,7 @@ from ogprofiler.input.fasta import parse_fasta
 
 
 def stage(origin: Path, out: Path, expected_digest: str, *, mode: str):
-    if mode not in {"smoke", "full"}:
+    if mode not in {"smoke", "smoke-proteomes", "full"}:
         raise ValueError("Unknown campaign mode")
     report = json.loads((origin / "preflight/qfo-input-audit.json").read_text())
     completion = json.loads((origin / "qfo-preflight-completion.json").read_text())
@@ -29,8 +29,10 @@ def stage(origin: Path, out: Path, expected_digest: str, *, mode: str):
     full_digest = hashlib.sha256(json.dumps(full_hashes, sort_keys=True).encode()).hexdigest()
     if full_digest != expected_digest:
         raise ValueError("Frozen input changed")
-    source = frozen if mode == "full" else origin / "preflight/smoke-input"
+    source = frozen if mode in {"full", "smoke-proteomes"} else origin / "preflight/smoke-input"
     files = sorted(source.glob("*.fasta"))
+    if mode == "smoke-proteomes":
+        files = files[:3]
     if not files:
         raise ValueError("No method inputs")
     if mode == "smoke":
@@ -93,7 +95,7 @@ def main():
     p.add_argument("--origin", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--expected-digest", required=True)
-    p.add_argument("--mode", choices=("smoke", "full"), required=True)
+    p.add_argument("--mode", choices=("smoke", "smoke-proteomes", "full"), required=True)
     a = p.parse_args()
     print(json.dumps(stage(a.origin, a.out, a.expected_digest, mode=a.mode), indent=2))
 

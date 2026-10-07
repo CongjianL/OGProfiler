@@ -101,3 +101,30 @@ def test_campaign_rejects_modified_smoke_records(tmp_path):
     p.write_text(p.read_text().replace("ACDE", "ACDF"))
     with pytest.raises(ValueError, match="Smoke records changed"):
         stage(origin, tmp_path / "campaign", digest, mode="smoke")
+
+
+def test_proteome_smoke_uses_first_three_full_species_and_own_digest(tmp_path):
+    origin, _ = origin_fixture(tmp_path)
+    source = origin / "preflight/input/bacteria"
+    for i in (2, 3):
+        (source / f"species{i}.fasta").write_text(f">sp|NEW{i}|NAME\nACDE\n")
+    import hashlib
+
+    from ogprofiler.core.manifest import sha256_file
+
+    digest = hashlib.sha256(
+        json.dumps(
+            {p.name: sha256_file(p) for p in sorted(source.glob("*.fasta"))}, sort_keys=True
+        ).encode()
+    ).hexdigest()
+    report_path = origin / "preflight/qfo-input-audit.json"
+    report = json.loads(report_path.read_text())
+    report.update(dataset_sha256=digest, n_species=4, n_proteins=6)
+    report_path.write_text(json.dumps(report))
+    result = stage(origin, tmp_path / "smoke", digest, mode="smoke-proteomes")
+    assert result["n_species"] == 3 and result["n_proteins"] == 5
+    assert result["dataset_sha256"] != digest
+    assert result["full_dataset_sha256"] == digest
+    assert set(result["input_sha256"]) == {"species0.fasta", "species1.fasta", "species2.fasta"}
+    for p in (tmp_path / "smoke/input").glob("*.fasta"):
+        assert p.read_bytes() == (source / p.name).read_bytes()
