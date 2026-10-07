@@ -16,7 +16,7 @@ from benchmarks.og_extraction.tree_cut import topology
 from ogprofiler.core.manifest import sha256_file
 
 
-def boundary_losses(nodes, membership, reference, actual):
+def boundary_losses(nodes, membership, reference, actual, pure_losses=None):
     """Count lost same-reference pairs at their unique LCA, without enumerating pairs.
 
     A pure assigned-reference LCA is a tree-available grouping opportunity.
@@ -67,6 +67,13 @@ def boundary_losses(nodes, membership, reference, actual):
             else "mixed_assigned_lca_requires_contamination"
         )
         result[category] += lost
+        if pure_losses is not None and category == "pure_assigned_lca_tree_available" and lost:
+            pure_losses[c] = dict(
+                lost_pairs=lost,
+                reference_og=next(iter(refs[c])),
+                assigned_size=sum(refs[c].values()),
+                production_fragments=len(joints[c]),
+            )
     result["within_component_lost_pairs"] = tp[order[0]] - retained[order[0]]
     if (
         sum(

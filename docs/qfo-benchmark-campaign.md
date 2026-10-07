@@ -250,3 +250,15 @@ OGProfiler2_benchmark/05_metrics/qfo/bacteria_fixed_tree_1411949。
 component0占全部损失73.5803%。任意节点完全匹配5723OG，资格节点4739OG。
 下一步固定树关联纯LCA与事件资格/生产active-view轨迹，核查资格与选择路径，
 同时诊断混合LCA的家族交错；不扩大gamma、不改默认、不自动重跑方法。
+
+## 纯LCA资格与生产路径追踪
+
+新增pure_lca_trace只读入口，读取1411949已核验的report与boundary-summary、
+固定层级节点/成员，以及生产og-manifest、v1_events、selection_trace、groups。
+按节点聚合纯LCA丢失对，严格核对总数等于52121的既有诊断（动态读取基准）。
+资格规则与生产相同：None，或多物种I。首先区别资格排除与资格通过；
+后者再分已选但参考家族仍碎片化、未选且有消耗轨迹、没有可见选择轨迹。
+已选与后续消耗可能同时发生，因此已选优先；不把所有资格通过的损失误称未提取。
+保留trace_order/processing_level/consumed_by及源OG规模，便于核查active-view。
+所有既有树/图和生产输入输出哈希再次检查，大逐节点记录与哈希清单留远端。
+使用独立4CPU/16GB/2h只读Slurm作业，不重做方法、不改默认、不扩大gamma。
