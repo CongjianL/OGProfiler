@@ -175,7 +175,6 @@ def diagnose(run, reference_dir, baseline, out):
                     yield e["u"], e["v"], e["weight"]
 
         candidates = msa_candidates(nodes, local, edges(), events)
-        evidence.extend(dict(component_id=cid, **r) for r in candidates)
         try:
             result = extract(
                 nodes,
@@ -187,12 +186,14 @@ def diagnose(run, reference_dir, baseline, out):
             )
         except (engine.OrthogroupConflictError, ValueError) as error:
             failures.append(dict(component_id=cid, error=str(error)))
+            evidence.extend(dict(component_id=cid, **r) for r in candidates)
             continue
         if {p for g in result.groups for p in g.protein_ids} != set(members):
             raise ValueError("Incomplete component partition")
         selected = {t.cluster_id for t in result.trace if t.status == "SELECTED"}
         for row in candidates:
             row["selected"] = row["cluster_id"] in selected
+        evidence.extend(dict(component_id=cid, **r) for r in candidates)
         for g in result.groups:
             for p in g.protein_ids:
                 if p in predictions:
