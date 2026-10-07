@@ -238,3 +238,15 @@ V2图组件仅丢23参考对，但最终丢176130对；需固定现有树诊断�
 计数算法不枚举真实蛋白对；小型随机树用显式pair枚举核验所有分类之和，
 同时覆盖纯LCA、混合LCA、结构叶内部损失及非法重复成员。
 再次核验固定图与树哈希后输出boundary-summary.json；大per-OG及oracle cuts留远端。
+
+## job1411949固定树诊断完成
+
+COMPLETED / 0:0，3:45；哈希核验通过，结果归档于
+OGProfiler2_benchmark/05_metrics/qfo/bacteria_fixed_tree_1411949。
+生产/全节点cut oracle/资格约束cut oracle的pairF1=63.5211/81.5008/66.0049%。
+资格约束oracle的recall52.6112%低于生产54.2763%，F1提升来自减少误合并；
+不将两个F1差当作树/选择的因果贡献。
+当前丢失176130对分为跨组件23、结构叶内0、纯assigned LCA52121、混合LCA123986；
+component0占全部损失73.5803%。任意节点完全匹配5723OG，资格节点4739OG。
+下一步固定树关联纯LCA与事件资格/生产active-view轨迹，核查资格与选择路径，
+同时诊断混合LCA的家族交错；不扩大gamma、不改默认、不自动重跑方法。
