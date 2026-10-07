@@ -176,3 +176,21 @@ SHA256 703718a40b464a4193a79e5070777a63d768a39ccaceda2f4c7cfd4885c55fe4。
 第五参数1411874记录为validated_smoke_job，不误记为失败重试。
 完整作业结束后先核验所有输出，再执行assigned主评估、独立unassigned报告、
 pairwise/B-cubed一致性、split/merge及资源汇总，仍不发布官方QFO分数。
+
+## 按用户要求：三方法并行执行
+
+2026-10-07用户明确要求V2/OF3/历史V1并行。原顺序job1411889在V2
+DIAMOND阶段（prepare已完成、搜索未完成、OF3/V1未启动）被精准取消，
+原snapshot/provenance/输入/不完整日志全部保留，不改写运行中的源码。
+新增三个入口：qfo_bacteria_v2.sh、qfo_bacteria_of3.sh、qfo_bacteria_v1.sh；
+每个32CPU/128GB/72h，总并发申请96CPU/384GB，由Slurm实际调度。
+三作业无相互依赖，共享同一冻结数据来源和source commit，但各自有独立
+RUN_ID、源码快照、输入副本、结果与timing，避免同目录争用。
+科学参数、搜索线程、worker数量不变；未完成的搜索重新执行，不当作有效缓存。
+原顺序入口保留用于历史重放，此轮不再使用。选择器QFO_METHOD默认all以兼容
+原smoke，独立入口仅启用一个方法；未知方法执行前报错。
+第5参数validated_smoke_job=1411874，第6参数supersedes_sequential_job=1411889。
+方法路由桩测试覆盖v2/of3/v1/all及错误值，确认没有误触发其它方法。
+三方法输出核验结束后再统一比较，不用任一方法完成状态代替全campaign成功。
+并行资源时间不相加成campaign墙钟时长；报告需分别保留各方法时间/内存，
+另报告三个作业最早开始至最晚完成的campaign跨度。
