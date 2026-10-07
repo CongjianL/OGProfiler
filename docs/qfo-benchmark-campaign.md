@@ -219,3 +219,22 @@ V2 pairP/R/F1=76.5618/54.2763/63.5211%，V1=46.2698/70.5801/55.8961%；
 B-cubed F1 V2=75.4443%，V1=77.2541%。结论依指标不同，不宣称全面优胜。
 V2图组件仅丢23参考对，但最终丢176130对；需固定现有树诊断内部树边界与OG提取，
 未据此改变生产默认或添加过滤规则。完整方法及评分不再重复提交。
+
+## 固定图/树的边界与选择诊断
+
+按用户明确要求：不调gamma、不改变soft42默认、不重做search/edges/hierarchy。
+新增qfo_bacteria_fixed_tree.sh：4CPU/16GB/2h，读取1411893固定V2图/树及
+1411894 OF3参考，使用已有run_audit与pair_f1_oracle接口。
+比较terminal cut、生产OG、全部节点完整cut oracle、事件资格约束cut oracle；
+已有run_audit校验所有输入与节点/成员哈希、完整覆盖、fractional全局最优性。
+标签oracle只保留独立DIAGNOSTIC文件，绝不写回生产结果。
+
+另用节点参考标签计数及(reference,production OG)联合计数计算pair LCA损失，
+精确分解当前丢失对为跨组件、结构叶内部、纯assigned参考LCA、混合assigned LCA。
+纯LCA表示树内有可用完整祖先边界；混合LCA的整个节点合并需夹带其他assigned家族。
+这两项是可用机会/表示限制诊断，不构成生产政策的因果归因；unassigned不参与纯度定义。
+图root总能提高recall但代价是误合并，因此不把recall差或oracle差硬拆为因果贡献。
+完整cut家族与生产active-view提取不等价，oracle不是任意OG输出的上界。
+计数算法不枚举真实蛋白对；小型随机树用显式pair枚举核验所有分类之和，
+同时覆盖纯LCA、混合LCA、结构叶内部损失及非法重复成员。
+再次核验固定图与树哈希后输出boundary-summary.json；大per-OG及oracle cuts留远端。
