@@ -8,7 +8,11 @@ from benchmarks.og_extraction.tree_cut import optimal_cut, topology
 from benchmarks.qfo.species_pair_null import conditioned_null
 
 
-def species_pair_cut(nodes, membership, edges, species):
+def species_pair_cut(nodes, membership, edges, species, *, exact=True):
+    if exact:
+        from benchmarks.og_extraction.exact_species_pair_graph import exact_cut
+
+        return exact_cut(nodes, membership, edges, species)
     # Reuse canonical-edge/membership validation and LCA internal weights only.
     base = graph_cut(nodes, membership, edges, strength_null=True)
     by_id, children, order = topology(nodes)

@@ -490,3 +490,26 @@ expected20.1140384784857，keep TP300 vs childcut253，真实损失47 TP。
 非活跃21399虽有数值tie，对该例输出无贡献。嵌套节点局部TP损失不累加。
 下一步分开修复实验数值tie与研究21396真实边界目标，避免可调epsilon
 抹去真实小增益。默认soft42保持；紧凑报告归档bacteria_conditioned_tie_1412103。
+
+### 修复实验条件 DP 的精确平分语义，并分解21396物种块
+
+实验 `species_pair_cut` 新的规范路径使用精确有理数 keep 分数传给原完整树 DP；
+仅在严格数学相等时保留父节点，不进行 1e-12 分数置零或 epsilon 比较。
+所有权重以 `Fraction.from_float` 表示存储边权，分母固定 source；
+LCA 内部权与端点强度使用精确累加、后序聚合，避免逐节点重扫全部边。
+最终跨组 null deficit 独立精确重算，恒等式用等号核验。
+
+历史浮点分支保留为显式 `exact=False`，定点审计和既有 benchmark 入口继续显式
+回放历史分支；修复回归入口 `--exact-conditioned --raw-replay-dir` 使用新路径。
+逐蛋白核验全部1205 source 的旧浮点 cut 与 job1412089 一致，再比较精确 cut 的
+TP/FP 与旧 cut，历史快照与文件不改写。生产 src/config/defaults 不修改。
+新增合成回归构造 `nextafter(1,0)` 边权：真实增益低于1e-12仍应split，
+并验证非零keep分数上的真tie、边顺序不变性、零权、审计一致性及目标恒等式。
+
+单 Slurm 作业内先进行全部1205 source的精确修复回归，成功后再定点审计
+10040/21394，并为21396的孩子最优边界输出各物种块的 source W_st、端点强度、
+观察跨组边权、期望及 signed gain。仍固定现有诱导图和树；分解用于定位真实
+小正增益，不添加阈值或修改资格。资源沿用4 CPU /16G /2h，无参数矩阵。
+
+修复验收：本地完整测试496 passed /8 skipped /5项既有warning；
+远端轻量合成测试15 passed，ruff、diff whitespace、Slurm语法通过。

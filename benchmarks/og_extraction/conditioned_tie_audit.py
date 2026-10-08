@@ -8,7 +8,7 @@ from benchmarks.og_extraction.tree_cut import topology
 
 
 def audit_tree(nodes, membership, edges, species):
-    raw = species_pair_cut(nodes, membership, edges, species)
+    raw = species_pair_cut(nodes, membership, edges, species, exact=False)
     by_id, children, order = topology(nodes)
     proteins = {c: set() for c in order}
     for p, leaf in membership:
@@ -22,27 +22,9 @@ def audit_tree(nodes, membership, edges, species):
     for u, v, w in rational_edges:
         s, t = species[u], species[v]
         weights[min(s, t), max(s, t)] += w
-    total = sum(weights.values(), Fraction())
-    scores = {}
-    for c in order:
-        ps = proteins[c]
-        k = Counter()
-        internal = Fraction()
-        for u, v, w in rational_edges:
-            s, t = species[u], species[v]
-            if u in ps:
-                k[s, t] += w
-            if v in ps:
-                k[t, s] += w
-            if u in ps and v in ps:
-                internal += w
-        expected = sum(
-            (k[s, s] ** 2 / (4 * w) if s == t else k[s, t] * k[t, s] / w)
-            for (s, t), w in weights.items()
-            if w
-        )
-        scores[c] = (internal - expected) / total if total else Fraction()
-    assert scores[order[0]] == 0
+    from benchmarks.og_extraction.exact_species_pair_graph import exact_scores
+
+    scores, total = exact_scores(nodes, membership, edges, species)
     raw_scores = {r["cluster_id"]: r["keep_score"] for r in raw["node_scores"]}
     exact_best, raw_best, exact_keep, raw_keep, rows = {}, {}, {}, {}, []
     for c in reversed(order):
@@ -104,7 +86,7 @@ def audit_tree(nodes, membership, edges, species):
         row["raw_child_prediction"] = child_partition(c, raw_keep)
         row["exact_child_prediction"] = child_partition(c, exact_keep)
 
-    def boundary(child_pred):
+    def boundary(child_pred, *, details=False):
         k, actual = Counter(), Counter()
         for u, v, w in rational_edges:
             s, t = species[u], species[v]
@@ -115,10 +97,12 @@ def audit_tree(nodes, membership, edges, species):
             if u in child_pred and v in child_pred and child_pred[u] != child_pred[v]:
                 actual["same" if s == t else "cross"] += w
         expected = Counter()
+        blocks = []
         gs = sorted(set(child_pred.values()))
         for (s, t), w in weights.items():
             if not w:
                 continue
+            before = expected["same" if s == t else "cross"]
             if s == t:
                 vals = [k[g, s, s] for g in gs]
                 expected["same"] += (sum(vals) ** 2 - sum(x * x for x in vals)) / (4 * w)
@@ -127,7 +111,34 @@ def audit_tree(nodes, membership, edges, species):
                 expected["cross"] += (
                     sum(a) * sum(b) - sum(x * y for x, y in zip(a, b, strict=True))
                 ) / w
-        return {
+            if details:
+                block_observed = sum(
+                    (
+                        w0
+                        for u, v, w0 in rational_edges
+                        if u in child_pred
+                        and v in child_pred
+                        and child_pred[u] != child_pred[v]
+                        and (min(species[u], species[v]), max(species[u], species[v])) == (s, t)
+                    ),
+                    Fraction(),
+                )
+                block_expected = expected["same" if s == t else "cross"] - before
+                blocks.append(
+                    dict(
+                        species_a=s,
+                        species_b=t,
+                        source_block_weight=float(w),
+                        expected=float(block_expected),
+                        observed=float(block_observed),
+                        gain=float((block_expected - block_observed) / total) if total else 0.0,
+                        endpoint_strengths=[
+                            dict(group=g, from_s=float(k[g, s, t]), from_t=float(k[g, t, s]))
+                            for g in gs
+                        ],
+                    )
+                )
+        result = {
             kind: dict(
                 observed=float(actual[kind]),
                 expected=float(expected[kind]),
@@ -136,9 +147,15 @@ def audit_tree(nodes, membership, edges, species):
             for kind in ("same", "cross")
         }
 
+        if details:
+            result["species_blocks"] = blocks
+        return result
+
     for row in rows:
         row["raw_child_boundary"] = boundary(row["raw_child_prediction"])
-        row["exact_child_boundary"] = boundary(row["exact_child_prediction"])
+        row["exact_child_boundary"] = boundary(
+            row["exact_child_prediction"], details=row["cluster_id"] == 21396
+        )
     selected, pred = partition(exact_keep)
     raw_selected, raw_pred = partition(raw_keep)
     for row in rows:
