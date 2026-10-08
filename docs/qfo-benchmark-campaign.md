@@ -552,3 +552,20 @@ Slurm单定点作业沿用4 CPU /16G /2h。
 
 验收：本地完整测试499 passed /8 skipped /5项既有warning；
 远端合成测试9 passed，ruff、diff whitespace、Slurm语法通过。
+
+### job1412154 完成：原边流与三子约束已核验
+
+COMPLETED /0:0，16秒；RUN_ID=20261008T113723Z_b4573d6f43f2_28e674d0_75809，
+sourceb4573d6，dirty=0。原incident与source诱导边逐权一致、局部目标、回放、
+覆盖、哈希通过。31672有15条core边，总权8.887643167393085，无外边；
+31901有11条core边，总权11.173859028267453，另有node外source内2599边
+.1390442158172523，二单例间无边，component内无source外incident边。
+块1/11：core—31672 actual .5360556758019136，expected .46736499897321476；
+core—31901 actual0，expected .12122695965386061。原边核验现已支持此前
+待证的逐子组分配；不是单靠块总量推断。其余非零core连接expected=actual。
+三子节点只表示keep或24+1+1；三项部分合并均缺原树节点。
+解释性“core+31672、31901独立”的gain .0002829527863496145、TP276/lost24，
+比合法三组TP253/lost47少损失23 TP，但仍未偏好完整merge300 TP。
+节点外source内null上下文与树表示约束分开处理；不是source外边干扰。
+下一步可固定图/合法节点集合审计单侧物种块代数退化的清洁/污染队列分布，
+不直接修改过滤、资格或树。生产soft42保持。紧凑归档bacteria_singleton_flow_1412154。
