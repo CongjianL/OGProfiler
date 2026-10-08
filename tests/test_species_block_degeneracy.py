@@ -72,3 +72,96 @@ def test_lca_pairs_attribute_selected_complete_cut_losses():
     tp = sum(v * (v - 1) // 2 for v in joint.values())
     assert lost == 3 - tp
     assert all(row["objective_identity_verified"] for row in r["legal_internal_nodes"])
+
+
+def block_at_one(n, m, e, s):
+    rows = profile(n, m, e, s, {1, 2}, context_flow=True)["legal_internal_nodes"]
+    row = next(r for r in rows if r["cluster_id"] == 1)
+    return row, row["blocks"][0]
+
+
+def test_context_cancelled_block_is_internal_only_without_boundary():
+    n, m, s = fixture()
+    row, b = block_at_one(n, m, [(0, 1, 2.0), (0, 2, 1.0)], s)
+    assert b["expected_internal_internal"] == b["observed"] == 1
+    assert b["expected_internal_external"] == b["expected_external_external"] == 0
+    assert b["node_boundary_weight"] == b["outside_node_weight"] == 0
+    assert row["context_groups"][0]["blocks"] == 1
+    assert not b["source_context_changes_sign"]
+
+
+def test_boundary_context_turns_internal_negative_into_positive():
+    n, m, s = fixture()
+    e = [(0, 1, 2.0), (0, 2, 1.0), (2, 3, 0.5)]
+    row, b = block_at_one(n, m, e, s)
+    assert b["internal_only_sign"] == -1
+    assert b["total_deficit_sign"] == 1
+    assert b["source_context_changes_sign"]
+    assert b["node_internal_weight"] == 3
+    assert b["node_boundary_weight"] == 0.5
+    assert b["outside_node_weight"] == 0
+    assert row["context_groups"][1]["internal_nonpositive_total_positive"] == 1
+    assert (
+        profile(n, m, e, s, {1, 2})["legal_internal_nodes"][1]["direct_gain"] == row["direct_gain"]
+    )
+
+
+def test_context_cross_external_and_outside_edge_conservation():
+    import pytest
+
+    n, m, s = fixture()
+    m = m + [(4, 2)]
+    s = dict(s)
+    s[4] = 1
+    e = [(0, 1, 2.0), (0, 2, 1.0), (2, 3, 0.5), (0, 4, 0.25), (3, 4, 0.75)]
+    _, b = block_at_one(n, m, e, s)
+    assert b["expected_external_external"] == pytest.approx(0.125 / 4.5)
+    assert b["node_internal_weight"] == 3
+    assert b["node_boundary_weight"] == 0.75
+    assert b["outside_node_weight"] == 0.75
+    assert b["source_block_weight"] == 4.5
+    assert b["context_identity_verified"]
+
+
+def test_same_species_context_endpoint_factors_and_empty_graph():
+    import pytest
+
+    n, m, _ = fixture()
+    s = {p: 0 for p, _ in m}
+    e = [(0, 1, 2.0), (0, 2, 1.0), (2, 3, 0.5)]
+    _, b = block_at_one(n, m, e, s)
+    assert b["expected_internal_internal"] == pytest.approx(10 / 14)
+    assert b["expected_internal_external"] == pytest.approx(5 / 14)
+    assert b["expected_external_external"] == 0
+    assert b["node_internal_weight"] == 3
+    assert b["node_boundary_weight"] == 0.5
+    assert b["outside_node_weight"] == 0
+    empty = profile(n, m, [], s, {0}, context_flow=True)
+    assert all(
+        all(g["blocks"] == 0 for g in r["context_groups"]) for r in empty["legal_internal_nodes"]
+    )
+
+
+def test_context_exact_identities_across_random_species_and_edges():
+    import random
+
+    rng = random.Random(42)
+    n, m, _ = fixture()
+    m += [(4, 2), (5, 4)]
+    for _ in range(30):
+        s = {p: rng.randrange(3) for p, _ in m}
+        e = [
+            (u, v, rng.randrange(1, 9) / 4)
+            for u in range(6)
+            for v in range(u + 1, 6)
+            if rng.random() < 0.5
+        ]
+        cut = species_pair_cut(n, m, e, s)
+        original = profile(n, m, e, s, set(cut["selected"]))
+        context = profile(n, m, e, s, set(cut["selected"]), context_flow=True)
+        for before, after in zip(
+            original["legal_internal_nodes"], context["legal_internal_nodes"], strict=True
+        ):
+            assert before["direct_gain"] == after["direct_gain"]
+            assert before["dp_state"] == after["dp_state"]
+            assert after["context_identity_verified"]

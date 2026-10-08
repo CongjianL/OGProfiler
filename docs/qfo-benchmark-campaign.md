@@ -614,3 +614,31 @@ clean92.09%、polluted56.48%，source等权节点比例中位数1 vs .8182。
 与21396的单侧集中/另一侧分散分开统计。下一步固定合法节点比较抵消/非零决定块
 及node外source内强度来源，先量化少量块支配效应，不加比例门槛或改默认。
 紧凑归档bacteria_block_degeneracy_1412157；soft42保持，本轮无追加作业。
+
+### 固定合法节点：抵消块与决定块的 source 内上下文分解
+
+新增只读 `--context-flow`，要求 `--block-degeneracy --exact-conditioned`；
+仍是同一1205 source、原图、合法直接子组与精确DP，标签只在特征固定后加载。
+对每个节点/物种块，把子组source端点强度写成 internal + external：internal
+仅来自两端都在节点内的原边，external来自node外但source内的跨界边。
+使用原source分母W_st（同物种4W_ss），精确展开：
+`expected = E_internal/internal + E_internal/external + E_external/external`。
+internal/external含两个方向。actual仅是直接子组间原边；完整直接cut的
+`expected-actual`与既有精确目标恒等，同时断言三个期望分量严格相加。
+
+三类原边权独立记账：两端node内、跨node边界、两端node外source内；总和等于
+原source物种块权重。node外/source内边没有新增跨source图上下文。
+完全位于node外的边影响固定分母，不直接贡献node端点；跨界边贡献external端点。
+internal-only分量也保持source分母，是解释性分解而非重估局部null的新目标。
+
+对connected_equal、decisive_positive、decisive_negative分别汇总actual、三类期望、
+原边三类权重、source归一化internal/external增益、精确符号变化计数；
+另统计完整直接cut由internal非正转为正的节点数。按source队列、局部pure/mixed及
+实际DP状态分层，关键21396/10052保留具体块，全部节点留远端cases。
+嵌套节点上的块/边权累加是重复实例，不是唯一图边比例；不把块均值当节点决定。
+完整直接cut不等同孩子各自最优DP分区；inactive与active_keep仍只是反事实切分。
+精确符号用于诊断，未新增比例门槛、资格/提取规则、gamma、epsilon或默认变更。
+
+本地完整测试508 passed /8 skipped /5项既有warning；新增确定性及随机图测试验证
+分解守恒、同物种系数、外部强度改变符号、空图，以及profile前后增益/DP状态一致。
+Slurm采用既有单作业4 CPU /16G /2h，冻结输入与source snapshot，无参数矩阵。

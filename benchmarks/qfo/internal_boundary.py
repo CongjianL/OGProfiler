@@ -59,6 +59,7 @@ def diagnose(
     raw_replay_dir=None,
     singleton_flow=False,
     block_degeneracy=False,
+    context_flow=False,
 ):
     hashes = json.loads((trace_dir / "input-hashes.json").read_text())
     for name in ("summary.json", "groups.json", "input-hashes.json"):
@@ -78,6 +79,8 @@ def diagnose(
         hashes[str(path)] = digest
         return pq.ParquetFile(path).read().to_pylist()
 
+    if context_flow and not block_degeneracy:
+        raise ValueError("Context flow requires fixed legal-node block profiles")
     if block_degeneracy and not exact_conditioned:
         raise ValueError("Degeneracy requires fixed exact conditioned cuts")
     if singleton_flow and tie_replay_dir is None:
@@ -237,7 +240,12 @@ def diagnose(
                 from benchmarks.og_extraction.species_block_degeneracy import profile
 
                 result["block_degeneracy"] = profile(
-                    subnodes[c], members[c], edge_groups[c], species, set(result["selected"])
+                    subnodes[c],
+                    members[c],
+                    edge_groups[c],
+                    species,
+                    set(result["selected"]),
+                    context_flow=context_flow,
                 )
                 degeneracy_inputs[cid, c] = (subnodes[c], members[c])
             if len(prediction) != r["source_full_size"]:
@@ -375,6 +383,15 @@ def diagnose(
                     source_cohort=cohort,
                     local_reference_cohort=local,
                     dp_state=state,
+                    context_turns_node_positive=sum(r["context_turns_node_positive"] for r in rs)
+                    if context_flow
+                    else None,
+                    internal_gain_sum=sum(r["internal_only_gain"] or 0 for r in rs)
+                    if context_flow
+                    else None,
+                    external_gain_sum=sum(r["external_gain"] or 0 for r in rs)
+                    if context_flow
+                    else None,
                     legal_nodes=len(rs),
                     connected_nodes=sum(r["cross_connected_blocks"] > 0 for r in rs),
                     degenerate_nodes=sum(r["single_side_connected_equal_blocks"] > 0 for r in rs),
@@ -426,6 +443,46 @@ def diagnose(
                     else None,
                 )
             )
+    context_strata = []
+    if context_flow:
+        context_cohorts = defaultdict(list)
+        for case in cases:
+            for row in case["objective"]["block_degeneracy"]["legal_internal_nodes"]:
+                for group in row["context_groups"]:
+                    context_cohorts[
+                        case["reference_cohort"],
+                        row["local_reference_cohort"],
+                        row["dp_state"],
+                        group["kind"],
+                    ].append(group)
+        for (cohort, local, state, kind), groups in sorted(context_cohorts.items()):
+            fields = (
+                "blocks",
+                "internal_gain",
+                "external_gain",
+                "external_present_blocks",
+                "source_context_changes_sign",
+                "internal_nonpositive_total_positive",
+                "observed",
+                "expected",
+                "expected_internal_internal",
+                "expected_internal_external",
+                "expected_external_external",
+                "node_internal_weight",
+                "node_boundary_weight",
+                "outside_node_weight",
+            )
+            context_strata.append(
+                dict(
+                    source_cohort=cohort,
+                    local_reference_cohort=local,
+                    dp_state=state,
+                    kind=kind,
+                    legal_nodes=len(groups),
+                    nodes_with_blocks=sum(g["blocks"] > 0 for g in groups),
+                    **{key: sum(g[key] for g in groups) for key in fields},
+                )
+            )
     for path, digest in hashes.items():
         if sha256_file(Path(path)) != digest:
             raise ValueError("Frozen input changed")
@@ -457,6 +514,14 @@ def diagnose(
                 production_changed=False,
                 immutable_inputs_verified=True,
                 reference_labels_used_for_objective=False,
+                context_flow=context_flow,
+                context_strata=context_strata,
+                context_scope=(
+                    "Fixed source denominator; "
+                    "internal/internal + internal/external + external/external. "
+                    "Summed block weights across nested nodes are repeated incidence, "
+                    "not unique edge fractions."
+                ),
                 block_degeneracy=block_degeneracy,
                 degeneracy_strata=degeneracy_strata,
                 degeneracy_source_summary=degeneracy_source_summary,
@@ -511,6 +576,7 @@ def main():
     p.add_argument("--raw-replay-dir", type=Path)
     p.add_argument("--singleton-flow", action="store_true")
     p.add_argument("--block-degeneracy", action="store_true")
+    p.add_argument("--context-flow", action="store_true")
     a = p.parse_args()
     diagnose(
         a.run,
@@ -523,6 +589,7 @@ def main():
         raw_replay_dir=a.raw_replay_dir,
         singleton_flow=a.singleton_flow,
         block_degeneracy=a.block_degeneracy,
+        context_flow=a.context_flow,
     )
 
 
