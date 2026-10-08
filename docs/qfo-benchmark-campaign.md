@@ -650,3 +650,23 @@ source SHA256=197464459b1db67e3e48307e0a3b8cb27681721483f96f3935e9bc892f20e2a0�
 MSA trace 20261008T013042Z、raw conditioned replay 20261008T052424Z的冻结run。
 输出 `/home/mselab/licj/projects/running/ogprofiler-runs/20261008T144003Z_dbb1ae780742_19746445_22299/species-block-context`。
 本节只记录提交与验证；科学结果待作业完成后读取，soft42生产保持不变。
+
+### job1412190完成：节点外/source内项可改变决定块符号，但非清洁队列专属
+
+COMPLETED /0:0，2分40秒；source dbb1ae7、dirty=0。1205 source/24462合法内部节点，
+覆盖、哈希、原回放及精确分解恒等式通过；取回summary并验证strata与1412157逐项一致。
+21396的16抵消块EIX=EXX=0，唯一(1,11)决定块internal gain −.00016032917480086512，
+external gain +.0002829527863496145，总gain +.0001226236115487494，实际移除47 TP。
+该块node内部权1.8104164021539222，边界权.26608481225368336，完全node外权0；
+之前31901外边.1390442158172523是边界总量子集，不把所有边界强度当同等作用。
+10052仍是internal actual=expected、external0的真tie，active_keep保留。
+
+active_split内部非正/全量转正：clean pure44/279，polluted pure36/137，
+polluted mixed324/2029。各完整队列总移除TP/FP仍为7561/0、6062/0、34226/620135；
+这些损失不是上述符号变化子集的专属损失。抵消块中存在外部项的计数分别325/1684、
+81/380、3255/19850，其internal负项与external正项精确抵消。
+这些context计数包括同物种块，与上轮单侧跨物种退化分母不同。
+外部作用也存在于混合节点，且直接删去外部项会让部分抵消块变为负项；暂不支持统一删除。
+下一步宜对符号变化子集追踪逐子组外部强度分配、唯一LCA损失及完整DP路径，
+比较结构匹配的pure/mixed病例，不使用退化比例门槛或修改生产soft42。
+归档bacteria_block_context_1412190；完整cases留远端，本轮无追加作业。
