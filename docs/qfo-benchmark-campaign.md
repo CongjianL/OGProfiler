@@ -701,3 +701,11 @@ polluted mixed324/2029。各完整队列总移除TP/FP仍为7561/0、6062/0、34
 本轮针对诊断的本地测试19 passed；ruff、diff whitespace与Slurm语法通过。
 完整本地回归在读取SciPy sparse/linalg/_isolve的缓存pyc时停滞（进程采样read及
 lsof文件路径已核查），已停止本轮等待进程，不报告全套通过，不修改依赖环境。
+
+远端小型合成测试19 passed。提交job1412208，
+RUN_ID=20261008T170938Z_665fc6874aac_722d001b_53277，
+source 665fc6874aac4efd3e71a5fbec8cac17cde24d22，dirty=0，
+SHA256=722d001b8daae5fd3c8ca2eaea1a4750b9abfbd73b0754e230ca2d59617e6471。
+执行输入增加1412190的精确context完整cuts，输出species-endpoint-paths。
+本地快照阶段的历史文件哈希与git diff等待后正常完成，未绕过wrapper或重复提交。
+科学结果待完成后读取；soft42生产默认保持不变。
