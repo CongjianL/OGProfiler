@@ -379,3 +379,24 @@ COMPLETED /0:0，19秒，固定cut gain与输入核验通过。
 清洁拆分225/235与污染646/678节点跨物种贡献为正；该信号不专属于污染。
 清洁21394的一组26基因覆盖23物种，不支持简单按物种分群解释。
 固定原cut继续物种对条件化null敏感性诊断，不优化cut、不调resolution、不改默认。
+
+### 下一步：固定切分的物种对条件 null 诊断
+
+在 job1412069 保存的全部 1205 个 source cuts 上，新增显式 opt-in
+`--condition-species-pairs`；原诊断入口默认行为及生产 soft42 均保持。
+每个 source induced graph 内，对无向物种块 `(s,t)` 保留总边权 `W_st`，
+并保留每个切分组在此块上的端点强度 `k_i,s,t`。跨物种块使用二部配置期望：
+`E_ij,st=(k_i,s,t*k_j,t,s+k_j,s,t*k_i,t,s)/W_st`；同物种块使用
+`E_ij,ss=k_i,s,s*k_j,s,s/(2W_ss)`。零权块贡献零；不添加伪计数。
+以 `sum_i<j,st(E_ij,st-observed_ij,st)/W` 重新评价既有切分，保留正负增益。
+同时验证各物种块的端点强度守恒及原无条件增益与保存值一致。
+
+输出逐节点、逐物种块的期望与实际跨组边权，以及 clean/polluted、原事件分层的
+增益变化和符号翻转。`1e-10` 仅用于报告数值正负容差，并非资格过滤阈值。
+参考标签仅用于事后队列汇总，不进入特征或 null。该对照是 null 敏感性诊断，
+不优化切分，不产生生产完整分区，不把正增益解释为生物学真值。
+Slurm 延用 4 CPU /16G /2h 的单作业资源，无参数矩阵。
+
+实现验收：本地完整轻量测试 484 passed /8 skipped /5 项既有 warning；
+远端合成短验证 12 passed；ruff、diff whitespace、Slurm bash 语法检查通过。
+提交前确认冻结输入可读，正式诊断使用 clean committed source snapshot。

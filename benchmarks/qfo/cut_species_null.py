@@ -121,7 +121,7 @@ def decompose(prediction, species, edges):
     )
 
 
-def diagnose(run, boundary_dir, out):
+def diagnose(run, boundary_dir, out, *, condition_species_pairs=False):
     hashes = json.loads((boundary_dir / "input-hashes.json").read_text())
 
     def freeze(path):
@@ -179,6 +179,10 @@ def diagnose(run, boundary_dir, out):
                 result["gain"], case["objective"]["cut_gain"], rel_tol=1e-8, abs_tol=1e-8
             ):
                 raise ValueError("Frozen objective gain differs")
+            if condition_species_pairs:
+                from benchmarks.qfo.species_pair_null import conditioned_null
+
+                result["conditioned_null"] = conditioned_null(cut["prediction"], species, edges[i])
             rows.append(
                 dict(
                     component_id=cid,
@@ -218,6 +222,21 @@ def diagnose(run, boundary_dir, out):
                 },
             )
         )
+    if condition_species_pairs:
+        for stratum in strata:
+            rs = groups[stratum["cohort"], stratum["event"]]
+            gains = [r["conditioned_null"]["gain"] for r in rs]
+            stratum["conditioned_null"] = dict(
+                positive_gain=sum(g > 1e-10 for g in gains),
+                nonpositive_gain=sum(g <= 1e-10 for g in gains),
+                positive_to_nonpositive=sum(
+                    r["gain"] > 1e-10 and r["conditioned_null"]["gain"] <= 1e-10 for r in rs
+                ),
+                gain_q10_q50_q90=np.quantile(gains, [0.1, 0.5, 0.9]).tolist(),
+                gain_change_q10_q50_q90=np.quantile(
+                    [r["conditioned_null"]["gain"] - r["gain"] for r in rs], [0.1, 0.5, 0.9]
+                ).tolist(),
+            )
     for path, digest in hashes.items():
         if sha256_file(Path(path)) != digest:
             raise ValueError("Frozen inputs changed")
@@ -228,6 +247,14 @@ def diagnose(run, boundary_dir, out):
     (out / "summary.json").write_text(
         json.dumps(
             dict(
+                species_pair_conditioned=condition_species_pairs,
+                conditioned_null_definition=(
+                    "Per species pair preserve W_st and endpoint strengths; "
+                    "bipartite configuration null for s!=t, undirected strength null for s=t. "
+                    "Evaluate saved cuts only, no cut optimization."
+                    if condition_species_pairs
+                    else None
+                ),
                 diagnostic_only=True,
                 production_changed=False,
                 fixed_cuts_verified=True,
@@ -255,8 +282,9 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     for key in ("run", "boundary-dir", "out"):
         p.add_argument("--" + key, type=Path, required=True)
+    p.add_argument("--condition-species-pairs", action="store_true")
     a = p.parse_args()
-    diagnose(a.run, a.boundary_dir, a.out)
+    diagnose(a.run, a.boundary_dir, a.out, condition_species_pairs=a.condition_species_pairs)
 
 
 if __name__ == "__main__":
