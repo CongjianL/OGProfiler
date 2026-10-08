@@ -415,3 +415,28 @@ source=6910e70，dirty=0。固定 1205 个 source cuts，哈希与原增益一�
 紧凑归档：OGProfiler2_benchmark/05_metrics/qfo/bacteria_species_pair_null_1412081/。
 下一步候选：固定树、完整可加和条件目标的动态规划切分对照，
 不是事后符号过滤或分辨率搜索。
+
+### 固定树的完整物种对条件 merge/cut 目标
+
+新增 benchmark-only `species_pair_cut`，不是对旧 cuts 的符号过滤。
+在每个原 source 的完整诱导图上固定所有 `W_st` 和蛋白端点强度，向上聚合
+`k_v,s,t`；节点 keep 分数为
+`q(v)=[Win(v)-sum_s k_v,s,s²/(4W_ss)-sum_s<t k_v,s,t*k_v,t,s/W_st]/W`。
+分母在 source 内固定，不随候选子节点重新估计，否则失去可加和与同尺度比较。
+零权块省略；总权零时所有节点分数零。每个内部节点递推
+`best(v)=max(q(v), sum_child best(child))`，平分保留父节点，结构叶不可再分。
+归一化分数绝对值不超过 1e-12 视作浮点零，不设置可搜索的生物学门槛。
+
+独立以所选完整分区的跨组块期望减实际边权重算目标，核验与 DP 分数一致。
+重算无条件目标的最优 cut，并验证新 DP 分数不低于该可行 cut 在新目标下的分数。
+全部切分完成后才加载参考标签，输出按 cohort/event 的完整 merge/cut TP/FP 损失、
+相对无条件最优 cut 的 TP/FP 变化，以及对原生产组的保留新增 TP/FP。
+每个 source 完整覆盖、source 间不重叠、输入哈希保持；范围仍为 1205 个变更 clades，
+不是整套 82507 蛋白的替代生产分区。不改变资格或 active-view 范围。
+
+合成测试包含穷举所有完整 cuts 与 DP 最优性对照、独立目标恒等式、单物种退化、
+物种分组的零增益父节点 tie、混合物种边界、缩放、零权及输入边验证。
+单 Slurm 作业沿用 4 CPU /16G /2h，无参数矩阵；生产 soft42 不变。
+
+本轮实现验收：本地完整轻量测试 489 passed /8 skipped /5 项既有 warning；
+远端合成测试 15 passed，ruff、diff whitespace 和 Slurm bash 语法通过。
