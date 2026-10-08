@@ -440,3 +440,20 @@ source=6910e70，dirty=0。固定 1205 个 source cuts，哈希与原增益一�
 
 本轮实现验收：本地完整轻量测试 489 passed /8 skipped /5 项既有 warning；
 远端合成测试 15 passed，ruff、diff whitespace 和 Slurm bash 语法通过。
+
+### job1412089 完成：条件化完整 DP 切分并未解决关键清洁节点
+
+COMPLETED /0:0，39 秒，RUN_ID=20261008T052424Z_5bb4e523a0ca_ab885050_14156，
+source=5bb4e52，dirty=0。1205 个 source 的完整切分与独立目标恒等式、覆盖、
+输入哈希、旧 cut 可行值比较检查通过。仍非整套生产替代分区。
+clean 440 中切分节点235→109，移除merge TP12448→7873；
+polluted 765 中切分678→557，移除TP45045→41027、FP629443→620867。
+相对原无条件最优 cut 合计多保留8593 TP、8576 FP，存在权衡。
+相对原生产新增且保留的 pairs 为33919 TP、84498 FP，是另一统计量。
+关键清洁source21394由3→5 groups，移除TP305→352，新TP89→42；
+10040由6→7 groups，移除TP333→342，新TP54→45。
+10040的新最优总目标与旧 cut 在新目标下重评相同，需检查局部 tie 路径，
+暂不把相同总分直接当作数值误差证明。21394则有真实报告增益变化但更低TP。
+优先审计固定新旧 cuts 的局部增益与数值平分，再讨论真实边界目标；
+默认soft42保持，无阈值、gamma或分辨率搜索，本轮不追加作业。
+紧凑归档：OGProfiler2_benchmark/05_metrics/qfo/bacteria_species_pair_cut_1412089/。
