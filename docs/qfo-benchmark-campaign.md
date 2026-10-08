@@ -597,3 +597,20 @@ core—31901 actual0，expected .12122695965386061。原边核验现已支持此
 
 验收：本地完整测试503 passed /8 skipped /5项既有warning；
 远端合成测试11 passed，ruff、diff whitespace、Slurm语法通过。
+
+### job1412157 完成：单侧退化广泛存在，不适合直接过滤
+
+COMPLETED /0:0，2分02秒；RUN_ID=20261008T121107Z_350ddd59bcfc_d5e29978_93712，
+source350ddd5，dirty=0。24462合法内部节点，代数/目标恒等式、覆盖、哈希、
+原cut回放与active_split唯一LCA损失检查通过。
+source出现退化clean438/440、polluted763/765；全部连接节点中含退化比例
+clean92.09%、polluted56.48%，source等权节点比例中位数1 vs .8182。
+实际active_split连接节点中含退化clean236/248 (95.16%)、polluted1845/2070 (89.13%)，
+退化块权重占比88.64% vs58.99%；该比例为层级节点—块实例，不是唯一原图边权比例。
+实际唯一LCA移除量重现clean7561TP/0FP、polluted40288TP/620135FP。
+退化也广泛出现在active_keep，未控制树尺寸/物种/复制组成，不能据此做因果或过滤规则。
+21396的17个跨组活跃块16精确抵消，占连接权97.3279%，唯一决定块(1,11)。
+前轮255为source全部有权块，与17不同分母。10052为双侧各集中一孩子真tie，
+与21396的单侧集中/另一侧分散分开统计。下一步固定合法节点比较抵消/非零决定块
+及node外source内强度来源，先量化少量块支配效应，不加比例门槛或改默认。
+紧凑归档bacteria_block_degeneracy_1412157；soft42保持，本轮无追加作业。
