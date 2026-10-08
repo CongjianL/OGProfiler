@@ -476,3 +476,17 @@ polluted 765 中切分678→557，移除TP45045→41027、FP629443→620867。
 
 验收：本地完整测试492 passed /8 skipped /5项既有warning；
 远端定点合成测试11 passed；ruff、diff whitespace、Slurm bash语法通过。
+
+### job1412103 完成：数值tie与真实边界增益已区分
+
+COMPLETED /0:0，13秒；RUN_ID=20261008T055443Z_53fa3e8ce4f6_3daf636e_31238，
+source53fa3e8，dirty=0。10040/21394浮点分区逐蛋白回放、精确目标恒等式、
+覆盖与输入哈希通过。10040活跃10052浮点split−keep=2.7756e-17，
+精确差0，parent-on-tie恢复9 TP，7→6组、TP93→102，精确目标不变；
+但相对merge仍lost333，未解决全部过切。非活跃10046的tie不影响实际分区。
+21394精确分区与浮点相同，5组TP278 lost352；活跃21396精确正增益
+.0001226236115487494，跨物种边界actual20.061502195660537 vs
+expected20.1140384784857，keep TP300 vs childcut253，真实损失47 TP。
+非活跃21399虽有数值tie，对该例输出无贡献。嵌套节点局部TP损失不累加。
+下一步分开修复实验数值tie与研究21396真实边界目标，避免可调epsilon
+抹去真实小增益。默认soft42保持；紧凑报告归档bacteria_conditioned_tie_1412103。
