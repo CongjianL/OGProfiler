@@ -7,7 +7,11 @@ from benchmarks.og_extraction.exact_species_pair_graph import exact_context
 from benchmarks.og_extraction.tree_cut import topology
 
 
-def profile(nodes, membership, edges, species, selected, *, context_flow=False):
+def profile(
+    nodes, membership, edges, species, selected, *, context_flow=False, endpoint_trace=False
+):
+    if endpoint_trace and not context_flow:
+        raise ValueError("Endpoint tracing requires context flow")
     scores, total, strengths, weights = exact_context(nodes, membership, edges, species)
     by_id, children, order = topology(nodes)
     leaves = dict(membership)
@@ -44,6 +48,7 @@ def profile(nodes, membership, edges, species, selected, *, context_flow=False):
         if not cs:
             continue
         blocks = []
+        pair_actual = {}
         inner = {ch: Counter() for ch in cs}
         if context_flow:
             # Within-child edges contribute both endpoints; between-child edges one each.
@@ -60,6 +65,10 @@ def profile(nodes, membership, edges, species, selected, *, context_flow=False):
                 return x
 
             for u, v, ew in at_lca_edges[c]:
+                if endpoint_trace:
+                    key = tuple(sorted((species[u], species[v])))
+                    cs_pair = tuple(sorted((child_of(u), child_of(v))))
+                    pair_actual.setdefault(key, Counter())[cs_pair] += ew
                 inner[child_of(u)][species[u], species[v]] += ew
                 inner[child_of(v)][species[v], species[u]] += ew
         delta = Fraction()
@@ -126,6 +135,15 @@ def profile(nodes, membership, edges, species, selected, *, context_flow=False):
                     external_right_strength=float(sum(bx)),
                     context_identity_verified=True,
                 )
+            if endpoint_trace:
+                from benchmarks.og_extraction.context_path_trace import endpoint_products
+
+                trace, totals = endpoint_products(
+                    cs, ai, bi, ax, bx, denom, pair_actual.get((s, t), Counter())
+                )
+                if totals != [eii, eix, exx, actual]:
+                    raise ValueError("Child-pair endpoint decomposition mismatch")
+                context["endpoint_trace"] = trace
             delta += expected - actual
             blocks.append(
                 dict(
@@ -205,12 +223,15 @@ def profile(nodes, membership, edges, species, selected, *, context_flow=False):
         deg_weight = sum(r["observed"] for r in degenerate)
         examples = (
             blocks
-            if c == 21396
+            if c == 21396 or (endpoint_trace and delta_internal <= 0 and delta > 0)
             else (
                 [r for r in blocks if r["single_side_connected_equal"]][:2]
                 + [r for r in blocks if r["nonzero_deficit"]][:2]
             )
         )
+        if endpoint_trace and not (delta_internal <= 0 and delta > 0 or c == 21396):
+            for block in blocks:
+                block.pop("endpoint_trace", None)
         rows.append(
             dict(
                 context_groups=context_groups,
@@ -258,9 +279,29 @@ def profile(nodes, membership, edges, species, selected, *, context_flow=False):
                 objective_identity_verified=True,
                 blocks=examples,
                 blocks_truncated=len(examples) < len(blocks),
-                block_examples_only=c != 21396,
+                block_examples_only=len(examples) < len(blocks),
             )
         )
+    if endpoint_trace:
+        from benchmarks.og_extraction.context_path_trace import attach_paths
+
+        attach_paths(rows, by_id, children, order, scores, selected)
+        composition = {c: Counter() for c in order}
+        for protein, leaf in membership:
+            composition[leaf][species[protein]] += 1
+        for c in reversed(order):
+            for child in children[c]:
+                composition[c].update(composition[child])
+        for row in rows:
+            if "path_trace" in row:
+                row["path_trace"]["child_composition"] = [
+                    dict(
+                        child_id=ch,
+                        proteins=sum(composition[ch].values()),
+                        species_counts=dict(sorted(composition[ch].items())),
+                    )
+                    for ch in children[row["cluster_id"]]
+                ]
     return dict(
         legal_internal_nodes=rows,
         objective_identity_verified=True,

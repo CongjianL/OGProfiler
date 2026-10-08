@@ -60,6 +60,7 @@ def diagnose(
     singleton_flow=False,
     block_degeneracy=False,
     context_flow=False,
+    endpoint_replay_dir=None,
 ):
     hashes = json.loads((trace_dir / "input-hashes.json").read_text())
     for name in ("summary.json", "groups.json", "input-hashes.json"):
@@ -85,6 +86,30 @@ def diagnose(
         raise ValueError("Degeneracy requires fixed exact conditioned cuts")
     if singleton_flow and tie_replay_dir is None:
         raise ValueError("Singleton flow requires fixed focused tie replay")
+    endpoint_replay = {}
+    if endpoint_replay_dir is not None:
+        if not context_flow:
+            raise ValueError("Endpoint paths require context profiles")
+        for name in ("summary.json", "cuts-DIAGNOSTIC-ONLY.json", "input-hashes.json"):
+            hashes[str(endpoint_replay_dir / name)] = sha256_file(endpoint_replay_dir / name)
+        old = json.loads((endpoint_replay_dir / "summary.json").read_text())
+        if not all(
+            old[k]
+            for k in (
+                "context_flow",
+                "exact_conditioned",
+                "coverage_verified",
+                "immutable_inputs_verified",
+            )
+        ):
+            raise ValueError("Unverified exact context replay")
+        for row in json.loads((endpoint_replay_dir / "cuts-DIAGNOSTIC-ONLY.json").read_text()):
+            endpoint_replay[row["component_id"], row["source_cluster_id"]] = {
+                int(p): c for p, c in row["prediction"].items()
+            }
+        expected_keys = {(r["component_id"], r["source_cluster_id"]) for r in rows}
+        if set(endpoint_replay) != expected_keys:
+            raise ValueError("Endpoint replay source set differs")
     proteins = read(run / "input/proteins.parquet")
     protein_metadata = {r["protein_id"]: r for r in proteins}
     species = {r["protein_id"]: r["species_id"] for r in proteins}
@@ -246,8 +271,11 @@ def diagnose(
                     species,
                     set(result["selected"]),
                     context_flow=context_flow,
+                    endpoint_trace=endpoint_replay_dir is not None,
                 )
                 degeneracy_inputs[cid, c] = (subnodes[c], members[c])
+            if endpoint_replay_dir is not None and prediction != endpoint_replay[cid, c]:
+                raise ValueError("Fixed exact context partition changed")
             if len(prediction) != r["source_full_size"]:
                 raise ValueError("Target source coverage mismatch")
             cases.append(
@@ -327,6 +355,10 @@ def diagnose(
             rs = case["objective"]["block_degeneracy"]["legal_internal_nodes"]
             ns, ms = degeneracy_inputs[case["component_id"], case["source_cluster_id"]]
             annotate_reference(rs, ns, ms, reference)
+            if endpoint_replay_dir is not None:
+                from benchmarks.og_extraction.context_path_trace import annotate_path_losses
+
+                annotate_path_losses(rs, ns)
             if (
                 sum(r["direct_removed_tp"] for r in rs if r["dp_state"] == "active_split")
                 != case["removed_merge_tp"]
@@ -483,11 +515,54 @@ def diagnose(
                     **{key: sum(g[key] for g in groups) for key in fields},
                 )
             )
+    endpoint_strata = []
+    if endpoint_replay_dir is not None:
+        endpoint_cohorts = defaultdict(list)
+        for case in cases:
+            for row in case["objective"]["block_degeneracy"]["legal_internal_nodes"]:
+                if "path_trace" in row:
+                    endpoint_cohorts[
+                        case["reference_cohort"], row["local_reference_cohort"], row["dp_state"]
+                    ].append(row)
+        for (cohort, local, state), rs in sorted(endpoint_cohorts.items()):
+            endpoint_strata.append(
+                dict(
+                    source_cohort=cohort,
+                    local_reference_cohort=local,
+                    dp_state=state,
+                    sign_reversal_nodes=len(rs),
+                    actual_direct_lca_tp=sum(r["path_trace"]["actual_direct_lca_tp"] for r in rs),
+                    actual_direct_lca_fp=sum(r["path_trace"]["actual_direct_lca_fp"] for r in rs),
+                    blocked_by_selected_ancestor=sum(
+                        r["path_trace"]["selected_ancestor"] is not None for r in rs
+                    ),
+                    immediate_frontier_nodes=sum(
+                        set(r["path_trace"]["local_frontier"]) == set(r["children"]) for r in rs
+                    ),
+                    deeper_frontier_nodes=sum(
+                        set(r["path_trace"]["local_frontier"]) != set(r["children"]) for r in rs
+                    ),
+                )
+            )
     for path, digest in hashes.items():
         if sha256_file(Path(path)) != digest:
             raise ValueError("Frozen input changed")
     out.mkdir(parents=True, exist_ok=False)
     (out / "cases.json").write_text(json.dumps(cases, indent=2) + "\n")
+    if endpoint_replay_dir is not None:
+        endpoint_targets = [
+            dict(
+                component_id=case["component_id"],
+                source_cluster_id=case["source_cluster_id"],
+                source_cohort=case["reference_cohort"],
+                node=row,
+            )
+            for case in cases
+            for row in case["objective"]["block_degeneracy"]["legal_internal_nodes"]
+            if "path_trace" in row
+        ]
+        (out / "endpoint-targets.json").write_text(json.dumps(endpoint_targets, indent=2) + "\n")
+
     # Independent diagnostic cuts, not a replacement full production partition.
     (out / "cuts-DIAGNOSTIC-ONLY.json").write_text(json.dumps(cut_files) + "\n")
     (out / "input-hashes.json").write_text(json.dumps(hashes, indent=2) + "\n")
@@ -515,6 +590,22 @@ def diagnose(
                 immutable_inputs_verified=True,
                 reference_labels_used_for_objective=False,
                 context_flow=context_flow,
+                endpoint_replay_verified=endpoint_replay_dir is not None,
+                endpoint_strata=endpoint_strata,
+                endpoint_focal=[
+                    dict(
+                        component_id=case["component_id"],
+                        source_cluster_id=case["source_cluster_id"],
+                        source_cohort=case["reference_cohort"],
+                        cluster_id=row["cluster_id"],
+                        local_reference_cohort=row["local_reference_cohort"],
+                        dp_state=row["dp_state"],
+                        path_trace=row["path_trace"],
+                    )
+                    for case in cases
+                    for row in case["objective"]["block_degeneracy"]["legal_internal_nodes"]
+                    if "path_trace" in row and row["cluster_id"] == 21396
+                ],
                 context_strata=context_strata,
                 context_scope=(
                     "Fixed source denominator; "
@@ -577,6 +668,7 @@ def main():
     p.add_argument("--singleton-flow", action="store_true")
     p.add_argument("--block-degeneracy", action="store_true")
     p.add_argument("--context-flow", action="store_true")
+    p.add_argument("--endpoint-replay-dir", type=Path)
     a = p.parse_args()
     diagnose(
         a.run,
@@ -590,6 +682,7 @@ def main():
         singleton_flow=a.singleton_flow,
         block_degeneracy=a.block_degeneracy,
         context_flow=a.context_flow,
+        endpoint_replay_dir=a.endpoint_replay_dir,
     )
 
 

@@ -158,10 +158,110 @@ def test_context_exact_identities_across_random_species_and_edges():
         ]
         cut = species_pair_cut(n, m, e, s)
         original = profile(n, m, e, s, set(cut["selected"]))
-        context = profile(n, m, e, s, set(cut["selected"]), context_flow=True)
+        context = profile(n, m, e, s, set(cut["selected"]), context_flow=True, endpoint_trace=True)
         for before, after in zip(
             original["legal_internal_nodes"], context["legal_internal_nodes"], strict=True
         ):
             assert before["direct_gain"] == after["direct_gain"]
             assert before["dp_state"] == after["dp_state"]
             assert after["context_identity_verified"]
+
+
+def test_endpoint_trace_sign_subset_and_unique_actual_lca_loss():
+    import pytest
+
+    from benchmarks.og_extraction.context_path_trace import annotate_path_losses
+
+    n, m, s = fixture()
+    e = [(0, 1, 2.0), (0, 2, 1.0), (2, 3, 0.5)]
+    selected = set(species_pair_cut(n, m, e, s)["selected"])
+    out = profile(n, m, e, s, selected, context_flow=True, endpoint_trace=True)
+    rows = out["legal_internal_nodes"]
+    annotate_reference(rows, n, m, {0: "A", 1: "A", 2: "A", 3: "B"})
+    annotate_path_losses(rows, n)
+    r = next(r for r in rows if r["cluster_id"] == 1)
+    assert r["context_turns_node_positive"]
+    assert not r["blocks_truncated"]
+    trace = r["blocks"][0]["endpoint_trace"]
+    assert trace["endpoints"] == [
+        dict(
+            child_id=3, internal_left=3.0, internal_right=2.0, external_left=0.0, external_right=0.0
+        ),
+        dict(
+            child_id=4, internal_left=0.0, internal_right=1.0, external_left=0.0, external_right=0.5
+        ),
+    ]
+    pair = trace["child_pairs"][0]
+    assert pair["observed"] == 1
+    assert pair["expected_ii"] == pytest.approx(6 / 7)
+    assert pair["expected_ix"] == pytest.approx(3 / 7)
+    assert pair["expected_xx"] == 0
+    assert r["path_trace"]["actual_direct_lca_tp"] == 2
+    assert r["path_trace"]["actual_direct_lca_fp"] == 0
+    assert r["path_trace"]["local_frontier"] == [3, 4]
+    assert r["path_trace"]["selected_ancestor"] is None
+    assert r["path_trace"]["descendant_optimization_gain_exact"] == "0"
+    assert [p["cluster_id"] for p in r["path_trace"]["root_path"]] == [0, 1]
+    assert set(out["legal_internal_nodes"][0]["children"]) == {1, 2}
+
+
+def test_path_trace_distinguishes_deeper_optimum_and_selected_ancestor():
+    from fractions import Fraction
+
+    from benchmarks.og_extraction.context_path_trace import annotate_path_losses, attach_paths
+    from benchmarks.og_extraction.tree_cut import topology
+
+    n, _, _ = fixture()
+    n += [dict(cluster_id=5, parent_id=3), dict(cluster_id=6, parent_id=3)]
+    by_id, children, order = topology(n)
+    scores = {
+        0: Fraction(9),
+        1: Fraction(1),
+        2: Fraction(0),
+        3: Fraction(2),
+        4: Fraction(0),
+        5: Fraction(2),
+        6: Fraction(1),
+    }
+    rows = [
+        dict(
+            cluster_id=1,
+            context_turns_node_positive=True,
+            dp_state="inactive",
+            direct_removed_tp=2,
+            direct_removed_fp=3,
+        )
+    ]
+    attach_paths(rows, by_id, children, order, scores, {0})
+    annotate_path_losses(rows, n)
+    path = rows[0]["path_trace"]
+    assert path["local_frontier"] == [5, 6, 4]
+    assert path["selected_ancestor"] == 0
+    assert path["actual_frontier"] == [0]
+    assert path["descendant_optimization_gain_exact"] == "1"
+    assert path["optimized_split_minus_keep_exact"] == "2"
+    assert path["actual_direct_lca_tp"] == path["actual_subtree_removed_tp"] == 0
+
+
+def test_three_child_same_species_endpoint_products_count_each_pair_once():
+    from collections import Counter
+    from fractions import Fraction
+
+    from benchmarks.og_extraction.context_path_trace import endpoint_products
+
+    trace, totals = endpoint_products(
+        [10, 20, 30],
+        list(map(Fraction, [2, 1, 0])),
+        list(map(Fraction, [2, 1, 0])),
+        list(map(Fraction, [0, 0, 1])),
+        list(map(Fraction, [0, 0, 1])),
+        Fraction(16),
+        Counter({(10, 20): Fraction(1, 2)}),
+    )
+    assert totals == [Fraction(1, 4), Fraction(3, 8), Fraction(0), Fraction(1, 2)]
+    assert [(p["left_child"], p["right_child"]) for p in trace["child_pairs"]] == [
+        (10, 20),
+        (10, 30),
+        (20, 30),
+    ]
+    assert [p["expected_ix"] for p in trace["child_pairs"]] == [0.0, 0.25, 0.125]

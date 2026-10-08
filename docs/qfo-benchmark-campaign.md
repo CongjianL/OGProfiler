@@ -670,3 +670,34 @@ polluted mixed324/2029。各完整队列总移除TP/FP仍为7561/0、6062/0、34
 下一步宜对符号变化子集追踪逐子组外部强度分配、唯一LCA损失及完整DP路径，
 比较结构匹配的pure/mixed病例，不使用退化比例门槛或修改生产soft42。
 归档bacteria_block_context_1412190；完整cases留远端，本轮无追加作业。
+
+### 符号变化子集：逐子组端点、唯一LCA损失和完整DP路径
+
+新增 `--endpoint-replay-dir`，传入1412190的species-block-context目录，并要求
+既有context-flow/exact/block profile模式。用其1205 source的完整精确prediction
+逐蛋白回放验证，额外冻结summary/cuts/hash文件；原图、树、合法节点和分母不变。
+子集在加载参考标签前固定：整个直接孩子切分的internal-only gain<=0、full gain>0，
+不是“任意一个块改变符号”或退化比例。保留active_split及inactive用于区分实际提取。
+
+对这些节点保留全部有actual或expected的块（不截断抵消块）。每块记录各直接孩子
+的internal/external双端点、所有无序孩子对的actual和EII/EIX/EXX；跨物种两个方向
+与同物种系数统一精确验证。within-child IX乘积单列，因不跨孩子而从完整cut期望
+中排除；不把所有跨节点边界端点当等价贡献。不重估局部null，不移除外部项。
+
+精确重建best/keep，验证source根frontier与固定cut一致。每个目标记录source根到
+目标路径、selected ancestor、孩子各自最优frontier、目标下到frontier的全部DP
+遍历与精确split-minus-keep；直接cut增益+后代优化增益必须等于局部DP增益。
+明确局部最优frontier与实际覆盖frontier的区别，inactive目标被selected祖先覆盖。
+严格正的直接增益保证局部DP选择split，不能把其资格/实际消耗与局部可选性混淆。
+同时输出各孩子物种/复制数组成，供后续结构匹配，不用于评分或挑标签。
+
+参考标签仅事后注释：目标直接LCA的actual TP/FP损失仅在active_split时计入，
+子集汇总只加直接LCA，避免嵌套重复。完整子树实际移除量与实际DP遍历中所有LCA
+累加独立核对，作为路径说明而非跨目标可加和指标。inactive反事实直接损失与
+实际0损失区分。endpoint-targets.json保留所有目标完整证据，summary保留分层汇总
+和21396路径；大cases留远端。soft42生产默认、资格与提取范围保持不变。
+单作业资源沿用4 CPU /16G /2h，无矩阵。
+
+本轮针对诊断的本地测试19 passed；ruff、diff whitespace与Slurm语法通过。
+完整本地回归在读取SciPy sparse/linalg/_isolve的缓存pyc时停滞（进程采样read及
+lsof文件路径已核查），已停止本轮等待进程，不报告全套通过，不修改依赖环境。
