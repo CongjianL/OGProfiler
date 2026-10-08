@@ -319,3 +319,14 @@ MSA假设未带来净改进，不采用默认，也不继续其阈值搜索；�
 admitted_selected字段报表缺陷忽略，修正在8723180，不影响成员与评分。
 下一步如继续，应固定树定位新增误合并的source_cluster与active-view消耗路径，
 对照新增TP无新增FP的组，区分资格与提取范围机制；本轮不自动提交作业。
+
+## MSA新增误合并来源与active-view路径
+
+只读取1412011保存的candidates、members、summary与input-hashes，不重新计算MSA资格。
+调用同一共享提取器回放，完整分区和component:local_group ID必须与既有实验一致。
+逐有新增TP/FP的组计算source_cluster、原事件、资格证据、处理层次和consumed_by轨迹，
+比较原完整子树与实际输出的inside/outside/omitted成员，区分完整来源节点放行与范围变化。
+分别报告实际输出与假设完整source的新增TP/FP，不将后者作为可同时实现的划分。
+逐组新增TP/FP求和必须严格匹配1412011的78681/700248；归档top误合并与无新增FP的TP对照。
+新增active-view诊断不修改默认、图树或资格规则，不自动尝试新评分/阈值。
+独立只读回放Slurm资源4CPU/16GB/2h，全部输入前后哈希核验；大轨迹留远端。
