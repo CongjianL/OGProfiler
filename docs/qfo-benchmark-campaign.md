@@ -642,3 +642,11 @@ internal-only分量也保持source分母，是解释性分解而非重估局部n
 本地完整测试508 passed /8 skipped /5项既有warning；新增确定性及随机图测试验证
 分解守恒、同物种系数、外部强度改变符号、空图，以及profile前后增益/DP状态一致。
 Slurm采用既有单作业4 CPU /16G /2h，冻结输入与source snapshot，无参数矩阵。
+
+提交job1412190：RUN_ID=20261008T144003Z_dbb1ae780742_19746445_22299，
+source dbb1ae7807426de25127ae08e976d0774aa1fd66，dirty=0，
+source SHA256=197464459b1db67e3e48307e0a3b8cb27681721483f96f3935e9bc892f20e2a0。
+远端短验证16 passed；输入沿用V2 20261007T045553Z、OF3 20261007T045622Z、
+MSA trace 20261008T013042Z、raw conditioned replay 20261008T052424Z的冻结run。
+输出 `/home/mselab/licj/projects/running/ogprofiler-runs/20261008T144003Z_dbb1ae780742_19746445_22299/species-block-context`。
+本节只记录提交与验证；科学结果待作业完成后读取，soft42生产保持不变。
