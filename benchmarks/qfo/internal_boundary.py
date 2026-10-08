@@ -58,6 +58,7 @@ def diagnose(
     exact_conditioned=False,
     raw_replay_dir=None,
     singleton_flow=False,
+    block_degeneracy=False,
 ):
     hashes = json.loads((trace_dir / "input-hashes.json").read_text())
     for name in ("summary.json", "groups.json", "input-hashes.json"):
@@ -77,6 +78,8 @@ def diagnose(
         hashes[str(path)] = digest
         return pq.ParquetFile(path).read().to_pylist()
 
+    if block_degeneracy and not exact_conditioned:
+        raise ValueError("Degeneracy requires fixed exact conditioned cuts")
     if singleton_flow and tie_replay_dir is None:
         raise ValueError("Singleton flow requires fixed focused tie replay")
     proteins = read(run / "input/proteins.parquet")
@@ -120,6 +123,7 @@ def diagnose(
     cases = []
     cut_files = []
     seen_proteins = set()
+    degeneracy_inputs = {}
     for cid, source_rows in sorted(targets.items()):
         folder = run / "hierarchy/components" / f"component={cid:08d}"
         nodes = read(folder / "nodes.parquet")
@@ -229,6 +233,13 @@ def diagnose(
                     raise ValueError("Raw child-pair flow and saved local objective differ")
                 flow["local_objective_identity_verified"] = True
                 result["singleton_flow"] = flow
+            if block_degeneracy:
+                from benchmarks.og_extraction.species_block_degeneracy import profile
+
+                result["block_degeneracy"] = profile(
+                    subnodes[c], members[c], edge_groups[c], species, set(result["selected"])
+                )
+                degeneracy_inputs[cid, c] = (subnodes[c], members[c])
             if len(prediction) != r["source_full_size"]:
                 raise ValueError("Target source coverage mismatch")
             cases.append(
@@ -302,6 +313,19 @@ def diagnose(
         )
         case["removed_merge_tp"] = case["merge_transitions"]["tp"] - score["tp"]
         case["removed_merge_fp"] = case["merge_transitions"]["fp"] - score["fp"]
+        if block_degeneracy:
+            from benchmarks.og_extraction.species_block_degeneracy import annotate_reference
+
+            rs = case["objective"]["block_degeneracy"]["legal_internal_nodes"]
+            ns, ms = degeneracy_inputs[case["component_id"], case["source_cluster_id"]]
+            annotate_reference(rs, ns, ms, reference)
+            if (
+                sum(r["direct_removed_tp"] for r in rs if r["dp_state"] == "active_split")
+                != case["removed_merge_tp"]
+                or sum(r["direct_removed_fp"] for r in rs if r["dp_state"] == "active_split")
+                != case["removed_merge_fp"]
+            ):
+                raise ValueError("LCA attribution differs from complete-cut pair losses")
     strata = []
     grouped = defaultdict(list)
     for c in cases:
@@ -331,6 +355,77 @@ def diagnose(
                 retained_new_fp=sum(c["cut_pairs"]["new_fp"] for c in group),
             )
         )
+    degeneracy_strata = []
+    degeneracy_source_summary = []
+    if block_degeneracy:
+        cohorts = defaultdict(list)
+        for case in cases:
+            for r in case["objective"]["block_degeneracy"]["legal_internal_nodes"]:
+                cohorts[
+                    case["reference_cohort"], r["local_reference_cohort"], r["dp_state"]
+                ].append(r)
+        for (cohort, local, state), rs in sorted(cohorts.items()):
+            fractions = [
+                r["single_side_equal_weight_fraction"]
+                for r in rs
+                if r["single_side_equal_weight_fraction"] is not None
+            ]
+            degeneracy_strata.append(
+                dict(
+                    source_cohort=cohort,
+                    local_reference_cohort=local,
+                    dp_state=state,
+                    legal_nodes=len(rs),
+                    connected_nodes=sum(r["cross_connected_blocks"] > 0 for r in rs),
+                    degenerate_nodes=sum(r["single_side_connected_equal_blocks"] > 0 for r in rs),
+                    connected_blocks=sum(r["cross_connected_blocks"] for r in rs),
+                    degenerate_blocks=sum(r["single_side_connected_equal_blocks"] for r in rs),
+                    one_side_opposite_distributed_blocks=sum(
+                        r["one_side_opposite_distributed_blocks"] for r in rs
+                    ),
+                    both_sides_concentrated_blocks=sum(
+                        r["both_sides_concentrated_blocks"] for r in rs
+                    ),
+                    connected_cross_weight=sum(r["connected_cross_weight"] for r in rs),
+                    degenerate_cross_weight=sum(r["single_side_equal_weight"] for r in rs),
+                    weight_fraction_q10_q50_q90=np.quantile(fractions, [0.1, 0.5, 0.9]).tolist()
+                    if fractions
+                    else None,
+                    lca_direct_tp=sum(r["direct_removed_tp"] for r in rs),
+                    lca_direct_fp=sum(r["direct_removed_fp"] for r in rs),
+                )
+            )
+    if block_degeneracy:
+        source_cohorts = defaultdict(list)
+        for case in cases:
+            rs = case["objective"]["block_degeneracy"]["legal_internal_nodes"]
+            connected = sum(r["cross_connected_blocks"] > 0 for r in rs)
+            degenerate = sum(r["single_side_connected_equal_blocks"] > 0 for r in rs)
+            source_cohorts[case["reference_cohort"]].append(
+                dict(
+                    legal_nodes=len(rs),
+                    connected_nodes=connected,
+                    degenerate_nodes=degenerate,
+                    connected_node_fraction=degenerate / connected if connected else None,
+                )
+            )
+        for cohort, rs in sorted(source_cohorts.items()):
+            values = [
+                r["connected_node_fraction"] for r in rs if r["connected_node_fraction"] is not None
+            ]
+            degeneracy_source_summary.append(
+                dict(
+                    source_cohort=cohort,
+                    sources=len(rs),
+                    connected_sources=sum(r["connected_nodes"] > 0 for r in rs),
+                    degenerate_sources=sum(r["degenerate_nodes"] > 0 for r in rs),
+                    per_source_node_fraction_q10_q50_q90=np.quantile(
+                        values, [0.1, 0.5, 0.9]
+                    ).tolist()
+                    if values
+                    else None,
+                )
+            )
     for path, digest in hashes.items():
         if sha256_file(Path(path)) != digest:
             raise ValueError("Frozen input changed")
@@ -339,6 +434,22 @@ def diagnose(
     # Independent diagnostic cuts, not a replacement full production partition.
     (out / "cuts-DIAGNOSTIC-ONLY.json").write_text(json.dumps(cut_files) + "\n")
     (out / "input-hashes.json").write_text(json.dumps(hashes, indent=2) + "\n")
+
+    def compact_case(case):
+        if not block_degeneracy:
+            return case
+        result = dict(case, objective=dict(case["objective"]))
+        profile = case["objective"]["block_degeneracy"]
+        rs = profile["legal_internal_nodes"]
+        result["objective"]["block_degeneracy"] = dict(
+            criterion=profile["criterion"],
+            scope=profile["scope"],
+            legal_nodes=len(rs),
+            degenerate_nodes=sum(r["single_side_connected_equal_blocks"] > 0 for r in rs),
+            key_nodes=[r for r in rs if r["cluster_id"] in (21396, 10052)],
+        )
+        return result
+
     (out / "summary.json").write_text(
         json.dumps(
             dict(
@@ -346,6 +457,9 @@ def diagnose(
                 production_changed=False,
                 immutable_inputs_verified=True,
                 reference_labels_used_for_objective=False,
+                block_degeneracy=block_degeneracy,
+                degeneracy_strata=degeneracy_strata,
+                degeneracy_source_summary=degeneracy_source_summary,
                 singleton_flow=singleton_flow,
                 exact_conditioned=exact_conditioned,
                 raw_conditioned_replay_verified=raw_replay_dir is not None,
@@ -366,14 +480,20 @@ def diagnose(
                     "Only changed complete-source clades; "
                     "no full partition strategy or biological inference"
                 ),
-                top_polluted=sorted(
-                    [c for c in cases if c["reference_cohort"] == "polluted"],
-                    key=lambda c: -c["merge_transitions"]["new_fp"],
-                )[:10],
-                top_clean=sorted(
-                    [c for c in cases if c["reference_cohort"] == "clean_tp_gain"],
-                    key=lambda c: -c["merge_transitions"]["new_tp"],
-                )[:10],
+                top_polluted=[
+                    compact_case(c)
+                    for c in sorted(
+                        [c for c in cases if c["reference_cohort"] == "polluted"],
+                        key=lambda c: -c["merge_transitions"]["new_fp"],
+                    )[:10]
+                ],
+                top_clean=[
+                    compact_case(c)
+                    for c in sorted(
+                        [c for c in cases if c["reference_cohort"] == "clean_tp_gain"],
+                        key=lambda c: -c["merge_transitions"]["new_tp"],
+                    )[:10]
+                ],
             ),
             indent=2,
         )
@@ -390,6 +510,7 @@ def main():
     p.add_argument("--exact-conditioned", action="store_true")
     p.add_argument("--raw-replay-dir", type=Path)
     p.add_argument("--singleton-flow", action="store_true")
+    p.add_argument("--block-degeneracy", action="store_true")
     a = p.parse_args()
     diagnose(
         a.run,
@@ -401,6 +522,7 @@ def main():
         exact_conditioned=a.exact_conditioned,
         raw_replay_dir=a.raw_replay_dir,
         singleton_flow=a.singleton_flow,
+        block_degeneracy=a.block_degeneracy,
     )
 
 

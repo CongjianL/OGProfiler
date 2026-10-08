@@ -569,3 +569,31 @@ core—31901 actual0，expected .12122695965386061。原边核验现已支持此
 节点外source内null上下文与树表示约束分开处理；不是source外边干扰。
 下一步可固定图/合法节点集合审计单侧物种块代数退化的清洁/污染队列分布，
 不直接修改过滤、资格或树。生产soft42保持。紧凑归档bacteria_singleton_flow_1412154。
+
+### 固定合法节点：单侧物种块代数退化的队列分布
+
+新增 `--block-degeneracy`：同一1205 source、原诱导图和全部合法内部节点，
+采用修复后的精确DP，仅做特征诊断。每个内部节点的候选为其全部直接孩子，
+不是孩子各自最优DP分区；同时标注实际精确DP的active_keep/active_split/inactive。
+跨物种块退化定义为：actual跨直接子组权重>0、expected严格等于actual，且
+至少一侧全部source端点强度W_st集中于单个直接孩子。缺边、双零不进入退化分子。
+另外区分“两侧各集中一个孩子”和“一侧集中、另一侧分布多个孩子”，
+不把物种分组的平凡退化与21396类型混为一类。全部比较用精确有理数，无epsilon。
+
+对所有有actual或expected的块计算分解，验证直接孩子cut增益恒等式；
+一侧source强度全在一个孩子时actual>0必有expected=actual，作为运行内代数断言。
+输出各节点的连接块/精确零差块/单侧退化块数与连接边权占比。
+按source clean_tp_gain/polluted、局部参考pure/mixed/unassigned及实际DP状态分层；
+另输出source等权的退化节点比例分位数，避免大树独占节点加权统计。
+标签只在全部特征和完整cuts固定后加载。
+
+直接孩子间参考对损失归属于唯一LCA；对active_split节点累加后必须恰好重现
+实际完整cut的removed_merge TP/FP。该唯一归因不同于上轮孩子最优cut的嵌套损失，
+不能把所有inactive/active_keep节点反事实损失当作实际分区损失。
+逐节点完整计数与分解不截断；块示例仅保留少量退化/非零项，标记examples-only，
+21396保留全部活跃块。完整逐节点数据留远端cases，summary仅队列聚合及关键节点。
+只做固定图/合法节点诊断，不引入过滤、任意部分合并或gamma/分辨率搜索。
+生产soft42保持；单作业4 CPU /16G /2h，无矩阵。
+
+验收：本地完整测试503 passed /8 skipped /5项既有warning；
+远端合成测试11 passed，ruff、diff whitespace、Slurm语法通过。

@@ -7,7 +7,7 @@ from benchmarks.og_extraction.fixed_tree_graph import graph_cut
 from benchmarks.og_extraction.tree_cut import optimal_cut, topology
 
 
-def exact_scores(nodes, membership, edges, species):
+def exact_context(nodes, membership, edges, species):
     by_id, children, order = topology(nodes)
     leaves = dict(membership)
     strengths = {c: Counter() for c in order}
@@ -47,6 +47,11 @@ def exact_scores(nodes, membership, edges, species):
         scores[c] = (internal[c] - expected) / total if total else Fraction()
     if scores[order[0]] != 0:
         raise ValueError("Exact root score is not zero")
+    return scores, total, strengths, weights
+
+
+def exact_scores(nodes, membership, edges, species):
+    scores, total, _, _ = exact_context(nodes, membership, edges, species)
     return scores, total
 
 
