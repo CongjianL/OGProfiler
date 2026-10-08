@@ -57,6 +57,7 @@ def diagnose(
     tie_replay_dir=None,
     exact_conditioned=False,
     raw_replay_dir=None,
+    singleton_flow=False,
 ):
     hashes = json.loads((trace_dir / "input-hashes.json").read_text())
     for name in ("summary.json", "groups.json", "input-hashes.json"):
@@ -76,7 +77,10 @@ def diagnose(
         hashes[str(path)] = digest
         return pq.ParquetFile(path).read().to_pylist()
 
+    if singleton_flow and tie_replay_dir is None:
+        raise ValueError("Singleton flow requires fixed focused tie replay")
     proteins = read(run / "input/proteins.parquet")
+    protein_metadata = {r["protein_id"]: r for r in proteins}
     species = {r["protein_id"]: r["species_id"] for r in proteins}
     names = {r["species_name"]: r["species_id"] for r in read(run / "input/species.parquet")}
     keys = {(r["species_id"], r["original_id"]): r["protein_id"] for r in proteins}
@@ -124,6 +128,7 @@ def diagnose(
         subnodes = defaultdict(list)
         members = defaultdict(list)
         edge_groups = defaultdict(list)
+        singleton_incident = []
         for c in order:
             parent = by_id[c]["parent_id"]
             if c in source_rows and owner.get(parent) is not None:
@@ -147,6 +152,12 @@ def diagnose(
             raise ValueError("Missing component edges")
         for path in paths:
             for e in read(path):
+                if (
+                    singleton_flow
+                    and cid == 0
+                    and (e["u"] in {31672, 31901} or e["v"] in {31672, 31901})
+                ):
+                    singleton_incident.append((e["u"], e["v"], e["weight"]))
                 a, b = protein_owner.get(e["u"]), protein_owner.get(e["v"])
                 if a is not None and a == b:
                     edge_groups[a].append((e["u"], e["v"], e["weight"]))
@@ -195,6 +206,29 @@ def diagnose(
                 if audit["raw_prediction"] != prediction:
                     raise ValueError("Local raw path replay differs")
                 result["tie_audit"] = audit
+            if singleton_flow and cid == 0 and c == 21394:
+                from benchmarks.og_extraction.singleton_edge_flow import trace_flow
+
+                flow = trace_flow(
+                    subnodes[c], members[c], edge_groups[c], singleton_incident, species, 21396
+                )
+                if set(flow["singletons"]) != {31672, 31901}:
+                    raise ValueError("Frozen singleton identity differs")
+                for edge in flow["incident_edges"]:
+                    edge["singleton_original_id"] = protein_metadata[edge["singleton"]][
+                        "original_id"
+                    ]
+                    edge["other_original_id"] = protein_metadata[edge["other"]]["original_id"]
+                split_gain = flow["candidate_partitions"][1]["gain_vs_keep"]
+                audit_row = next(
+                    row for row in result["tie_audit"]["local_rows"] if row["cluster_id"] == 21396
+                )
+                if not math.isclose(
+                    split_gain, audit_row["exact_split_minus_keep"], rel_tol=1e-12, abs_tol=1e-15
+                ):
+                    raise ValueError("Raw child-pair flow and saved local objective differ")
+                flow["local_objective_identity_verified"] = True
+                result["singleton_flow"] = flow
             if len(prediction) != r["source_full_size"]:
                 raise ValueError("Target source coverage mismatch")
             cases.append(
@@ -248,6 +282,10 @@ def diagnose(
                     row["exact_child_pairs"] = diagnostic_pairs(
                         local_ref, row["exact_child_prediction"]
                     )
+        if "singleton_flow" in case["objective"]:
+            for candidate in case["objective"]["singleton_flow"]["candidate_partitions"]:
+                local_ref = {p: ref[p] for p in candidate["prediction"] if p in ref}
+                candidate["reference_pairs"] = diagnostic_pairs(local_ref, candidate["prediction"])
         case["raw_conditioned_cut_pairs"] = diagnostic_pairs(ref, cut["raw_conditioned_prediction"])
         case["exact_minus_raw_tp"] = score["tp"] - case["raw_conditioned_cut_pairs"]["tp"]
         case["exact_minus_raw_fp"] = score["fp"] - case["raw_conditioned_cut_pairs"]["fp"]
@@ -308,6 +346,7 @@ def diagnose(
                 production_changed=False,
                 immutable_inputs_verified=True,
                 reference_labels_used_for_objective=False,
+                singleton_flow=singleton_flow,
                 exact_conditioned=exact_conditioned,
                 raw_conditioned_replay_verified=raw_replay_dir is not None,
                 tie_audit_replay_verified=tie_replay_dir is not None,
@@ -350,6 +389,7 @@ def main():
     p.add_argument("--tie-replay-dir", type=Path)
     p.add_argument("--exact-conditioned", action="store_true")
     p.add_argument("--raw-replay-dir", type=Path)
+    p.add_argument("--singleton-flow", action="store_true")
     a = p.parse_args()
     diagnose(
         a.run,
@@ -360,6 +400,7 @@ def main():
         tie_replay_dir=a.tie_replay_dir,
         exact_conditioned=a.exact_conditioned,
         raw_replay_dir=a.raw_replay_dir,
+        singleton_flow=a.singleton_flow,
     )
 
 

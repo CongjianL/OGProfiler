@@ -531,3 +531,24 @@ node外species1端点强度约 .2660848122536832已由块总量确认，
 下一步定位原始边流与完整切分表示贡献，不增加门槛。零贡献不是缺边证据。
 soft42默认保持。
 紧凑归档：bacteria_exact_dp_1412104；本轮无追加作业。
+
+### 原始冻结边流与三子完整切分表示的核验
+
+新增只读 `--singleton-flow`，只在已有定点 replay 上启用。
+扫描冻结 component0 的所有 retained weighted edge 记录，捕获31672/31901的
+全部incident edges（含source外、component内），保留u/v、实际权重、原蛋白ID与物种ID。
+这里的“原边”指冻结图的原始记录，不是预过滤相似性hits，不补造缺失边。
+逐单例区分：node内直接子组、node外但source内、source外；若两个单例直接相连，
+该无向边会分别出现在两个单例的incident报告中，不把两份报告相加当作总边权。
+source内incident记录与source诱导图逐边/逐权精确一致才继续。
+
+对各直接子组对、各物种块独立重算actual和固定source null期望及signed deficit，
+核验三组总目标与已有精确局部增益一致。列出三子集合全部五种集合分区，
+按原树节点蛋白集合逐一核验可表示性；部分子组合并若无原节点，明确标记为
+仅解释性反事实，不作为新生产cut或新选择策略。
+参考标签只在结构/边流/候选分区固定后事后计分。
+保持现有树图、精确DP与历史浮点回放、资格、active-view、soft42；无门槛搜索。
+Slurm单定点作业沿用4 CPU /16G /2h。
+
+验收：本地完整测试499 passed /8 skipped /5项既有warning；
+远端合成测试9 passed，ruff、diff whitespace、Slurm语法通过。
