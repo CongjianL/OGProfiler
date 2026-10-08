@@ -457,3 +457,22 @@ polluted 765 中切分678→557，移除TP45045→41027、FP629443→620867。
 优先审计固定新旧 cuts 的局部增益与数值平分，再讨论真实边界目标；
 默认soft42保持，无阈值、gamma或分辨率搜索，本轮不追加作业。
 紧凑归档：OGProfiler2_benchmark/05_metrics/qfo/bacteria_species_pair_cut_1412089/。
+
+### 10040 同分异切与 21394 正增益边界的定点审计
+
+新增 opt-in `--tie-replay-dir`，只读取 component0/source10040、21394。
+先逐蛋白核验当前浮点条件目标分区与冻结 job1412089 分区一致；
+所有树图输入仍用原 source、原诱导权重，不改变任何 score 或默认路径。
+精确审计使用 `Fraction.from_float` 保留存储 binary64 边权的完整值，
+逐节点重算内部权、物种块端点强度与原可加和目标，精确判断 keep/split 的
+差值符号和等号。不使用 epsilon、分辨率调参或参考标签决定平分。
+
+输出浮点与精确 DP 的局部 keep/split 最优值、差值、choice_changed、
+两套 active 路径及 exact tie 标志；精确最终分区独立核验跨组 null deficit 恒等式，
+并验证不劣于原浮点 cut 在精确目标下的值。精确分区是诊断反事实，非生产修正。
+逐节点报告孩子最优 cut 的同/跨物种边界实际权重、期望与 signed gain；
+参考标签随后仅用于 keep 与孩子最优 cut 的 TP/FP 变化及精确最终 cut 的指标。
+原浮点选择函数与 job1412089 快照不修改。双目标定点 Slurm 沿用4 CPU /16G /2h。
+
+验收：本地完整测试492 passed /8 skipped /5项既有warning；
+远端定点合成测试11 passed；ruff、diff whitespace、Slurm bash语法通过。

@@ -47,7 +47,9 @@ def inspect(nodes, membership, edges, *, species=None):
     ), {r["protein_id"]: r["cluster_id"] for r in cut["members"]}
 
 
-def diagnose(run, reference_dir, trace_dir, out, *, condition_species_pairs=False):
+def diagnose(
+    run, reference_dir, trace_dir, out, *, condition_species_pairs=False, tie_replay_dir=None
+):
     hashes = json.loads((trace_dir / "input-hashes.json").read_text())
     for name in ("summary.json", "groups.json", "input-hashes.json"):
         path = trace_dir / name
@@ -72,6 +74,26 @@ def diagnose(run, reference_dir, trace_dir, out, *, condition_species_pairs=Fals
     keys = {(r["species_id"], r["original_id"]): r["protein_id"] for r in proteins}
     with (run / "results/members.tsv").open() as h:
         actual = {int(r["protein_id"]): r["family_id"] for r in csv.DictReader(h, delimiter="\t")}
+    replay_cuts = {}
+    if tie_replay_dir is not None:
+        if not condition_species_pairs:
+            raise ValueError("Tie audit requires conditioned objective")
+        for name in ("summary.json", "cuts-DIAGNOSTIC-ONLY.json", "input-hashes.json"):
+            hashes[str(tie_replay_dir / name)] = sha256_file(tie_replay_dir / name)
+        replay = json.loads((tie_replay_dir / "summary.json").read_text())
+        if not replay["coverage_verified"] or not replay["immutable_inputs_verified"]:
+            raise ValueError("Unverified tie replay")
+        for r in json.loads((tie_replay_dir / "cuts-DIAGNOSTIC-ONLY.json").read_text()):
+            replay_cuts[r["component_id"], r["source_cluster_id"]] = {
+                int(p): c for p, c in r["prediction"].items()
+            }
+        rows = [
+            r
+            for r in rows
+            if (r["component_id"], r["source_cluster_id"]) in {(0, 10040), (0, 21394)}
+        ]
+        if len(rows) != 2:
+            raise ValueError("Missing focused tie targets")
     targets = defaultdict(dict)
     for r in rows:
         targets[r["component_id"]][r["source_cluster_id"]] = r
@@ -133,6 +155,15 @@ def diagnose(run, reference_dir, trace_dir, out, *, condition_species_pairs=Fals
                 ):
                     raise ValueError("Conditioned DP worse than feasible unconditional cut")
                 result["objective_identity_verified"] = True
+            if tie_replay_dir is not None:
+                from benchmarks.og_extraction.conditioned_tie_audit import audit_tree
+
+                if prediction != replay_cuts[cid, c]:
+                    raise ValueError("Frozen conditioned cut replay differs")
+                audit = audit_tree(subnodes[c], members[c], edge_groups[c], species)
+                if audit["raw_prediction"] != prediction:
+                    raise ValueError("Local raw path replay differs")
+                result["tie_audit"] = audit
             if len(prediction) != r["source_full_size"]:
                 raise ValueError("Target source coverage mismatch")
             cases.append(
@@ -172,6 +203,19 @@ def diagnose(run, reference_dir, trace_dir, out, *, condition_species_pairs=Fals
         shared_pairs = sum(map(choose2, Counter((actual[p], pred[p]) for p in ref).values()))
         score["new_tp"] = score["tp"] - shared_tp
         score["new_fp"] = score["fp"] - (shared_pairs - shared_tp)
+        if tie_replay_dir is not None:
+            audit = case["objective"]["tie_audit"]
+            audit["exact_cut_pairs"] = diagnostic_pairs(ref, audit["exact_prediction"])
+            for row in audit["local_rows"]:
+                local_ref = {p: ref[p] for p in row["proteins"] if p in ref}
+                row["keep_pairs"] = diagnostic_pairs(local_ref, dict.fromkeys(local_ref, 0))
+                if row["raw_child_prediction"]:
+                    row["raw_child_pairs"] = diagnostic_pairs(
+                        local_ref, row["raw_child_prediction"]
+                    )
+                    row["exact_child_pairs"] = diagnostic_pairs(
+                        local_ref, row["exact_child_prediction"]
+                    )
         case["cut_pairs"] = score
         case["unconditional_cut_pairs"] = diagnostic_pairs(ref, cut["unconditional_prediction"])
         case["conditioned_minus_unconditional_tp"] = (
@@ -227,6 +271,7 @@ def diagnose(run, reference_dir, trace_dir, out, *, condition_species_pairs=Fals
                 production_changed=False,
                 immutable_inputs_verified=True,
                 reference_labels_used_for_objective=False,
+                tie_audit_replay_verified=tie_replay_dir is not None,
                 species_pair_conditioned=condition_species_pairs,
                 objective=(
                     "sum_v (Win_v - sum_s k_v,ss^2/(4W_ss) - sum_s<t k_v,st*k_v,ts/W_st)/W; "
@@ -263,6 +308,7 @@ def main():
     for key in ("run", "reference-dir", "trace-dir", "out"):
         p.add_argument("--" + key, type=Path, required=True)
     p.add_argument("--condition-species-pairs", action="store_true")
+    p.add_argument("--tie-replay-dir", type=Path)
     a = p.parse_args()
     diagnose(
         a.run,
@@ -270,6 +316,7 @@ def main():
         a.trace_dir,
         a.out,
         condition_species_pairs=a.condition_species_pairs,
+        tie_replay_dir=a.tie_replay_dir,
     )
 
 
