@@ -98,6 +98,12 @@ class HierarchyNode(SerializableModel):
     network_event: str | None = None
     phylo_event: str | None = None
     terminal_reason: str | None = None
+    search_status: str | None = None
+    termination_kind: str | None = None
+    failure_codes: tuple[str, ...] = ()
+    selection_phase: str | None = None
+    selection_kind: str | None = None
+    refinement_truncated: bool = False
 
 
 @dataclass(frozen=True, slots=True)

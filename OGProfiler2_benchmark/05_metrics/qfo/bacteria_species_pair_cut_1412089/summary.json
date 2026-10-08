@@ -1,0 +1,1745 @@
+{
+  "diagnostic_only": true,
+  "production_changed": false,
+  "immutable_inputs_verified": true,
+  "reference_labels_used_for_objective": false,
+  "species_pair_conditioned": true,
+  "objective": "sum_v (Win_v - sum_s k_v,ss^2/(4W_ss) - sum_s<t k_v,st*k_v,ts/W_st)/W; source-fixed denominators, zero blocks omitted, resolution1, tie keep parent",
+  "baseline_merge_score": "root zero (or zero-weight case)",
+  "target_nodes": 1205,
+  "coverage_verified": true,
+  "strata": [
+    {
+      "cohort": "clean_tp_gain",
+      "event": "II",
+      "nodes": 2,
+      "conditioned_minus_unconditional_tp": 0,
+      "conditioned_minus_unconditional_fp": 0,
+      "unconditional_split_nodes": 1,
+      "split_nodes": 1,
+      "cut_gain_q10_q50_q90": [
+        0.025491972565493595,
+        0.12745986282746796,
+        0.22942775308944233
+      ],
+      "removed_merge_tp": 20,
+      "removed_merge_fp": 0,
+      "retained_new_tp": 8,
+      "retained_new_fp": 0
+    },
+    {
+      "cohort": "clean_tp_gain",
+      "event": "III-1",
+      "nodes": 359,
+      "conditioned_minus_unconditional_tp": 2953,
+      "conditioned_minus_unconditional_fp": 0,
+      "unconditional_split_nodes": 160,
+      "split_nodes": 86,
+      "cut_gain_q10_q50_q90": [
+        0.0,
+        0.0,
+        0.07650670409257211
+      ],
+      "removed_merge_tp": 5798,
+      "removed_merge_fp": 0,
+      "retained_new_tp": 4495,
+      "retained_new_fp": 0
+    },
+    {
+      "cohort": "clean_tp_gain",
+      "event": "III-2",
+      "nodes": 79,
+      "conditioned_minus_unconditional_tp": 1622,
+      "conditioned_minus_unconditional_fp": 0,
+      "unconditional_split_nodes": 74,
+      "split_nodes": 22,
+      "cut_gain_q10_q50_q90": [
+        0.0,
+        0.0,
+        0.060803016152875256
+      ],
+      "removed_merge_tp": 2055,
+      "removed_merge_fp": 0,
+      "retained_new_tp": 1640,
+      "retained_new_fp": 0
+    },
+    {
+      "cohort": "polluted",
+      "event": "II",
+      "nodes": 5,
+      "conditioned_minus_unconditional_tp": 164,
+      "conditioned_minus_unconditional_fp": 1816,
+      "unconditional_split_nodes": 5,
+      "split_nodes": 5,
+      "cut_gain_q10_q50_q90": [
+        0.41168000370547525,
+        0.48876808774250513,
+        0.5740891059715229
+      ],
+      "removed_merge_tp": 159,
+      "removed_merge_fp": 24370,
+      "retained_new_tp": 1474,
+      "retained_new_fp": 8770
+    },
+    {
+      "cohort": "polluted",
+      "event": "III-1",
+      "nodes": 513,
+      "conditioned_minus_unconditional_tp": 1958,
+      "conditioned_minus_unconditional_fp": 6275,
+      "unconditional_split_nodes": 430,
+      "split_nodes": 346,
+      "cut_gain_q10_q50_q90": [
+        0.0,
+        0.021094306560040646,
+        0.3161035002502346
+      ],
+      "removed_merge_tp": 26526,
+      "removed_merge_fp": 389735,
+      "retained_new_tp": 16233,
+      "retained_new_fp": 44900
+    },
+    {
+      "cohort": "polluted",
+      "event": "III-2",
+      "nodes": 247,
+      "conditioned_minus_unconditional_tp": 1896,
+      "conditioned_minus_unconditional_fp": 485,
+      "unconditional_split_nodes": 243,
+      "split_nodes": 206,
+      "cut_gain_q10_q50_q90": [
+        0.0,
+        0.07138797473492992,
+        0.29575239231492806
+      ],
+      "removed_merge_tp": 14342,
+      "removed_merge_fp": 206762,
+      "retained_new_tp": 10069,
+      "retained_new_fp": 30828
+    }
+  ],
+  "scope": "Only changed complete-source clades; no full partition strategy or biological inference",
+  "top_polluted": [
+    {
+      "component_id": 0,
+      "source_cluster_id": 22807,
+      "original_event": "III-1",
+      "full_size": 458,
+      "merge_transitions": {
+        "assigned_size": 440,
+        "tp": 1741,
+        "fp": 94839,
+        "new_tp": 671,
+        "new_fp": 94075,
+        "retained_fp": 764
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.6586379038333944,
+        "cut_gain": 0.6586379038333944,
+        "selected": [
+          22809,
+          22852,
+          22986,
+          23003,
+          23052,
+          23097,
+          23114,
+          23115,
+          23184,
+          23201,
+          23204,
+          23205,
+          23208,
+          23209,
+          23258,
+          23338,
+          23343,
+          23378,
+          23417,
+          23428,
+          23429,
+          23430,
+          23432,
+          23586,
+          23593
+        ],
+        "split": true,
+        "total_weight": 3000.112612780132,
+        "groups": 25,
+        "unconditional_cut_under_conditioned_objective": 0.6573787484483306,
+        "optimization_gain_over_unconditional_cut": 0.001259155385063826,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7748197453679352,
+        "cut_gain": 0.7748197453679352,
+        "selected": [
+          22809,
+          22852,
+          22986,
+          23003,
+          23051,
+          23115,
+          23184,
+          23201,
+          23204,
+          23205,
+          23208,
+          23210,
+          23239,
+          23258,
+          23338,
+          23343,
+          23378,
+          23417,
+          23428,
+          23429,
+          23430,
+          23432,
+          23586,
+          23593
+        ],
+        "split": true,
+        "total_weight": 3000.112612780132,
+        "groups": 24
+      },
+      "cut_pairs": {
+        "tp": 1596,
+        "fp": 8402,
+        "lost": 145,
+        "new_tp": 526,
+        "new_fp": 7638
+      },
+      "unconditional_cut_pairs": {
+        "tp": 1611,
+        "fp": 8496,
+        "lost": 130
+      },
+      "conditioned_minus_unconditional_tp": -15,
+      "conditioned_minus_unconditional_fp": -94,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 145,
+      "removed_merge_fp": 86437
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 14737,
+      "original_event": "III-2",
+      "full_size": 311,
+      "merge_transitions": {
+        "assigned_size": 299,
+        "tp": 966,
+        "fp": 43585,
+        "new_tp": 535,
+        "new_fp": 43107,
+        "retained_fp": 478
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.3525872576114577,
+        "cut_gain": 0.3525872576114577,
+        "selected": [
+          14740,
+          14826,
+          14835,
+          14836,
+          14841,
+          14848,
+          14998,
+          15007,
+          15008,
+          15053,
+          15085,
+          15086,
+          15087,
+          15088,
+          15093,
+          15096,
+          15105,
+          15106,
+          15107,
+          15112,
+          15113,
+          15114,
+          15115,
+          15116,
+          15117,
+          15118,
+          15119,
+          15121,
+          15132,
+          15133,
+          15134,
+          15180,
+          15181,
+          15188,
+          15211
+        ],
+        "split": true,
+        "total_weight": 2960.8320420704877,
+        "groups": 35,
+        "unconditional_cut_under_conditioned_objective": 0.35174237740682357,
+        "optimization_gain_over_unconditional_cut": 0.0008448802046341353,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 6.661338147750939e-16,
+        "best_cut_score": 0.5281231547368131,
+        "cut_gain": 0.5281231547368125,
+        "selected": [
+          14738,
+          14848,
+          14998,
+          15007,
+          15009,
+          15050,
+          15053,
+          15085,
+          15086,
+          15087,
+          15088,
+          15093,
+          15096,
+          15105,
+          15106,
+          15107,
+          15112,
+          15113,
+          15114,
+          15115,
+          15116,
+          15117,
+          15118,
+          15119,
+          15120,
+          15133,
+          15134,
+          15180,
+          15181,
+          15188,
+          15211
+        ],
+        "split": true,
+        "total_weight": 2960.832042070488,
+        "groups": 31
+      },
+      "cut_pairs": {
+        "tp": 760,
+        "fp": 6007,
+        "lost": 206,
+        "new_tp": 329,
+        "new_fp": 5529
+      },
+      "unconditional_cut_pairs": {
+        "tp": 868,
+        "fp": 6394,
+        "lost": 98
+      },
+      "conditioned_minus_unconditional_tp": -108,
+      "conditioned_minus_unconditional_fp": -387,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 206,
+      "removed_merge_fp": 37578
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 32278,
+      "original_event": "III-1",
+      "full_size": 281,
+      "merge_transitions": {
+        "assigned_size": 272,
+        "tp": 1127,
+        "fp": 35729,
+        "new_tp": 580,
+        "new_fp": 35380,
+        "retained_fp": 349
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.3898997685816048,
+        "cut_gain": 0.3898997685816048,
+        "selected": [
+          32282,
+          32309,
+          32396,
+          32399,
+          32416,
+          32426,
+          32461,
+          32463,
+          32468,
+          32473,
+          32611,
+          32628,
+          32629,
+          32650,
+          32657,
+          32658,
+          32659,
+          32660,
+          32681,
+          32686,
+          32697,
+          32698,
+          32719,
+          32720,
+          32721,
+          32726,
+          32727,
+          32728
+        ],
+        "split": true,
+        "total_weight": 2539.6114838311423,
+        "groups": 28,
+        "unconditional_cut_under_conditioned_objective": 0.3898997685816048,
+        "optimization_gain_over_unconditional_cut": 0.0,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": -8.881784197001252e-16,
+        "best_cut_score": 0.5707104053700187,
+        "cut_gain": 0.5707104053700196,
+        "selected": [
+          32282,
+          32309,
+          32396,
+          32399,
+          32416,
+          32426,
+          32461,
+          32463,
+          32468,
+          32473,
+          32611,
+          32628,
+          32629,
+          32650,
+          32657,
+          32658,
+          32659,
+          32660,
+          32681,
+          32686,
+          32697,
+          32698,
+          32719,
+          32720,
+          32721,
+          32726,
+          32727,
+          32728
+        ],
+        "split": true,
+        "total_weight": 2539.611483831142,
+        "groups": 28
+      },
+      "cut_pairs": {
+        "tp": 895,
+        "fp": 4410,
+        "lost": 232,
+        "new_tp": 348,
+        "new_fp": 4061
+      },
+      "unconditional_cut_pairs": {
+        "tp": 895,
+        "fp": 4410,
+        "lost": 232
+      },
+      "conditioned_minus_unconditional_tp": 0,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 232,
+      "removed_merge_fp": 31319
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 31866,
+      "original_event": "III-1",
+      "full_size": 251,
+      "merge_transitions": {
+        "assigned_size": 244,
+        "tp": 910,
+        "fp": 28736,
+        "new_tp": 535,
+        "new_fp": 28570,
+        "retained_fp": 166
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.4748946182133633,
+        "cut_gain": 0.4748946182133633,
+        "selected": [
+          31869,
+          31935,
+          31959,
+          32022,
+          32023,
+          32024,
+          32025,
+          32026,
+          32027,
+          32029,
+          32048,
+          32069,
+          32084,
+          32099,
+          32116,
+          32123,
+          32132,
+          32133,
+          32162,
+          32163,
+          32170,
+          32173,
+          32196,
+          32197,
+          32216,
+          32226,
+          32231,
+          32246,
+          32247,
+          32248,
+          32253,
+          32258,
+          32259,
+          32264,
+          32267,
+          32270,
+          32271,
+          32276,
+          32277
+        ],
+        "split": true,
+        "total_weight": 981.8484212176269,
+        "groups": 39,
+        "unconditional_cut_under_conditioned_objective": 0.46880380736964744,
+        "optimization_gain_over_unconditional_cut": 0.006090810843715877,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7157377731208817,
+        "cut_gain": 0.7157377731208817,
+        "selected": [
+          31869,
+          31935,
+          31958,
+          32029,
+          32048,
+          32069,
+          32084,
+          32099,
+          32116,
+          32123,
+          32132,
+          32133,
+          32162,
+          32163,
+          32170,
+          32173,
+          32196,
+          32197,
+          32216,
+          32223,
+          32248,
+          32253,
+          32258,
+          32259,
+          32264,
+          32267,
+          32270,
+          32271,
+          32276,
+          32277
+        ],
+        "split": true,
+        "total_weight": 981.8484212176269,
+        "groups": 30
+      },
+      "cut_pairs": {
+        "tp": 606,
+        "fp": 1482,
+        "lost": 304,
+        "new_tp": 231,
+        "new_fp": 1316
+      },
+      "unconditional_cut_pairs": {
+        "tp": 676,
+        "fp": 1854,
+        "lost": 234
+      },
+      "conditioned_minus_unconditional_tp": -70,
+      "conditioned_minus_unconditional_fp": -372,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 304,
+      "removed_merge_fp": 27254
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 20942,
+      "original_event": "III-1",
+      "full_size": 215,
+      "merge_transitions": {
+        "assigned_size": 213,
+        "tp": 1450,
+        "fp": 21128,
+        "new_tp": 362,
+        "new_fp": 21016,
+        "retained_fp": 112
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7222826109973166,
+        "cut_gain": 0.7222826109973166,
+        "selected": [
+          20947,
+          20997,
+          21042,
+          21083,
+          21125,
+          21145,
+          21186,
+          21239,
+          21338,
+          21343
+        ],
+        "split": true,
+        "total_weight": 2182.049137543624,
+        "groups": 10,
+        "unconditional_cut_under_conditioned_objective": 0.7222012158056801,
+        "optimization_gain_over_unconditional_cut": 8.139519163652409e-05,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7986599778484248,
+        "cut_gain": 0.7986599778484248,
+        "selected": [
+          20947,
+          20997,
+          21043,
+          21064,
+          21083,
+          21125,
+          21145,
+          21186,
+          21239,
+          21338,
+          21343
+        ],
+        "split": true,
+        "total_weight": 2182.049137543624,
+        "groups": 11
+      },
+      "cut_pairs": {
+        "tp": 1389,
+        "fp": 1599,
+        "lost": 61,
+        "new_tp": 301,
+        "new_fp": 1487
+      },
+      "unconditional_cut_pairs": {
+        "tp": 1365,
+        "fp": 1491,
+        "lost": 85
+      },
+      "conditioned_minus_unconditional_tp": 24,
+      "conditioned_minus_unconditional_fp": 108,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 61,
+      "removed_merge_fp": 19529
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 5226,
+      "original_event": "II",
+      "full_size": 187,
+      "merge_transitions": {
+        "assigned_size": 182,
+        "tp": 1104,
+        "fp": 15367,
+        "new_tp": 386,
+        "new_fp": 15104,
+        "retained_fp": 263
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.5618643163016255,
+        "cut_gain": 0.5618643163016255,
+        "selected": [
+          5227,
+          5338,
+          5410,
+          5458,
+          5477,
+          5516,
+          5517,
+          5554,
+          5563,
+          5564,
+          5575
+        ],
+        "split": true,
+        "total_weight": 2153.0762769306584,
+        "groups": 11,
+        "unconditional_cut_under_conditioned_objective": 0.5442445457866121,
+        "optimization_gain_over_unconditional_cut": 0.0176197705150134,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7153054635819909,
+        "cut_gain": 0.7153054635819909,
+        "selected": [
+          5228,
+          5287,
+          5332,
+          5333,
+          5340,
+          5373,
+          5408,
+          5409,
+          5477,
+          5516,
+          5517,
+          5554,
+          5563,
+          5564,
+          5575
+        ],
+        "split": true,
+        "total_weight": 2153.0762769306584,
+        "groups": 15
+      },
+      "cut_pairs": {
+        "tp": 945,
+        "fp": 1939,
+        "lost": 159,
+        "new_tp": 227,
+        "new_fp": 1676
+      },
+      "unconditional_cut_pairs": {
+        "tp": 949,
+        "fp": 1149,
+        "lost": 155
+      },
+      "conditioned_minus_unconditional_tp": -4,
+      "conditioned_minus_unconditional_fp": 790,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 159,
+      "removed_merge_fp": 13428
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 51247,
+      "original_event": "II",
+      "full_size": 182,
+      "merge_transitions": {
+        "assigned_size": 178,
+        "tp": 1040,
+        "fp": 14713,
+        "new_tp": 933,
+        "new_fp": 14668,
+        "retained_fp": 45
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.48876808774250513,
+        "cut_gain": 0.48876808774250513,
+        "selected": [
+          51248,
+          51380
+        ],
+        "split": true,
+        "total_weight": 3257.1372859608277,
+        "groups": 2,
+        "unconditional_cut_under_conditioned_objective": 0.48687130788397026,
+        "optimization_gain_over_unconditional_cut": 0.0018967798585348694,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.5016804583264571,
+        "cut_gain": 0.5016804583264576,
+        "selected": [
+          51248,
+          51381,
+          51480,
+          51481,
+          51498,
+          51499
+        ],
+        "split": true,
+        "total_weight": 3257.1372859608277,
+        "groups": 6
+      },
+      "cut_pairs": {
+        "tp": 1040,
+        "fp": 6792,
+        "lost": 0,
+        "new_tp": 933,
+        "new_fp": 6747
+      },
+      "unconditional_cut_pairs": {
+        "tp": 980,
+        "fp": 5766,
+        "lost": 60
+      },
+      "conditioned_minus_unconditional_tp": 60,
+      "conditioned_minus_unconditional_fp": 1026,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 0,
+      "removed_merge_fp": 7921
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 48621,
+      "original_event": "III-1",
+      "full_size": 175,
+      "merge_transitions": {
+        "assigned_size": 162,
+        "tp": 470,
+        "fp": 12571,
+        "new_tp": 261,
+        "new_fp": 12156,
+        "retained_fp": 415
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.37769889200370743,
+        "cut_gain": 0.37769889200370743,
+        "selected": [
+          48628,
+          48672,
+          48742,
+          48777,
+          48780,
+          48781,
+          48794,
+          48795,
+          48796,
+          48797,
+          48798,
+          48799,
+          48806,
+          48807,
+          48808,
+          48844,
+          48845,
+          48848,
+          48849,
+          48854,
+          48857,
+          48906,
+          48907
+        ],
+        "split": true,
+        "total_weight": 896.5421456285699,
+        "groups": 23,
+        "unconditional_cut_under_conditioned_objective": 0.3776988920037075,
+        "optimization_gain_over_unconditional_cut": -5.551115123125783e-17,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.5568481494287704,
+        "cut_gain": 0.5568481494287708,
+        "selected": [
+          48628,
+          48672,
+          48742,
+          48777,
+          48780,
+          48781,
+          48794,
+          48795,
+          48796,
+          48797,
+          48798,
+          48799,
+          48806,
+          48807,
+          48808,
+          48843,
+          48848,
+          48849,
+          48854,
+          48857,
+          48906,
+          48907
+        ],
+        "split": true,
+        "total_weight": 896.5421456285699,
+        "groups": 22
+      },
+      "cut_pairs": {
+        "tp": 383,
+        "fp": 1291,
+        "lost": 87,
+        "new_tp": 174,
+        "new_fp": 878
+      },
+      "unconditional_cut_pairs": {
+        "tp": 383,
+        "fp": 1293,
+        "lost": 87
+      },
+      "conditioned_minus_unconditional_tp": 0,
+      "conditioned_minus_unconditional_fp": -2,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 87,
+      "removed_merge_fp": 11280
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 221,
+      "original_event": "III-1",
+      "full_size": 173,
+      "merge_transitions": {
+        "assigned_size": 159,
+        "tp": 391,
+        "fp": 12170,
+        "new_tp": 163,
+        "new_fp": 12000,
+        "retained_fp": 170
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.4671094106336903,
+        "cut_gain": 0.4671094106336903,
+        "selected": [
+          228,
+          253,
+          256,
+          271,
+          286,
+          309,
+          310,
+          317,
+          318,
+          319,
+          320,
+          329,
+          338,
+          357,
+          416,
+          431,
+          444,
+          473,
+          480,
+          491,
+          494,
+          511,
+          512
+        ],
+        "split": true,
+        "total_weight": 430.78693101736377,
+        "groups": 23,
+        "unconditional_cut_under_conditioned_objective": 0.4645964606735465,
+        "optimization_gain_over_unconditional_cut": 0.00251294996014384,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7974985692970837,
+        "cut_gain": 0.7974985692970837,
+        "selected": [
+          227,
+          256,
+          271,
+          286,
+          309,
+          310,
+          317,
+          318,
+          319,
+          320,
+          329,
+          338,
+          357,
+          416,
+          431,
+          444,
+          473,
+          480,
+          491,
+          494,
+          511,
+          512
+        ],
+        "split": true,
+        "total_weight": 430.7869310173638,
+        "groups": 22
+      },
+      "cut_pairs": {
+        "tp": 313,
+        "fp": 615,
+        "lost": 78,
+        "new_tp": 85,
+        "new_fp": 445
+      },
+      "unconditional_cut_pairs": {
+        "tp": 315,
+        "fp": 639,
+        "lost": 76
+      },
+      "conditioned_minus_unconditional_tp": -2,
+      "conditioned_minus_unconditional_fp": -24,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 78,
+      "removed_merge_fp": 11555
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 7840,
+      "original_event": "III-2",
+      "full_size": 159,
+      "merge_transitions": {
+        "assigned_size": 154,
+        "tp": 931,
+        "fp": 10850,
+        "new_tp": 500,
+        "new_fp": 10727,
+        "retained_fp": 123
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.4122277711937762,
+        "cut_gain": 0.4122277711937762,
+        "selected": [
+          7842,
+          7861,
+          7899,
+          7948,
+          7971,
+          7980,
+          8026,
+          8037,
+          8056,
+          8071,
+          8072,
+          8073,
+          8076,
+          8077,
+          8082,
+          8087,
+          8088,
+          8091,
+          8092,
+          8093,
+          8094,
+          8095,
+          8096,
+          8099,
+          8104
+        ],
+        "split": true,
+        "total_weight": 1000.4369550542467,
+        "groups": 25,
+        "unconditional_cut_under_conditioned_objective": 0.39846875787146363,
+        "optimization_gain_over_unconditional_cut": 0.013759013322312552,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.6779481870979172,
+        "cut_gain": 0.6779481870979172,
+        "selected": [
+          7842,
+          7861,
+          7899,
+          7948,
+          7971,
+          7976,
+          8096,
+          8099,
+          8104
+        ],
+        "split": true,
+        "total_weight": 1000.4369550542467,
+        "groups": 9
+      },
+      "cut_pairs": {
+        "tp": 582,
+        "fp": 451,
+        "lost": 349,
+        "new_tp": 151,
+        "new_fp": 328
+      },
+      "unconditional_cut_pairs": {
+        "tp": 702,
+        "fp": 2356,
+        "lost": 229
+      },
+      "conditioned_minus_unconditional_tp": -120,
+      "conditioned_minus_unconditional_fp": -1905,
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 349,
+      "removed_merge_fp": 10399
+    }
+  ],
+  "top_clean": [
+    {
+      "component_id": 0,
+      "source_cluster_id": 21394,
+      "original_event": "III-1",
+      "full_size": 37,
+      "merge_transitions": {
+        "assigned_size": 36,
+        "tp": 630,
+        "fp": 0,
+        "new_tp": 394,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.0788352370707509,
+        "cut_gain": 0.0788352370707509,
+        "selected": [
+          21397,
+          21444,
+          21445,
+          21446,
+          21457
+        ],
+        "split": true,
+        "total_weight": 428.4352920422329,
+        "groups": 5,
+        "unconditional_cut_under_conditioned_objective": 0.0787126134592022,
+        "optimization_gain_over_unconditional_cut": 0.00012262361154868895,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.13413446734672574,
+        "cut_gain": 0.13413446734672574,
+        "selected": [
+          21396,
+          21446,
+          21457
+        ],
+        "split": true,
+        "total_weight": 428.43529204223285,
+        "groups": 3
+      },
+      "cut_pairs": {
+        "tp": 278,
+        "fp": 0,
+        "lost": 352,
+        "new_tp": 42,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 325,
+        "fp": 0,
+        "lost": 305
+      },
+      "conditioned_minus_unconditional_tp": -47,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 352,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 10040,
+      "original_event": "III-2",
+      "full_size": 30,
+      "merge_transitions": {
+        "assigned_size": 30,
+        "tp": 435,
+        "fp": 0,
+        "new_tp": 387,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.2212223890038809,
+        "cut_gain": 0.2212223890038809,
+        "selected": [
+          10045,
+          10053,
+          10067,
+          10068,
+          10073,
+          10074,
+          10075
+        ],
+        "split": true,
+        "total_weight": 49.564383476409475,
+        "groups": 7,
+        "unconditional_cut_under_conditioned_objective": 0.2212223890038809,
+        "optimization_gain_over_unconditional_cut": 0.0,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.5019303280490091,
+        "cut_gain": 0.5019303280490091,
+        "selected": [
+          10045,
+          10052,
+          10068,
+          10073,
+          10074,
+          10075
+        ],
+        "split": true,
+        "total_weight": 49.564383476409475,
+        "groups": 6
+      },
+      "cut_pairs": {
+        "tp": 93,
+        "fp": 0,
+        "lost": 342,
+        "new_tp": 45,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 102,
+        "fp": 0,
+        "lost": 333
+      },
+      "conditioned_minus_unconditional_tp": -9,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 342,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 48967,
+      "original_event": "III-1",
+      "full_size": 29,
+      "merge_transitions": {
+        "assigned_size": 29,
+        "tp": 406,
+        "fp": 0,
+        "new_tp": 336,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.10813537766737612,
+        "cut_gain": 0.10813537766737612,
+        "selected": [
+          48969,
+          49000,
+          49015
+        ],
+        "split": true,
+        "total_weight": 232.39634894829905,
+        "groups": 3,
+        "unconditional_cut_under_conditioned_objective": 0.09876827296531292,
+        "optimization_gain_over_unconditional_cut": 0.0093671047020632,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.15793367265696096,
+        "cut_gain": 0.1579336726569614,
+        "selected": [
+          48973,
+          48990,
+          48993,
+          48996,
+          48997,
+          49000,
+          49015
+        ],
+        "split": true,
+        "total_weight": 232.39634894829905,
+        "groups": 7
+      },
+      "cut_pairs": {
+        "tp": 175,
+        "fp": 0,
+        "lost": 231,
+        "new_tp": 105,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 80,
+        "fp": 0,
+        "lost": 326
+      },
+      "conditioned_minus_unconditional_tp": 95,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 231,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 90,
+      "source_cluster_id": 1,
+      "original_event": "III-1",
+      "full_size": 29,
+      "merge_transitions": {
+        "assigned_size": 29,
+        "tp": 406,
+        "fp": 0,
+        "new_tp": 312,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.1958130394903329,
+        "cut_gain": 0.1958130394903329,
+        "selected": [
+          6,
+          10,
+          33,
+          34,
+          41,
+          42,
+          43,
+          44
+        ],
+        "split": true,
+        "total_weight": 170.93421046553954,
+        "groups": 8,
+        "unconditional_cut_under_conditioned_objective": 0.195813039490333,
+        "optimization_gain_over_unconditional_cut": -8.326672684688674e-17,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.23817015853219073,
+        "cut_gain": 0.23817015853219117,
+        "selected": [
+          6,
+          10,
+          33,
+          34,
+          41,
+          42,
+          43,
+          44
+        ],
+        "split": true,
+        "total_weight": 170.93421046553954,
+        "groups": 8
+      },
+      "cut_pairs": {
+        "tp": 94,
+        "fp": 0,
+        "lost": 312,
+        "new_tp": 0,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 94,
+        "fp": 0,
+        "lost": 312
+      },
+      "conditioned_minus_unconditional_tp": 0,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 312,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 59,
+      "source_cluster_id": 1,
+      "original_event": "III-1",
+      "full_size": 32,
+      "merge_transitions": {
+        "assigned_size": 31,
+        "tp": 465,
+        "fp": 0,
+        "new_tp": 286,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.015111863708298128,
+        "cut_gain": 0.015111863708298128,
+        "selected": [
+          7,
+          8,
+          15,
+          17,
+          50,
+          51,
+          52,
+          55,
+          56,
+          57,
+          58,
+          59
+        ],
+        "split": true,
+        "total_weight": 291.8990663491427,
+        "groups": 12,
+        "unconditional_cut_under_conditioned_objective": 0.015111863708298071,
+        "optimization_gain_over_unconditional_cut": 5.724587470723463e-17,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.03675919656722277,
+        "cut_gain": 0.03675919656722277,
+        "selected": [
+          6,
+          13,
+          52,
+          55,
+          56,
+          57,
+          58,
+          59
+        ],
+        "split": true,
+        "total_weight": 291.8990663491427,
+        "groups": 8
+      },
+      "cut_pairs": {
+        "tp": 125,
+        "fp": 0,
+        "lost": 340,
+        "new_tp": 0,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 179,
+        "fp": 0,
+        "lost": 286
+      },
+      "conditioned_minus_unconditional_tp": -54,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 340,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 19,
+      "source_cluster_id": 1,
+      "original_event": "III-1",
+      "full_size": 31,
+      "merge_transitions": {
+        "assigned_size": 31,
+        "tp": 465,
+        "fp": 0,
+        "new_tp": 271,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.008116404096293014,
+        "cut_gain": 0.008116404096293014,
+        "selected": [
+          3,
+          8,
+          54
+        ],
+        "split": true,
+        "total_weight": 748.6621780431105,
+        "groups": 3,
+        "unconditional_cut_under_conditioned_objective": 0.008116404096293203,
+        "optimization_gain_over_unconditional_cut": -1.8908485888147197e-16,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.017520191185018377,
+        "cut_gain": 0.01752019118501882,
+        "selected": [
+          3,
+          8,
+          54
+        ],
+        "split": true,
+        "total_weight": 748.6621780431103,
+        "groups": 3
+      },
+      "cut_pairs": {
+        "tp": 329,
+        "fp": 0,
+        "lost": 136,
+        "new_tp": 135,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 329,
+        "fp": 0,
+        "lost": 136
+      },
+      "conditioned_minus_unconditional_tp": 0,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 136,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 7,
+      "source_cluster_id": 3,
+      "original_event": "III-1",
+      "full_size": 27,
+      "merge_transitions": {
+        "assigned_size": 27,
+        "tp": 351,
+        "fp": 0,
+        "new_tp": 245,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.0,
+        "cut_gain": 0.0,
+        "selected": [
+          3
+        ],
+        "split": false,
+        "total_weight": 321.1120001926181,
+        "groups": 1,
+        "unconditional_cut_under_conditioned_objective": -0.027857216039962725,
+        "optimization_gain_over_unconditional_cut": 0.027857216039962725,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 4.440892098500626e-16,
+        "best_cut_score": 0.043971705294766565,
+        "cut_gain": 0.04397170529476612,
+        "selected": [
+          12,
+          14,
+          27,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48
+        ],
+        "split": true,
+        "total_weight": 321.1120001926181,
+        "groups": 14
+      },
+      "cut_pairs": {
+        "tp": 351,
+        "fp": 0,
+        "lost": 0,
+        "new_tp": 245,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 43,
+        "fp": 0,
+        "lost": 308
+      },
+      "conditioned_minus_unconditional_tp": 308,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 0,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 46,
+      "source_cluster_id": 1,
+      "original_event": "III-2",
+      "full_size": 28,
+      "merge_transitions": {
+        "assigned_size": 27,
+        "tp": 351,
+        "fp": 0,
+        "new_tp": 243,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.054484151045207097,
+        "cut_gain": 0.054484151045207097,
+        "selected": [
+          3,
+          7,
+          8,
+          34,
+          45,
+          46,
+          49,
+          50,
+          51
+        ],
+        "split": true,
+        "total_weight": 140.78266484735272,
+        "groups": 9,
+        "unconditional_cut_under_conditioned_objective": 0.030290854337522245,
+        "optimization_gain_over_unconditional_cut": 0.02419329670768485,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.4479496040520984,
+        "cut_gain": 0.4479496040520988,
+        "selected": [
+          2,
+          29
+        ],
+        "split": true,
+        "total_weight": 140.78266484735272,
+        "groups": 2
+      },
+      "cut_pairs": {
+        "tp": 73,
+        "fp": 0,
+        "lost": 278,
+        "new_tp": 0,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 169,
+        "fp": 0,
+        "lost": 182
+      },
+      "conditioned_minus_unconditional_tp": -96,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 278,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 112,
+      "source_cluster_id": 2,
+      "original_event": "III-1",
+      "full_size": 32,
+      "merge_transitions": {
+        "assigned_size": 30,
+        "tp": 435,
+        "fp": 0,
+        "new_tp": 239,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.017187813761196158,
+        "cut_gain": 0.017187813761196158,
+        "selected": [
+          3,
+          12,
+          57,
+          58,
+          59,
+          60
+        ],
+        "split": true,
+        "total_weight": 630.1391140257394,
+        "groups": 6,
+        "unconditional_cut_under_conditioned_objective": 0.017187813761196106,
+        "optimization_gain_over_unconditional_cut": 5.204170427930421e-17,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 4.440892098500626e-16,
+        "best_cut_score": 0.031166966290229872,
+        "cut_gain": 0.031166966290229428,
+        "selected": [
+          3,
+          12,
+          57,
+          58,
+          59,
+          60
+        ],
+        "split": true,
+        "total_weight": 630.1391140257394,
+        "groups": 6
+      },
+      "cut_pairs": {
+        "tp": 282,
+        "fp": 0,
+        "lost": 153,
+        "new_tp": 86,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 282,
+        "fp": 0,
+        "lost": 153
+      },
+      "conditioned_minus_unconditional_tp": 0,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 153,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 64,
+      "source_cluster_id": 42,
+      "original_event": "III-2",
+      "full_size": 26,
+      "merge_transitions": {
+        "assigned_size": 25,
+        "tp": 300,
+        "fp": 0,
+        "new_tp": 217,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.0024657849775522817,
+        "cut_gain": 0.0024657849775522817,
+        "selected": [
+          43,
+          58,
+          70,
+          89,
+          90
+        ],
+        "split": true,
+        "total_weight": 257.028755612305,
+        "groups": 5,
+        "unconditional_cut_under_conditioned_objective": 0.002465784977552298,
+        "optimization_gain_over_unconditional_cut": -1.6479873021779667e-17,
+        "objective_identity_verified": true
+      },
+      "unconditional_objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.30064345710175455,
+        "cut_gain": 0.30064345710175455,
+        "selected": [
+          43,
+          58,
+          69,
+          90
+        ],
+        "split": true,
+        "total_weight": 257.02875561230496,
+        "groups": 4
+      },
+      "cut_pairs": {
+        "tp": 81,
+        "fp": 0,
+        "lost": 219,
+        "new_tp": 8,
+        "new_fp": 0
+      },
+      "unconditional_cut_pairs": {
+        "tp": 91,
+        "fp": 0,
+        "lost": 209
+      },
+      "conditioned_minus_unconditional_tp": -10,
+      "conditioned_minus_unconditional_fp": 0,
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 219,
+      "removed_merge_fp": 0
+    }
+  ]
+}

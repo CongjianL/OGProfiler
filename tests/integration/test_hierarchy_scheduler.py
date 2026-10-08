@@ -56,6 +56,12 @@ def _command(run: Path, seed: int = 42) -> list[str]:
         "--set",
         "hierarchy.stability_mode=fast",
         "--set",
+        "hierarchy.admission_policy=legacy_strict",
+        "--set",
+        "hierarchy.topology_policy=kway_v1",
+        "--set",
+        "hierarchy.resolution_strategy=adaptive",
+        "--set",
         "hierarchy.gamma_max=0.1",
         "--set",
         f"hierarchy.seed={seed}",
@@ -74,6 +80,7 @@ def test_scheduler_parallel_resume_corruption_and_config_invalidation(tmp_path: 
         "scheduled": 2,
         "singleton_components": 8,
         "skipped": 0,
+        "unresolved": 0,
     }
     statistics = pq.read_table(run / "components" / "statistics.parquet").to_pylist()
     assert [row["n_vertices"] for row in statistics[:2]] == [6, 4]

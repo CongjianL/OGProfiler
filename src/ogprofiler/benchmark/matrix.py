@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ogprofiler.config import DEFAULT_CONFIG
+from ogprofiler.config import DEFAULT_CONFIG, load_config
 from ogprofiler.core.manifest import sha256_json, write_json
 
 
@@ -39,13 +39,20 @@ DEFAULT_AXES: dict[str, list[dict[str, Any]]] = {
         {"hierarchy.method": value} for value in ("rber", "rbcv", "cpm", "modularity")
     ],
     "gamma_strategy": [
-        {"hierarchy.resolution_strategy": "adaptive"},
-        {"hierarchy.resolution_strategy": "log_grid"},
+        {"hierarchy.resolution_strategy": "bounded_adaptive_v2"},
+        {
+            "hierarchy.resolution_strategy": "log_grid",
+            "hierarchy.admission_policy": "legacy_strict",
+            # Legacy search needs its compatible topology, not the soft42 default.
+            "hierarchy.topology_policy": "kway_v1",
+            # Compare search policies at the same explicit optimization budget.
+            "hierarchy.leiden_iterations": 10,
+        },
     ],
     "split_acceptance": [
-        {"hierarchy.min_family_size": 2, "hierarchy.max_child_fraction": 0.95},
-        {"hierarchy.min_family_size": 3, "hierarchy.max_child_fraction": 0.90},
-        {"hierarchy.min_family_size": 5, "hierarchy.max_child_fraction": 0.80},
+        {"hierarchy.max_child_fraction": 0.95},
+        {"hierarchy.max_child_fraction": 0.90},
+        {"hierarchy.max_child_fraction": 0.80},
     ],
     "seed": [{"hierarchy.seed": value} for value in (7, 42, 104729)],
 }
@@ -80,10 +87,7 @@ def generate_ofat_matrix(
                 continue
             seen.add(overrides)
             identity = sha256_json({"axis": axis, "overrides": overrides})[:12]
-            config = {section: dict(values) for section, values in DEFAULT_CONFIG.items()}
-            for key, item in value.items():
-                section, name = key.split(".", 1)
-                config[section][name] = item
+            config = load_config(overrides=list(overrides))
             runs.append(
                 MatrixRun(
                     f"{axis}-{identity}",

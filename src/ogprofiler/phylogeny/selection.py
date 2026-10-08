@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import csv
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from ogprofiler.core.manifest import sha256_file
 from ogprofiler.exceptions import PhylogenyError
 
 
@@ -27,6 +29,53 @@ def _tsv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
+def terminal_result_paths(run_root: Path) -> tuple[Path, Path, Path, Path]:
+    """Refinement remains terminal-family evidence, independent of OG selection."""
+    root = run_root / "results"
+    if (root / "terminal_families.tsv").is_file():
+        manifest_path = root / "export-manifest.json"
+        try:
+            manifest = json.loads(manifest_path.read_text())
+            if manifest["parameters"]["strategy"] != "v1_compatible":
+                raise PhylogenyError("Terminal diagnostic export is not complete")
+            for name in (
+                "terminal_families.tsv",
+                "terminal_members.tsv",
+                "hierarchy.tsv",
+                "events.tsv",
+            ):
+                if sha256_file(root / name) != manifest["output_checksums"][name]:
+                    raise PhylogenyError("Terminal diagnostics are corrupt; rerun export")
+            for name, checksum in manifest["input_checksums"].items():
+                if name.startswith(
+                    ("hierarchy/", "evolution/components/", "components/", "input/proteins.parquet")
+                ):
+                    if sha256_file(run_root / name) != checksum:
+                        raise PhylogenyError("Terminal diagnostics are stale; rerun export")
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            raise PhylogenyError(f"Invalid terminal diagnostic export: {error}") from error
+        return (
+            root / "terminal_families.tsv",
+            root / "terminal_members.tsv",
+            root / "hierarchy.tsv",
+            root / "events.tsv",
+        )
+    diagnostic = root / "terminal-families"
+    if (diagnostic / "export-manifest.json").is_file():
+        return (
+            diagnostic / "families.tsv",
+            diagnostic / "members.tsv",
+            diagnostic / "hierarchy.tsv",
+            diagnostic / "events.tsv",
+        )
+    # Explicitly retain pre-P4 terminal exchange fixtures/legacy workspaces only.
+    families = root / "families.tsv"
+    rows = _tsv(families)
+    if rows and not {"cluster_id", "terminal_reason", "network_event"}.issubset(rows[0]):
+        raise PhylogenyError("Refinement requires terminal-family diagnostics; rerun export")
+    return families, root / "members.tsv", root / "hierarchy.tsv", root / "events.tsv"
+
+
 def select_refinement_families(
     run_root: Path,
     *,
@@ -35,9 +84,10 @@ def select_refinement_families(
     large_family_size: int,
     max_families: int,
 ) -> tuple[RefinementFamily, ...]:
-    family_rows = _tsv(run_root / "results" / "families.tsv")
-    hierarchy_rows = _tsv(run_root / "results" / "hierarchy.tsv")
-    event_rows = _tsv(run_root / "results" / "events.tsv")
+    families_path, _, hierarchy_path, events_path = terminal_result_paths(run_root)
+    family_rows = _tsv(families_path)
+    hierarchy_rows = _tsv(hierarchy_path)
+    event_rows = _tsv(events_path)
     known = {row["family_id"] for row in family_rows}
     unknown = sorted(set(explicit_family_ids) - known)
     if unknown:

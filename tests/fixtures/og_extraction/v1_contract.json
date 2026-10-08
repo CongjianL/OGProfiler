@@ -1,0 +1,1127 @@
+{
+  "cases": [
+    {
+      "name": "binary_disjoint",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "a",
+          "genes": [
+            "s0|a"
+          ],
+          "species": [
+            "s0"
+          ]
+        },
+        {
+          "name": "b",
+          "genes": [
+            "s1|b"
+          ],
+          "species": [
+            "s1"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "r",
+          "a"
+        ],
+        [
+          "r",
+          "b"
+        ]
+      ],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": "I",
+          "a": null,
+          "b": null
+        },
+        "groups": [
+          {
+            "source": "r",
+            "level": 2,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": [
+              "a",
+              "b",
+              "r"
+            ]
+          }
+        ],
+        "remaining_nodes": [
+          "r"
+        ],
+        "remaining_degrees": {
+          "r": 0
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "parent_II_child_I",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s1|b",
+            "s0|c",
+            "s1|d"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "a",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "b",
+          "genes": [
+            "s0|c",
+            "s1|d"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "a0",
+          "genes": [
+            "s0|a"
+          ],
+          "species": [
+            "s0"
+          ]
+        },
+        {
+          "name": "a1",
+          "genes": [
+            "s1|b"
+          ],
+          "species": [
+            "s1"
+          ]
+        },
+        {
+          "name": "b0",
+          "genes": [
+            "s0|c"
+          ],
+          "species": [
+            "s0"
+          ]
+        },
+        {
+          "name": "b1",
+          "genes": [
+            "s1|d"
+          ],
+          "species": [
+            "s1"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "r",
+          "a"
+        ],
+        [
+          "r",
+          "b"
+        ],
+        [
+          "a",
+          "a0"
+        ],
+        [
+          "a",
+          "a1"
+        ],
+        [
+          "b",
+          "b0"
+        ],
+        [
+          "b",
+          "b1"
+        ]
+      ],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": "II",
+          "a": "I",
+          "b": "I",
+          "a0": null,
+          "a1": null,
+          "b0": null,
+          "b1": null
+        },
+        "groups": [
+          {
+            "source": "a",
+            "level": 2,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": [
+              "a0",
+              "a1",
+              "a"
+            ]
+          },
+          {
+            "source": "b",
+            "level": 2,
+            "reported_count": 2,
+            "members": [
+              "s0|c",
+              "s1|d"
+            ],
+            "consumed": [
+              "b0",
+              "b1",
+              "b"
+            ]
+          }
+        ],
+        "remaining_nodes": [
+          "r",
+          "a",
+          "b"
+        ],
+        "remaining_degrees": {
+          "r": 2,
+          "a": 1,
+          "b": 1
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "partial_III1",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s1|b",
+            "s0|c"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "a",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "b",
+          "genes": [
+            "s0|c"
+          ],
+          "species": [
+            "s0"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "r",
+          "a"
+        ],
+        [
+          "r",
+          "b"
+        ]
+      ],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": "III-1",
+          "a": null,
+          "b": null
+        },
+        "groups": [
+          {
+            "source": "a",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": null
+          },
+          {
+            "source": "b",
+            "level": 1,
+            "reported_count": 1,
+            "members": [
+              "s0|c"
+            ],
+            "consumed": null
+          }
+        ],
+        "remaining_nodes": [
+          "r",
+          "a",
+          "b"
+        ],
+        "remaining_degrees": {
+          "r": 2,
+          "a": 1,
+          "b": 1
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "partial_III2",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s1|b",
+            "s0|c",
+            "s2|e"
+          ],
+          "species": [
+            "s0",
+            "s1",
+            "s2"
+          ]
+        },
+        {
+          "name": "a",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "b",
+          "genes": [
+            "s0|c",
+            "s2|e"
+          ],
+          "species": [
+            "s0",
+            "s2"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "r",
+          "a"
+        ],
+        [
+          "r",
+          "b"
+        ]
+      ],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": "III-2",
+          "a": null,
+          "b": null
+        },
+        "groups": [
+          {
+            "source": "a",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": null
+          },
+          {
+            "source": "b",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s0|c",
+              "s2|e"
+            ],
+            "consumed": null
+          }
+        ],
+        "remaining_nodes": [
+          "r",
+          "a",
+          "b"
+        ],
+        "remaining_degrees": {
+          "r": 2,
+          "a": 1,
+          "b": 1
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "polytomy_residual_multispecies",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s1|b",
+            "s0|c",
+            "s1|d",
+            "s2|e",
+            "s2|f"
+          ],
+          "species": [
+            "s0",
+            "s1",
+            "s2"
+          ]
+        },
+        {
+          "name": "a",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "b",
+          "genes": [
+            "s0|c",
+            "s2|e"
+          ],
+          "species": [
+            "s0",
+            "s2"
+          ]
+        },
+        {
+          "name": "c",
+          "genes": [
+            "s1|d",
+            "s2|f"
+          ],
+          "species": [
+            "s1",
+            "s2"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "r",
+          "a"
+        ],
+        [
+          "r",
+          "b"
+        ],
+        [
+          "r",
+          "c"
+        ]
+      ],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": "III-3",
+          "a": null,
+          "b": null,
+          "c": null
+        },
+        "groups": [
+          {
+            "source": "a",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": null
+          },
+          {
+            "source": "b",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s0|c",
+              "s2|e"
+            ],
+            "consumed": null
+          },
+          {
+            "source": "c",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s1|d",
+              "s2|f"
+            ],
+            "consumed": null
+          }
+        ],
+        "remaining_nodes": [
+          "r",
+          "a",
+          "b",
+          "c"
+        ],
+        "remaining_degrees": {
+          "r": 3,
+          "a": 1,
+          "b": 1,
+          "c": 1
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "coverage_then_residual",
+      "vertices": [
+        {
+          "name": "large",
+          "genes": [
+            "s0|a",
+            "s1|b",
+            "s0|c",
+            "s1|d"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "small",
+          "genes": [
+            "s0|x",
+            "s1|y",
+            "s2|z"
+          ],
+          "species": [
+            "s0",
+            "s1",
+            "s2"
+          ]
+        }
+      ],
+      "edges": [],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "large": null,
+          "small": "I"
+        },
+        "groups": [
+          {
+            "source": "small",
+            "level": 3,
+            "reported_count": 3,
+            "members": [
+              "s0|x",
+              "s1|y",
+              "s2|z"
+            ],
+            "consumed": [
+              "small"
+            ]
+          },
+          {
+            "source": "large",
+            "level": 1,
+            "reported_count": 4,
+            "members": [
+              "s0|a",
+              "s0|c",
+              "s1|b",
+              "s1|d"
+            ],
+            "consumed": null
+          }
+        ],
+        "remaining_nodes": [
+          "large",
+          "small"
+        ],
+        "remaining_degrees": {
+          "large": 0,
+          "small": 0
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "degree_zero_unique",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        }
+      ],
+      "edges": [],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": "I"
+        },
+        "groups": [
+          {
+            "source": "r",
+            "level": 2,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": [
+              "r"
+            ]
+          }
+        ],
+        "remaining_nodes": [
+          "r"
+        ],
+        "remaining_degrees": {
+          "r": 0
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "degree_zero_duplicate",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s0|c"
+          ],
+          "species": [
+            "s0"
+          ]
+        }
+      ],
+      "edges": [],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": null
+        },
+        "groups": [
+          {
+            "source": "r",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s0|c"
+            ],
+            "consumed": null
+          }
+        ],
+        "remaining_nodes": [
+          "r"
+        ],
+        "remaining_degrees": {
+          "r": 0
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "singleton_isolate",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a"
+          ],
+          "species": [
+            "s0"
+          ]
+        }
+      ],
+      "edges": [],
+      "n_species": 3,
+      "isolates": [
+        "s0|a"
+      ],
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": "I"
+        },
+        "groups": [
+          {
+            "source": "s0|a",
+            "level": 0,
+            "reported_count": 1,
+            "members": [
+              "s0|a"
+            ],
+            "consumed": null
+          }
+        ],
+        "remaining_nodes": [
+          "r"
+        ],
+        "remaining_degrees": {
+          "r": 0
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "same_rank_tie",
+      "vertices": [
+        {
+          "name": "first",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "second",
+          "genes": [
+            "s0|c",
+            "s1|d"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        }
+      ],
+      "edges": [],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "first": "I",
+          "second": "I"
+        },
+        "groups": [
+          {
+            "source": "first",
+            "level": 2,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": [
+              "first"
+            ]
+          },
+          {
+            "source": "second",
+            "level": 2,
+            "reported_count": 2,
+            "members": [
+              "s0|c",
+              "s1|d"
+            ],
+            "consumed": [
+              "second"
+            ]
+          }
+        ],
+        "remaining_nodes": [
+          "first",
+          "second"
+        ],
+        "remaining_degrees": {
+          "first": 0,
+          "second": 0
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "equal_members_unary_root",
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "child",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "r",
+          "child"
+        ]
+      ],
+      "n_species": 3,
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": null,
+          "child": null
+        },
+        "groups": [
+          {
+            "source": "r",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": null
+          },
+          {
+            "source": "child",
+            "level": 1,
+            "reported_count": 2,
+            "members": [
+              "s0|a",
+              "s1|b"
+            ],
+            "consumed": null
+          }
+        ],
+        "remaining_nodes": [
+          "r",
+          "child"
+        ],
+        "remaining_degrees": {
+          "r": 1,
+          "child": 1
+        },
+        "unassigned": [],
+        "duplicate_members": [
+          "s0|a",
+          "s1|b"
+        ]
+      }
+    },
+    {
+      "name": "nested_same_coverage_largest_first",
+      "overlap_count": 1,
+      "n_species": 2,
+      "vertices": [
+        {
+          "name": "r",
+          "genes": [
+            "s0|a",
+            "s1|b",
+            "s0|c"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "a",
+          "genes": [
+            "s0|a",
+            "s1|b"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "b",
+          "genes": [
+            "s0|c"
+          ],
+          "species": [
+            "s0"
+          ]
+        },
+        {
+          "name": "a0",
+          "genes": [
+            "s0|a"
+          ],
+          "species": [
+            "s0"
+          ]
+        },
+        {
+          "name": "a1",
+          "genes": [
+            "s1|b"
+          ],
+          "species": [
+            "s1"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "r",
+          "a"
+        ],
+        [
+          "r",
+          "b"
+        ],
+        [
+          "a",
+          "a0"
+        ],
+        [
+          "a",
+          "a1"
+        ]
+      ],
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "r": "I",
+          "a": "I",
+          "b": null,
+          "a0": null,
+          "a1": null
+        },
+        "groups": [
+          {
+            "source": "r",
+            "level": 2,
+            "reported_count": 3,
+            "members": [
+              "s0|a",
+              "s0|c",
+              "s1|b"
+            ],
+            "consumed": [
+              "a",
+              "b",
+              "a0",
+              "a1",
+              "r"
+            ]
+          }
+        ],
+        "remaining_nodes": [
+          "r"
+        ],
+        "remaining_degrees": {
+          "r": 0
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    },
+    {
+      "name": "coverage_priority_over_gene_size",
+      "n_species": 3,
+      "vertices": [
+        {
+          "name": "large",
+          "genes": [
+            "s0|a",
+            "s0|c",
+            "s1|b",
+            "s1|d"
+          ],
+          "species": [
+            "s0",
+            "s1"
+          ]
+        },
+        {
+          "name": "small",
+          "genes": [
+            "s0|x",
+            "s1|y",
+            "s2|z"
+          ],
+          "species": [
+            "s0",
+            "s1",
+            "s2"
+          ]
+        },
+        {
+          "name": "a",
+          "genes": [
+            "s0|a",
+            "s0|c"
+          ],
+          "species": [
+            "s0"
+          ]
+        },
+        {
+          "name": "b",
+          "genes": [
+            "s1|b",
+            "s1|d"
+          ],
+          "species": [
+            "s1"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "large",
+          "a"
+        ],
+        [
+          "large",
+          "b"
+        ]
+      ],
+      "expected": {
+        "reference_sha256": "35607fb7cdbd5f8db6c6a3bc3f22df953884b24af2df023f79307bdfcdc4ac3b",
+        "raw_events": {
+          "large": "I",
+          "small": "I",
+          "a": null,
+          "b": null
+        },
+        "groups": [
+          {
+            "source": "small",
+            "level": 3,
+            "reported_count": 3,
+            "members": [
+              "s0|x",
+              "s1|y",
+              "s2|z"
+            ],
+            "consumed": [
+              "small"
+            ]
+          },
+          {
+            "source": "large",
+            "level": 2,
+            "reported_count": 4,
+            "members": [
+              "s0|a",
+              "s0|c",
+              "s1|b",
+              "s1|d"
+            ],
+            "consumed": [
+              "a",
+              "b",
+              "large"
+            ]
+          }
+        ],
+        "remaining_nodes": [
+          "large",
+          "small"
+        ],
+        "remaining_degrees": {
+          "large": 0,
+          "small": 0
+        },
+        "unassigned": [],
+        "duplicate_members": []
+      }
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import sys
 import time
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
+from typing import TypedDict
 
 import igraph as ig
 import psutil
@@ -14,18 +15,38 @@ import psutil
 from ogprofiler.core.models import HierarchyNode
 from ogprofiler.graph.components import Component
 from ogprofiler.hierarchy.leiden import LeidenCallCounter
-from ogprofiler.hierarchy.resolution import ResolutionSearchConfig, search_resolution
+from ogprofiler.hierarchy.resolution import ResolutionSearchConfig, _seed_count, search_resolution
 
 
 @dataclass(frozen=True, slots=True)
 class HierarchyConfig:
+    recursion_stop_size: int = 1
+    component_leiden_call_budget: int | None = None
+    leiden_iterations: int = 10
     method: str = "rber"
     seed: int = 42
     max_depth: int = 20
-    stability_mode: str = "fast"
+    stability_mode: str = "robust"
     subtree_workers: int = 1
     subtree_release_size: int = 50_000
     resolution: ResolutionSearchConfig = ResolutionSearchConfig()
+
+    def validate(self) -> None:
+        self.resolution.validate()
+        if type(self.recursion_stop_size) is not int or self.recursion_stop_size < 1:
+            raise ValueError("recursion_stop_size must be a positive integer")
+        if type(self.leiden_iterations) is not int or self.leiden_iterations < 1:
+            raise ValueError("leiden_iterations must be positive and finite")
+        if (
+            self.component_leiden_call_budget is not None
+            and self.resolution.admission_policy == "legacy_strict"
+        ):
+            raise ValueError("Component budget requires bounded_adaptive_v2")
+        if self.component_leiden_call_budget is not None and (
+            type(self.component_leiden_call_budget) is not int
+            or self.component_leiden_call_budget < 1
+        ):
+            raise ValueError("component_leiden_call_budget must be a positive integer or null")
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,6 +77,18 @@ class ResolutionCandidateTrace:
     rejection_reason: str | None
     valid: bool
     selected: bool
+    violations: tuple[str, ...] = ()
+    structural_valid: bool = True
+    policy_valid: bool = True
+    phase: str = "legacy"
+    evaluation_index: int = 0
+    evaluation_budget: int = 0
+    stability_evaluated: bool = True
+    binary_eligible: bool | None = None
+    kway_eligible: bool | None = None
+    original_violations: tuple[str, ...] = ()
+    selection_kind: str | None = None
+    refinement_truncated: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -102,6 +135,16 @@ def _terminal_reason(
 ) -> str | None:
     if len(global_ids) == 1:
         return "SINGLETON"
+    if config.resolution.admission_policy == "nonempty_children_v1":
+        if len(global_ids) <= config.recursion_stop_size:
+            return "SIZE_STOP"
+        if species_by_protein is not None and _species_count(global_ids, species_by_protein) <= 1:
+            return "ONE_SPECIES"
+        if depth >= config.max_depth:
+            return "DEPTH_LIMIT"
+        if graph.ecount() == 0:
+            return "NO_EDGE_SUPPORT"
+        return None
     if len(global_ids) < 2 * config.resolution.min_child_size:
         return "MIN_SIZE"
     if depth >= config.max_depth:
@@ -113,6 +156,30 @@ def _terminal_reason(
     return None
 
 
+class NodeOutcome(TypedDict, total=False):
+    split_status: str
+    terminal_reason: str | None
+    search_status: str | None
+    termination_kind: str | None
+    failure_codes: tuple[str, ...]
+
+
+def node_outcome(reason: str | None, config: HierarchyConfig) -> NodeOutcome:
+    """Shared DFS/subtree state semantics; structural leaves retain membership."""
+    if config.resolution.admission_policy == "legacy_strict":
+        return {"split_status": "TERMINAL" if reason else "SPLIT", "terminal_reason": reason}
+    if reason is None:
+        return {"split_status": "SPLIT", "search_status": "ACCEPTED"}
+    policy = reason in {"SINGLETON", "SIZE_STOP", "ONE_SPECIES"}
+    return {
+        "split_status": "TERMINAL" if policy else "UNRESOLVED",
+        "terminal_reason": reason,
+        "search_status": "POLICY_STOP" if policy else reason,
+        "termination_kind": "POLICY" if policy else "SEARCH",
+        "failure_codes": () if policy else (reason,),
+    }
+
+
 def infer_component_hierarchy(
     component: Component,
     config: HierarchyConfig,
@@ -122,7 +189,7 @@ def infer_component_hierarchy(
     """Infer one component from root to terminal families using explicit DFS."""
 
     started = time.perf_counter()
-    config.resolution.validate()
+    config.validate()
     root_global_ids = component.vertices
     if root_graph is None:
         root_graph, root_global_ids = component.as_edge_table().to_igraph()
@@ -139,7 +206,7 @@ def infer_component_hierarchy(
     stack = [_WorkItem(0, None, 0, tuple(range(len(root_global_ids))))]
     terminal_membership: dict[int, int] = {}
     resolution_candidates: list[ResolutionCandidateTrace] = []
-    call_counter = LeidenCallCounter()
+    call_counter = LeidenCallCounter(n_iterations=config.leiden_iterations)
     subgraph_constructions = 0
     next_cluster_id = 1
 
@@ -156,15 +223,32 @@ def infer_component_hierarchy(
 
         reason = _terminal_reason(graph, global_ids, work.depth, config, species_by_protein)
         if reason is not None:
-            nodes[work.cluster_id] = replace(
-                nodes[work.cluster_id], split_status="TERMINAL", terminal_reason=reason
-            )
+            nodes[work.cluster_id] = replace(nodes[work.cluster_id], **node_outcome(reason, config))
             terminal_membership.update({protein_id: work.cluster_id for protein_id in global_ids})
             continue
 
+        resolution_config = config.resolution
+        if config.component_leiden_call_budget is not None:
+            available = (config.component_leiden_call_budget - call_counter.count) // _seed_count(
+                config.stability_mode, resolution_config.publication_seeds
+            )
+            if available < 1:
+                nodes[work.cluster_id] = replace(
+                    nodes[work.cluster_id], **node_outcome("COMPONENT_BUDGET_EXHAUSTED", config)
+                )
+                terminal_membership.update(
+                    {protein_id: work.cluster_id for protein_id in global_ids}
+                )
+                continue
+            resolution_config = replace(
+                resolution_config,
+                max_candidate_evaluations=min(
+                    available, resolution_config.max_candidate_evaluations
+                ),
+            )
         search = search_resolution(
             graph,
-            config.resolution,
+            resolution_config,
             method=config.method,
             weights="weight",
             seed=config.seed,
@@ -189,14 +273,25 @@ def infer_component_hierarchy(
                 rejection_reason=candidate.rejection_reason,
                 valid=candidate.valid,
                 selected=selected is not None and candidate.gamma == selected.gamma,
+                violations=candidate.violations,
+                structural_valid=candidate.structural_valid,
+                policy_valid=candidate.policy_valid,
+                phase=candidate.phase,
+                evaluation_index=candidate.evaluation_index,
+                evaluation_budget=candidate.evaluation_budget,
+                stability_evaluated=candidate.stability_evaluated,
+                binary_eligible=candidate.binary_eligible,
+                kway_eligible=candidate.kway_eligible,
+                original_violations=candidate.original_violations,
+                selection_kind=candidate.selection_kind,
+                refinement_truncated=candidate.refinement_truncated,
             )
             for candidate in search.candidates
         )
         if selected is None:
             nodes[work.cluster_id] = replace(
                 nodes[work.cluster_id],
-                split_status="TERMINAL",
-                terminal_reason=search.terminal_reason or "GAMMA_LIMIT",
+                **node_outcome(search.terminal_reason or "GAMMA_LIMIT", config),
             )
             terminal_membership.update({protein_id: work.cluster_id for protein_id in global_ids})
             continue
@@ -212,8 +307,13 @@ def infer_component_hierarchy(
             nodes[work.cluster_id],
             resolution=selected.gamma,
             quality=selected.quality,
+            selection_kind=selected.selection_kind,
+            refinement_truncated=selected.refinement_truncated,
             child_count=len(ordered_groups),
-            split_status="SPLIT",
+            **node_outcome(None, config),
+            selection_phase=selected.phase
+            if config.resolution.admission_policy != "legacy_strict"
+            else None,
         )
 
         children: list[_WorkItem] = []
@@ -239,6 +339,35 @@ def infer_component_hierarchy(
                 )
             )
         stack.extend(reversed(children))
+
+    if config.resolution.admission_policy == "nonempty_children_v1":
+        # Match sorted subtree paths even when DFS creates grandchildren before siblings run.
+        child_ids: dict[int, list[int]] = {}
+        for node in nodes.values():
+            if node.parent_id is not None:
+                child_ids.setdefault(node.parent_id, []).append(node.cluster_id)
+        order: list[int] = []
+        pending = [0]
+        while pending:
+            current = pending.pop()
+            order.append(current)
+            pending.extend(reversed(sorted(child_ids.get(current, []))))
+        mapping = {old: new for new, old in enumerate(order)}
+        nodes = {
+            mapping[old]: replace(
+                node,
+                cluster_id=mapping[old],
+                parent_id=None if node.parent_id is None else mapping[node.parent_id],
+            )
+            for old, node in nodes.items()
+        }
+        terminal_membership = {
+            protein: mapping[cluster] for protein, cluster in terminal_membership.items()
+        }
+        resolution_candidates = [
+            replace(candidate, cluster_id=mapping[candidate.cluster_id])
+            for candidate in resolution_candidates
+        ]
 
     metrics = HierarchyMetrics(
         runtime_seconds=time.perf_counter() - started,

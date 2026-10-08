@@ -15,6 +15,7 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from ogprofiler import __version__
+from ogprofiler.config import load_config
 from ogprofiler.core.manifest import sha256_file, write_json
 from ogprofiler.exceptions import CheckpointError, InputError
 
@@ -25,6 +26,7 @@ PIPELINE_STAGES = (
     "components",
     "hierarchy",
     "annotate-network",
+    "orthogroups",
     "export",
 )
 
@@ -72,10 +74,17 @@ def pipeline_commands(
         elif stage == "hierarchy":
             command = ["hierarchy-all", "--run", str(run_root), *common]
         elif stage == "export":
-            command = ["export", "--run", str(run_root)]
+            command = ["export", "--run", str(run_root), *common]
         else:
             command = [stage, "--run", str(run_root), *common]
         commands.append(tuple(command))
+    if until_stage == "export":
+        config_path = config
+        if config_path is None and (run_root / "run.yaml").is_file():
+            config_path = run_root / "run.yaml"
+        resolved = load_config(str(config_path) if config_path else None, list(overrides))
+        if resolved["output"]["emit_pairwise_orthologs"]:
+            commands.append(("orthologs", "--run", str(run_root), *common))
     return tuple(commands)
 
 
@@ -87,6 +96,7 @@ def _artifact_status(run_root: Path) -> tuple[StageStatus, ...]:
         ("components", run_root / "components/component-manifest.json"),
         ("hierarchy", run_root / "hierarchy/scheduler-manifest.json"),
         ("annotate-network", run_root / "evolution/network-event-manifest.json"),
+        ("orthogroups", run_root / "orthogroups/og-manifest.json"),
         ("export", run_root / "results/export-manifest.json"),
     )
     first_missing = False
@@ -94,6 +104,12 @@ def _artifact_status(run_root: Path) -> tuple[StageStatus, ...]:
     for stage, path in artifacts:
         if path.is_file():
             status = "DONE"
+            if stage == "orthogroups":
+                try:
+                    value = json.loads(path.read_text())["status"]
+                    status = value if value in {"DONE", "FAILED"} else "INVALID"
+                except (OSError, ValueError, KeyError, TypeError):
+                    status = "INVALID"
         elif first_missing:
             status = "PENDING"
         else:
@@ -118,8 +134,10 @@ def run_status(run_root: Path) -> dict[str, Any]:
                     tasks[str(status)] = int(count)
         except sqlite3.Error as error:
             raise CheckpointError(f"Failed to inspect {database}: {error}") from error
-    overall = "FAILED" if tasks["FAILED"] else (
-        "COMPLETE" if all(row.status == "DONE" for row in stages) else "IN_PROGRESS"
+    overall = (
+        "FAILED"
+        if tasks["FAILED"] or any(row.status == "FAILED" for row in stages)
+        else ("COMPLETE" if all(row.status == "DONE" for row in stages) else "IN_PROGRESS")
     )
     return {
         "run_root": str(run_root.resolve()),

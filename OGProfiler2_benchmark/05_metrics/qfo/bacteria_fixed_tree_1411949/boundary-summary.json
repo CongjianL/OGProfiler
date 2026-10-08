@@ -1,0 +1,1919 @@
+{
+  "diagnostic_only": true,
+  "production_changed": false,
+  "source_run": "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045553Z_e8c26772c335_32efeb60_54892/campaign/v2",
+  "reference_dir": "/home/mselab/licj/projects/running/ogprofiler-runs/20261007T045622Z_e8c26772c335_32efeb60_59156/campaign/of3/Results_Oct07/Orthogroups",
+  "fixed_graph_sha256": "e0ee696e04817f356bec17651ae9657bfc897df8a0b20dca7e0028f17597b924",
+  "audit_report_sha256": "f112483563eeda468823005981782955bc849cd936f59497b1efcd9f6e408694",
+  "diagnostic_source_sha256": "e4f911270a3633d09da6b5c9dfc0f4609f4df5ee254d2898adef8ade08ff4e2c",
+  "attribution_scope": "Actual lost reference pairs by LCA; opportunities/constraints, not causal policy attribution",
+  "purity_scope": "OF3 assigned universe only; unassigned excluded",
+  "cross_component_lost_pairs": 23,
+  "lca_losses": {
+    "within_structural_leaf": 0,
+    "pure_assigned_lca_tree_available": 52121,
+    "mixed_assigned_lca_requires_contamination": 123986,
+    "within_component_lost_pairs": 176107
+  },
+  "actual": {
+    "proteins": 62466,
+    "reference_groups": 9828,
+    "predicted_groups": 18941,
+    "missing_predictions": 0,
+    "excluded_predictions": 20041,
+    "true_positive_pairs": 209075,
+    "reference_pairs": 385205,
+    "predicted_pairs": 273080,
+    "discordant_pairs": 64005,
+    "lost_pairs": 176130,
+    "pair_precision": 0.7656181338801816,
+    "pair_recall": 0.5427629444062253,
+    "pair_f1": 0.6352111927204782,
+    "bcubed_precision": 0.8726439567764697,
+    "bcubed_recall": 0.6644429564527639,
+    "macro_best_f1": 0.7891260328656221,
+    "exact_reference_groups": 4382,
+    "split_reference_groups": 4373,
+    "merged_predicted_groups": 1884,
+    "component_pair_recall_ceiling": 0.9999402915330798,
+    "reference_pairs_across_components": 23,
+    "cross_component_predicted_pairs": 0,
+    "top_splits": [
+      {
+        "reference_og": "OG0000000",
+        "size": 149,
+        "fragments": 61,
+        "lost_pairs": 10009,
+        "best_f1": 0.4148936170212766
+      },
+      {
+        "reference_og": "OG0000001",
+        "size": 135,
+        "fragments": 72,
+        "lost_pairs": 8880,
+        "best_f1": 0.16326530612244897
+      },
+      {
+        "reference_og": "OG0000003",
+        "size": 103,
+        "fragments": 26,
+        "lost_pairs": 4309,
+        "best_f1": 0.5072463768115942
+      },
+      {
+        "reference_og": "OG0000007",
+        "size": 70,
+        "fragments": 33,
+        "lost_pairs": 2334,
+        "best_f1": 0.18181818181818182
+      },
+      {
+        "reference_og": "OG0000009",
+        "size": 64,
+        "fragments": 34,
+        "lost_pairs": 1956,
+        "best_f1": 0.17142857142857143
+      },
+      {
+        "reference_og": "OG0000011",
+        "size": 60,
+        "fragments": 25,
+        "lost_pairs": 1668,
+        "best_f1": 0.2857142857142857
+      },
+      {
+        "reference_og": "OG0000013",
+        "size": 53,
+        "fragments": 21,
+        "lost_pairs": 1212,
+        "best_f1": 0.463768115942029
+      },
+      {
+        "reference_og": "OG0000014",
+        "size": 51,
+        "fragments": 17,
+        "lost_pairs": 1077,
+        "best_f1": 0.5217391304347826
+      },
+      {
+        "reference_og": "OG0000016",
+        "size": 45,
+        "fragments": 16,
+        "lost_pairs": 893,
+        "best_f1": 0.35714285714285715
+      },
+      {
+        "reference_og": "OG0000017",
+        "size": 43,
+        "fragments": 18,
+        "lost_pairs": 836,
+        "best_f1": 0.3137254901960784
+      },
+      {
+        "reference_og": "OG0000019",
+        "size": 42,
+        "fragments": 10,
+        "lost_pairs": 716,
+        "best_f1": 0.4074074074074074
+      },
+      {
+        "reference_og": "OG0000024",
+        "size": 40,
+        "fragments": 20,
+        "lost_pairs": 707,
+        "best_f1": 0.43137254901960786
+      },
+      {
+        "reference_og": "OG0000020",
+        "size": 41,
+        "fragments": 14,
+        "lost_pairs": 689,
+        "best_f1": 0.4528301886792453
+      },
+      {
+        "reference_og": "OG0000015",
+        "size": 45,
+        "fragments": 18,
+        "lost_pairs": 686,
+        "best_f1": 0.704225352112676
+      },
+      {
+        "reference_og": "OG0000018",
+        "size": 42,
+        "fragments": 13,
+        "lost_pairs": 657,
+        "best_f1": 0.6451612903225806
+      },
+      {
+        "reference_og": "OG0000012",
+        "size": 57,
+        "fragments": 2,
+        "lost_pairs": 656,
+        "best_f1": 0.8118811881188119
+      },
+      {
+        "reference_og": "OG0000028",
+        "size": 39,
+        "fragments": 16,
+        "lost_pairs": 646,
+        "best_f1": 0.4074074074074074
+      },
+      {
+        "reference_og": "OG0000027",
+        "size": 39,
+        "fragments": 12,
+        "lost_pairs": 640,
+        "best_f1": 0.4528301886792453
+      },
+      {
+        "reference_og": "OG0000029",
+        "size": 38,
+        "fragments": 15,
+        "lost_pairs": 629,
+        "best_f1": 0.3829787234042553
+      },
+      {
+        "reference_og": "OG0000032",
+        "size": 37,
+        "fragments": 17,
+        "lost_pairs": 600,
+        "best_f1": 0.3384615384615385
+      },
+      {
+        "reference_og": "OG0000033",
+        "size": 37,
+        "fragments": 18,
+        "lost_pairs": 555,
+        "best_f1": 0.5769230769230769
+      },
+      {
+        "reference_og": "OG0000031",
+        "size": 38,
+        "fragments": 8,
+        "lost_pairs": 551,
+        "best_f1": 0.5384615384615384
+      },
+      {
+        "reference_og": "OG0000044",
+        "size": 34,
+        "fragments": 21,
+        "lost_pairs": 531,
+        "best_f1": 0.34146341463414637
+      },
+      {
+        "reference_og": "OG0000053",
+        "size": 33,
+        "fragments": 32,
+        "lost_pairs": 527,
+        "best_f1": 0.11428571428571428
+      },
+      {
+        "reference_og": "OG0000041",
+        "size": 35,
+        "fragments": 18,
+        "lost_pairs": 522,
+        "best_f1": 0.4090909090909091
+      },
+      {
+        "reference_og": "OG0000030",
+        "size": 38,
+        "fragments": 19,
+        "lost_pairs": 513,
+        "best_f1": 0.6896551724137931
+      },
+      {
+        "reference_og": "OG0000054",
+        "size": 33,
+        "fragments": 16,
+        "lost_pairs": 489,
+        "best_f1": 0.3076923076923077
+      },
+      {
+        "reference_og": "OG0000040",
+        "size": 35,
+        "fragments": 14,
+        "lost_pairs": 480,
+        "best_f1": 0.5660377358490566
+      },
+      {
+        "reference_og": "OG0000047",
+        "size": 34,
+        "fragments": 12,
+        "lost_pairs": 480,
+        "best_f1": 0.45454545454545453
+      },
+      {
+        "reference_og": "OG0000045",
+        "size": 34,
+        "fragments": 13,
+        "lost_pairs": 478,
+        "best_f1": 0.4897959183673469
+      }
+    ],
+    "top_merges": [
+      {
+        "predicted_og": "OG000023334",
+        "size": 158,
+        "reference_ogs": 3,
+        "discordant_pairs": 6209
+      },
+      {
+        "predicted_og": "OG000018242",
+        "size": 69,
+        "reference_ogs": 4,
+        "discordant_pairs": 1564
+      },
+      {
+        "predicted_og": "OG000005296",
+        "size": 64,
+        "reference_ogs": 3,
+        "discordant_pairs": 1073
+      },
+      {
+        "predicted_og": "OG000011679",
+        "size": 48,
+        "reference_ogs": 4,
+        "discordant_pairs": 782
+      },
+      {
+        "predicted_og": "OG000000773",
+        "size": 73,
+        "reference_ogs": 4,
+        "discordant_pairs": 771
+      },
+      {
+        "predicted_og": "OG000007705",
+        "size": 39,
+        "reference_ogs": 3,
+        "discordant_pairs": 482
+      },
+      {
+        "predicted_og": "OG000001666",
+        "size": 32,
+        "reference_ogs": 7,
+        "discordant_pairs": 404
+      },
+      {
+        "predicted_og": "OG000002455",
+        "size": 31,
+        "reference_ogs": 7,
+        "discordant_pairs": 341
+      },
+      {
+        "predicted_og": "OG000018146",
+        "size": 88,
+        "reference_ogs": 2,
+        "discordant_pairs": 336
+      },
+      {
+        "predicted_og": "OG000000858",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 335
+      },
+      {
+        "predicted_og": "OG000001166",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 315
+      },
+      {
+        "predicted_og": "OG000003218",
+        "size": 28,
+        "reference_ogs": 8,
+        "discordant_pairs": 304
+      },
+      {
+        "predicted_og": "OG000000229",
+        "size": 27,
+        "reference_ogs": 6,
+        "discordant_pairs": 296
+      },
+      {
+        "predicted_og": "OG000001742",
+        "size": 30,
+        "reference_ogs": 4,
+        "discordant_pairs": 280
+      },
+      {
+        "predicted_og": "OG000011664",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 272
+      },
+      {
+        "predicted_og": "OG000000318",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 266
+      },
+      {
+        "predicted_og": "OG000004139",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 257
+      },
+      {
+        "predicted_og": "OG000002288",
+        "size": 24,
+        "reference_ogs": 10,
+        "discordant_pairs": 254
+      },
+      {
+        "predicted_og": "OG000000160",
+        "size": 30,
+        "reference_ogs": 5,
+        "discordant_pairs": 253
+      },
+      {
+        "predicted_og": "OG000003677",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 252
+      },
+      {
+        "predicted_og": "OG000000971",
+        "size": 26,
+        "reference_ogs": 4,
+        "discordant_pairs": 243
+      },
+      {
+        "predicted_og": "OG000025452",
+        "size": 36,
+        "reference_ogs": 2,
+        "discordant_pairs": 243
+      },
+      {
+        "predicted_og": "OG000011660",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 241
+      },
+      {
+        "predicted_og": "OG000000303",
+        "size": 26,
+        "reference_ogs": 5,
+        "discordant_pairs": 236
+      },
+      {
+        "predicted_og": "OG000003683",
+        "size": 25,
+        "reference_ogs": 5,
+        "discordant_pairs": 233
+      },
+      {
+        "predicted_og": "OG000003147",
+        "size": 25,
+        "reference_ogs": 4,
+        "discordant_pairs": 225
+      },
+      {
+        "predicted_og": "OG000018145",
+        "size": 113,
+        "reference_ogs": 3,
+        "discordant_pairs": 223
+      },
+      {
+        "predicted_og": "OG000002289",
+        "size": 28,
+        "reference_ogs": 7,
+        "discordant_pairs": 219
+      },
+      {
+        "predicted_og": "OG000000037",
+        "size": 24,
+        "reference_ogs": 5,
+        "discordant_pairs": 212
+      },
+      {
+        "predicted_og": "OG000000487",
+        "size": 23,
+        "reference_ogs": 6,
+        "discordant_pairs": 208
+      }
+    ]
+  },
+  "terminal_cut": {
+    "proteins": 62466,
+    "reference_groups": 9828,
+    "predicted_groups": 53859,
+    "missing_predictions": 0,
+    "excluded_predictions": 20041,
+    "true_positive_pairs": 44025,
+    "reference_pairs": 385205,
+    "predicted_pairs": 55207,
+    "discordant_pairs": 11182,
+    "lost_pairs": 341180,
+    "pair_precision": 0.7974532215117648,
+    "pair_recall": 0.1142897937461871,
+    "pair_f1": 0.1999264325222746,
+    "bcubed_precision": 0.9921397487279887,
+    "bcubed_recall": 0.2449244331391027,
+    "macro_best_f1": 0.5289091697905655,
+    "exact_reference_groups": 1601,
+    "split_reference_groups": 8197,
+    "merged_predicted_groups": 147,
+    "component_pair_recall_ceiling": 0.9999402915330798,
+    "reference_pairs_across_components": 23,
+    "cross_component_predicted_pairs": 0,
+    "top_splits": [
+      {
+        "reference_og": "OG0000000",
+        "size": 149,
+        "fragments": 86,
+        "lost_pairs": 10638,
+        "best_f1": 0.24705882352941178
+      },
+      {
+        "reference_og": "OG0000001",
+        "size": 135,
+        "fragments": 106,
+        "lost_pairs": 8944,
+        "best_f1": 0.16326530612244897
+      },
+      {
+        "reference_og": "OG0000003",
+        "size": 103,
+        "fragments": 30,
+        "lost_pairs": 4319,
+        "best_f1": 0.5072463768115942
+      },
+      {
+        "reference_og": "OG0000007",
+        "size": 70,
+        "fragments": 59,
+        "lost_pairs": 2402,
+        "best_f1": 0.0821917808219178
+      },
+      {
+        "reference_og": "OG0000009",
+        "size": 64,
+        "fragments": 40,
+        "lost_pairs": 1965,
+        "best_f1": 0.17142857142857143
+      },
+      {
+        "reference_og": "OG0000011",
+        "size": 60,
+        "fragments": 40,
+        "lost_pairs": 1701,
+        "best_f1": 0.2857142857142857
+      },
+      {
+        "reference_og": "OG0000013",
+        "size": 53,
+        "fragments": 51,
+        "lost_pairs": 1376,
+        "best_f1": 0.07272727272727272
+      },
+      {
+        "reference_og": "OG0000014",
+        "size": 51,
+        "fragments": 46,
+        "lost_pairs": 1270,
+        "best_f1": 0.07547169811320754
+      },
+      {
+        "reference_og": "OG0000010",
+        "size": 62,
+        "fragments": 18,
+        "lost_pairs": 1247,
+        "best_f1": 0.7346938775510204
+      },
+      {
+        "reference_og": "OG0000015",
+        "size": 45,
+        "fragments": 44,
+        "lost_pairs": 989,
+        "best_f1": 0.0851063829787234
+      },
+      {
+        "reference_og": "OG0000016",
+        "size": 45,
+        "fragments": 42,
+        "lost_pairs": 987,
+        "best_f1": 0.0851063829787234
+      },
+      {
+        "reference_og": "OG0000019",
+        "size": 42,
+        "fragments": 42,
+        "lost_pairs": 861,
+        "best_f1": 0.046511627906976744
+      },
+      {
+        "reference_og": "OG0000017",
+        "size": 43,
+        "fragments": 22,
+        "lost_pairs": 844,
+        "best_f1": 0.3137254901960784
+      },
+      {
+        "reference_og": "OG0000018",
+        "size": 42,
+        "fragments": 26,
+        "lost_pairs": 828,
+        "best_f1": 0.2857142857142857
+      },
+      {
+        "reference_og": "OG0000021",
+        "size": 41,
+        "fragments": 34,
+        "lost_pairs": 812,
+        "best_f1": 0.13636363636363635
+      },
+      {
+        "reference_og": "OG0000020",
+        "size": 41,
+        "fragments": 28,
+        "lost_pairs": 752,
+        "best_f1": 0.4528301886792453
+      },
+      {
+        "reference_og": "OG0000026",
+        "size": 39,
+        "fragments": 39,
+        "lost_pairs": 741,
+        "best_f1": 0.05
+      },
+      {
+        "reference_og": "OG0000028",
+        "size": 39,
+        "fragments": 38,
+        "lost_pairs": 740,
+        "best_f1": 0.0975609756097561
+      },
+      {
+        "reference_og": "OG0000027",
+        "size": 39,
+        "fragments": 33,
+        "lost_pairs": 733,
+        "best_f1": 0.14285714285714285
+      },
+      {
+        "reference_og": "OG0000024",
+        "size": 40,
+        "fragments": 27,
+        "lost_pairs": 721,
+        "best_f1": 0.43137254901960786
+      },
+      {
+        "reference_og": "OG0000031",
+        "size": 38,
+        "fragments": 38,
+        "lost_pairs": 703,
+        "best_f1": 0.05128205128205128
+      },
+      {
+        "reference_og": "OG0000030",
+        "size": 38,
+        "fragments": 36,
+        "lost_pairs": 701,
+        "best_f1": 0.1
+      },
+      {
+        "reference_og": "OG0000029",
+        "size": 38,
+        "fragments": 35,
+        "lost_pairs": 700,
+        "best_f1": 0.1
+      },
+      {
+        "reference_og": "OG0000022",
+        "size": 41,
+        "fragments": 15,
+        "lost_pairs": 698,
+        "best_f1": 0.509090909090909
+      },
+      {
+        "reference_og": "OG0000033",
+        "size": 37,
+        "fragments": 34,
+        "lost_pairs": 663,
+        "best_f1": 0.10256410256410256
+      },
+      {
+        "reference_og": "OG0000032",
+        "size": 37,
+        "fragments": 30,
+        "lost_pairs": 658,
+        "best_f1": 0.15
+      },
+      {
+        "reference_og": "OG0000012",
+        "size": 57,
+        "fragments": 2,
+        "lost_pairs": 656,
+        "best_f1": 0.8367346938775511
+      },
+      {
+        "reference_og": "OG0000034",
+        "size": 37,
+        "fragments": 33,
+        "lost_pairs": 656,
+        "best_f1": 0.23809523809523808
+      },
+      {
+        "reference_og": "OG0000036",
+        "size": 37,
+        "fragments": 32,
+        "lost_pairs": 655,
+        "best_f1": 0.23809523809523808
+      },
+      {
+        "reference_og": "OG0000035",
+        "size": 37,
+        "fragments": 26,
+        "lost_pairs": 648,
+        "best_f1": 0.1951219512195122
+      }
+    ],
+    "top_merges": [
+      {
+        "predicted_og": "(0, 35396)",
+        "size": 158,
+        "reference_ogs": 3,
+        "discordant_pairs": 6209
+      },
+      {
+        "predicted_og": "(0, 52030)",
+        "size": 69,
+        "reference_ogs": 4,
+        "discordant_pairs": 1564
+      },
+      {
+        "predicted_og": "(0, 52261)",
+        "size": 48,
+        "reference_ogs": 4,
+        "discordant_pairs": 782
+      },
+      {
+        "predicted_og": "(20, 0)",
+        "size": 88,
+        "reference_ogs": 2,
+        "discordant_pairs": 336
+      },
+      {
+        "predicted_og": "(0, 52924)",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 272
+      },
+      {
+        "predicted_og": "(0, 37510)",
+        "size": 36,
+        "reference_ogs": 2,
+        "discordant_pairs": 243
+      },
+      {
+        "predicted_og": "(0, 46732)",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 241
+      },
+      {
+        "predicted_og": "(0, 27354)",
+        "size": 113,
+        "reference_ogs": 3,
+        "discordant_pairs": 223
+      },
+      {
+        "predicted_og": "(85, 0)",
+        "size": 44,
+        "reference_ogs": 2,
+        "discordant_pairs": 160
+      },
+      {
+        "predicted_og": "(0, 19065)",
+        "size": 33,
+        "reference_ogs": 3,
+        "discordant_pairs": 119
+      },
+      {
+        "predicted_og": "(0, 33818)",
+        "size": 22,
+        "reference_ogs": 3,
+        "discordant_pairs": 115
+      },
+      {
+        "predicted_og": "(355, 0)",
+        "size": 21,
+        "reference_ogs": 2,
+        "discordant_pairs": 104
+      },
+      {
+        "predicted_og": "(0, 41748)",
+        "size": 16,
+        "reference_ogs": 6,
+        "discordant_pairs": 100
+      },
+      {
+        "predicted_og": "(205, 5)",
+        "size": 20,
+        "reference_ogs": 2,
+        "discordant_pairs": 84
+      },
+      {
+        "predicted_og": "(0, 34555)",
+        "size": 19,
+        "reference_ogs": 3,
+        "discordant_pairs": 63
+      },
+      {
+        "predicted_og": "(0, 18661)",
+        "size": 11,
+        "reference_ogs": 7,
+        "discordant_pairs": 48
+      },
+      {
+        "predicted_og": "(610, 0)",
+        "size": 12,
+        "reference_ogs": 2,
+        "discordant_pairs": 35
+      },
+      {
+        "predicted_og": "(15, 97)",
+        "size": 19,
+        "reference_ogs": 2,
+        "discordant_pairs": 34
+      },
+      {
+        "predicted_og": "(0, 34549)",
+        "size": 10,
+        "reference_ogs": 4,
+        "discordant_pairs": 29
+      },
+      {
+        "predicted_og": "(0, 34596)",
+        "size": 9,
+        "reference_ogs": 5,
+        "discordant_pairs": 29
+      },
+      {
+        "predicted_og": "(479, 6)",
+        "size": 10,
+        "reference_ogs": 2,
+        "discordant_pairs": 24
+      },
+      {
+        "predicted_og": "(0, 18067)",
+        "size": 10,
+        "reference_ogs": 3,
+        "discordant_pairs": 23
+      },
+      {
+        "predicted_og": "(0, 33789)",
+        "size": 19,
+        "reference_ogs": 2,
+        "discordant_pairs": 18
+      },
+      {
+        "predicted_og": "(0, 27338)",
+        "size": 7,
+        "reference_ogs": 3,
+        "discordant_pairs": 14
+      },
+      {
+        "predicted_og": "(759, 0)",
+        "size": 9,
+        "reference_ogs": 2,
+        "discordant_pairs": 14
+      },
+      {
+        "predicted_og": "(0, 19162)",
+        "size": 14,
+        "reference_ogs": 2,
+        "discordant_pairs": 13
+      },
+      {
+        "predicted_og": "(0, 27361)",
+        "size": 8,
+        "reference_ogs": 2,
+        "discordant_pairs": 12
+      },
+      {
+        "predicted_og": "(0, 46744)",
+        "size": 6,
+        "reference_ogs": 3,
+        "discordant_pairs": 12
+      },
+      {
+        "predicted_og": "(0, 34825)",
+        "size": 7,
+        "reference_ogs": 3,
+        "discordant_pairs": 11
+      },
+      {
+        "predicted_og": "(0, 34861)",
+        "size": 12,
+        "reference_ogs": 2,
+        "discordant_pairs": 11
+      }
+    ]
+  },
+  "unrestricted_oracle": {
+    "proteins": 62466,
+    "reference_groups": 9828,
+    "predicted_groups": 19425,
+    "missing_predictions": 0,
+    "excluded_predictions": 20041,
+    "true_positive_pairs": 290862,
+    "reference_pairs": 385205,
+    "predicted_pairs": 328560,
+    "discordant_pairs": 37698,
+    "lost_pairs": 94343,
+    "pair_precision": 0.885262965668371,
+    "pair_recall": 0.7550836567541959,
+    "pair_f1": 0.8150077406429287,
+    "bcubed_precision": 0.9567305796471869,
+    "bcubed_recall": 0.7511622823583085,
+    "macro_best_f1": 0.8514310194804585,
+    "exact_reference_groups": 5678,
+    "split_reference_groups": 3724,
+    "merged_predicted_groups": 642,
+    "component_pair_recall_ceiling": 0.9999402915330798,
+    "reference_pairs_across_components": 23,
+    "cross_component_predicted_pairs": 0,
+    "top_splits": [
+      {
+        "reference_og": "OG0000009",
+        "size": 64,
+        "fragments": 26,
+        "lost_pairs": 1771,
+        "best_f1": 0.49411764705882355
+      },
+      {
+        "reference_og": "OG0000011",
+        "size": 60,
+        "fragments": 20,
+        "lost_pairs": 1459,
+        "best_f1": 0.5581395348837209
+      },
+      {
+        "reference_og": "OG0000020",
+        "size": 41,
+        "fragments": 19,
+        "lost_pairs": 715,
+        "best_f1": 0.4528301886792453
+      },
+      {
+        "reference_og": "OG0000001",
+        "size": 135,
+        "fragments": 6,
+        "lost_pairs": 660,
+        "best_f1": 0.9629629629629629
+      },
+      {
+        "reference_og": "OG0000032",
+        "size": 37,
+        "fragments": 26,
+        "lost_pairs": 653,
+        "best_f1": 0.15
+      },
+      {
+        "reference_og": "OG0000016",
+        "size": 45,
+        "fragments": 7,
+        "lost_pairs": 564,
+        "best_f1": 0.6829268292682927
+      },
+      {
+        "reference_og": "OG0000053",
+        "size": 33,
+        "fragments": 32,
+        "lost_pairs": 527,
+        "best_f1": 0.11428571428571428
+      },
+      {
+        "reference_og": "OG0000041",
+        "size": 35,
+        "fragments": 19,
+        "lost_pairs": 523,
+        "best_f1": 0.4090909090909091
+      },
+      {
+        "reference_og": "OG0000044",
+        "size": 34,
+        "fragments": 19,
+        "lost_pairs": 516,
+        "best_f1": 0.4186046511627907
+      },
+      {
+        "reference_og": "OG0000003",
+        "size": 103,
+        "fragments": 6,
+        "lost_pairs": 500,
+        "best_f1": 0.8909090909090909
+      },
+      {
+        "reference_og": "OG0000040",
+        "size": 35,
+        "fragments": 17,
+        "lost_pairs": 486,
+        "best_f1": 0.5660377358490566
+      },
+      {
+        "reference_og": "OG0000045",
+        "size": 34,
+        "fragments": 13,
+        "lost_pairs": 478,
+        "best_f1": 0.4897959183673469
+      },
+      {
+        "reference_og": "OG0000062",
+        "size": 31,
+        "fragments": 24,
+        "lost_pairs": 457,
+        "best_f1": 0.17647058823529413
+      },
+      {
+        "reference_og": "OG0000060",
+        "size": 31,
+        "fragments": 21,
+        "lost_pairs": 439,
+        "best_f1": 0.35
+      },
+      {
+        "reference_og": "OG0000013",
+        "size": 53,
+        "fragments": 6,
+        "lost_pairs": 422,
+        "best_f1": 0.9072164948453608
+      },
+      {
+        "reference_og": "OG0000071",
+        "size": 30,
+        "fragments": 19,
+        "lost_pairs": 403,
+        "best_f1": 0.42105263157894735
+      },
+      {
+        "reference_og": "OG0000083",
+        "size": 29,
+        "fragments": 26,
+        "lost_pairs": 402,
+        "best_f1": 0.1875
+      },
+      {
+        "reference_og": "OG0000026",
+        "size": 39,
+        "fragments": 3,
+        "lost_pairs": 390,
+        "best_f1": 0.7213114754098361
+      },
+      {
+        "reference_og": "OG0000079",
+        "size": 29,
+        "fragments": 17,
+        "lost_pairs": 383,
+        "best_f1": 0.29411764705882354
+      },
+      {
+        "reference_og": "OG0000097",
+        "size": 28,
+        "fragments": 20,
+        "lost_pairs": 370,
+        "best_f1": 0.13333333333333333
+      },
+      {
+        "reference_og": "OG0000081",
+        "size": 29,
+        "fragments": 14,
+        "lost_pairs": 366,
+        "best_f1": 0.3888888888888889
+      },
+      {
+        "reference_og": "OG0000069",
+        "size": 30,
+        "fragments": 9,
+        "lost_pairs": 364,
+        "best_f1": 0.4878048780487805
+      },
+      {
+        "reference_og": "OG0000039",
+        "size": 35,
+        "fragments": 13,
+        "lost_pairs": 363,
+        "best_f1": 0.7333333333333333
+      },
+      {
+        "reference_og": "OG0000095",
+        "size": 28,
+        "fragments": 13,
+        "lost_pairs": 334,
+        "best_f1": 0.4444444444444444
+      },
+      {
+        "reference_og": "OG0000104",
+        "size": 27,
+        "fragments": 13,
+        "lost_pairs": 320,
+        "best_f1": 0.36363636363636365
+      },
+      {
+        "reference_og": "OG0000094",
+        "size": 28,
+        "fragments": 14,
+        "lost_pairs": 317,
+        "best_f1": 0.5365853658536586
+      },
+      {
+        "reference_og": "OG0000115",
+        "size": 26,
+        "fragments": 18,
+        "lost_pairs": 316,
+        "best_f1": 0.20689655172413793
+      },
+      {
+        "reference_og": "OG0000106",
+        "size": 27,
+        "fragments": 15,
+        "lost_pairs": 315,
+        "best_f1": 0.45714285714285713
+      },
+      {
+        "reference_og": "OG0000068",
+        "size": 30,
+        "fragments": 8,
+        "lost_pairs": 313,
+        "best_f1": 0.5581395348837209
+      },
+      {
+        "reference_og": "OG0000080",
+        "size": 29,
+        "fragments": 10,
+        "lost_pairs": 311,
+        "best_f1": 0.6190476190476191
+      }
+    ],
+    "top_merges": [
+      {
+        "predicted_og": "(0, 35396)",
+        "size": 158,
+        "reference_ogs": 3,
+        "discordant_pairs": 6209
+      },
+      {
+        "predicted_og": "(0, 19881)",
+        "size": 117,
+        "reference_ogs": 3,
+        "discordant_pairs": 1940
+      },
+      {
+        "predicted_og": "(0, 52030)",
+        "size": 69,
+        "reference_ogs": 4,
+        "discordant_pairs": 1564
+      },
+      {
+        "predicted_og": "(0, 19217)",
+        "size": 157,
+        "reference_ogs": 3,
+        "discordant_pairs": 1352
+      },
+      {
+        "predicted_og": "(0, 52261)",
+        "size": 48,
+        "reference_ogs": 4,
+        "discordant_pairs": 782
+      },
+      {
+        "predicted_og": "(0, 3863)",
+        "size": 55,
+        "reference_ogs": 4,
+        "discordant_pairs": 703
+      },
+      {
+        "predicted_og": "(0, 16428)",
+        "size": 135,
+        "reference_ogs": 3,
+        "discordant_pairs": 654
+      },
+      {
+        "predicted_og": "(0, 40068)",
+        "size": 53,
+        "reference_ogs": 4,
+        "discordant_pairs": 597
+      },
+      {
+        "predicted_og": "(0, 2494)",
+        "size": 50,
+        "reference_ogs": 3,
+        "discordant_pairs": 591
+      },
+      {
+        "predicted_og": "(0, 39837)",
+        "size": 69,
+        "reference_ogs": 3,
+        "discordant_pairs": 495
+      },
+      {
+        "predicted_og": "(0, 24396)",
+        "size": 52,
+        "reference_ogs": 3,
+        "discordant_pairs": 461
+      },
+      {
+        "predicted_og": "(95, 0)",
+        "size": 40,
+        "reference_ogs": 2,
+        "discordant_pairs": 396
+      },
+      {
+        "predicted_og": "(0, 5101)",
+        "size": 45,
+        "reference_ogs": 3,
+        "discordant_pairs": 342
+      },
+      {
+        "predicted_og": "(20, 0)",
+        "size": 88,
+        "reference_ogs": 2,
+        "discordant_pairs": 336
+      },
+      {
+        "predicted_og": "(0, 51141)",
+        "size": 42,
+        "reference_ogs": 3,
+        "discordant_pairs": 317
+      },
+      {
+        "predicted_og": "(0, 50708)",
+        "size": 35,
+        "reference_ogs": 2,
+        "discordant_pairs": 304
+      },
+      {
+        "predicted_og": "(109, 0)",
+        "size": 35,
+        "reference_ogs": 2,
+        "discordant_pairs": 294
+      },
+      {
+        "predicted_og": "(0, 41529)",
+        "size": 35,
+        "reference_ogs": 3,
+        "discordant_pairs": 287
+      },
+      {
+        "predicted_og": "(42, 2)",
+        "size": 35,
+        "reference_ogs": 2,
+        "discordant_pairs": 286
+      },
+      {
+        "predicted_og": "(0, 52924)",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 272
+      },
+      {
+        "predicted_og": "(51, 2)",
+        "size": 44,
+        "reference_ogs": 2,
+        "discordant_pairs": 259
+      },
+      {
+        "predicted_og": "(23, 1)",
+        "size": 37,
+        "reference_ogs": 2,
+        "discordant_pairs": 252
+      },
+      {
+        "predicted_og": "(0, 37510)",
+        "size": 36,
+        "reference_ogs": 2,
+        "discordant_pairs": 243
+      },
+      {
+        "predicted_og": "(0, 46732)",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 241
+      },
+      {
+        "predicted_og": "(0, 10728)",
+        "size": 32,
+        "reference_ogs": 3,
+        "discordant_pairs": 236
+      },
+      {
+        "predicted_og": "(17, 66)",
+        "size": 35,
+        "reference_ogs": 4,
+        "discordant_pairs": 236
+      },
+      {
+        "predicted_og": "(0, 585)",
+        "size": 35,
+        "reference_ogs": 2,
+        "discordant_pairs": 234
+      },
+      {
+        "predicted_og": "(0, 27354)",
+        "size": 113,
+        "reference_ogs": 3,
+        "discordant_pairs": 223
+      },
+      {
+        "predicted_og": "(146, 0)",
+        "size": 30,
+        "reference_ogs": 2,
+        "discordant_pairs": 216
+      },
+      {
+        "predicted_og": "(140, 0)",
+        "size": 31,
+        "reference_ogs": 2,
+        "discordant_pairs": 210
+      }
+    ]
+  },
+  "eligible_oracle": {
+    "proteins": 62466,
+    "reference_groups": 9828,
+    "predicted_groups": 22732,
+    "missing_predictions": 0,
+    "excluded_predictions": 20041,
+    "true_positive_pairs": 202661,
+    "reference_pairs": 385205,
+    "predicted_pairs": 228874,
+    "discordant_pairs": 26213,
+    "lost_pairs": 182544,
+    "pair_precision": 0.8854697344390363,
+    "pair_recall": 0.526112070196389,
+    "pair_f1": 0.6600486256654274,
+    "bcubed_precision": 0.9572893081575571,
+    "bcubed_recall": 0.6376360866733165,
+    "macro_best_f1": 0.825237717377736,
+    "exact_reference_groups": 4695,
+    "split_reference_groups": 4791,
+    "merged_predicted_groups": 770,
+    "component_pair_recall_ceiling": 0.9999402915330798,
+    "reference_pairs_across_components": 23,
+    "cross_component_predicted_pairs": 0,
+    "top_splits": [
+      {
+        "reference_og": "OG0000000",
+        "size": 149,
+        "fragments": 61,
+        "lost_pairs": 10009,
+        "best_f1": 0.4148936170212766
+      },
+      {
+        "reference_og": "OG0000001",
+        "size": 135,
+        "fragments": 72,
+        "lost_pairs": 8880,
+        "best_f1": 0.16326530612244897
+      },
+      {
+        "reference_og": "OG0000003",
+        "size": 103,
+        "fragments": 29,
+        "lost_pairs": 4318,
+        "best_f1": 0.5072463768115942
+      },
+      {
+        "reference_og": "OG0000007",
+        "size": 70,
+        "fragments": 33,
+        "lost_pairs": 2334,
+        "best_f1": 0.18181818181818182
+      },
+      {
+        "reference_og": "OG0000009",
+        "size": 64,
+        "fragments": 34,
+        "lost_pairs": 1956,
+        "best_f1": 0.17142857142857143
+      },
+      {
+        "reference_og": "OG0000011",
+        "size": 60,
+        "fragments": 26,
+        "lost_pairs": 1669,
+        "best_f1": 0.2857142857142857
+      },
+      {
+        "reference_og": "OG0000013",
+        "size": 53,
+        "fragments": 21,
+        "lost_pairs": 1212,
+        "best_f1": 0.463768115942029
+      },
+      {
+        "reference_og": "OG0000014",
+        "size": 51,
+        "fragments": 17,
+        "lost_pairs": 1077,
+        "best_f1": 0.5217391304347826
+      },
+      {
+        "reference_og": "OG0000016",
+        "size": 45,
+        "fragments": 16,
+        "lost_pairs": 893,
+        "best_f1": 0.35714285714285715
+      },
+      {
+        "reference_og": "OG0000017",
+        "size": 43,
+        "fragments": 18,
+        "lost_pairs": 836,
+        "best_f1": 0.3137254901960784
+      },
+      {
+        "reference_og": "OG0000019",
+        "size": 42,
+        "fragments": 10,
+        "lost_pairs": 716,
+        "best_f1": 0.41509433962264153
+      },
+      {
+        "reference_og": "OG0000020",
+        "size": 41,
+        "fragments": 19,
+        "lost_pairs": 715,
+        "best_f1": 0.4528301886792453
+      },
+      {
+        "reference_og": "OG0000024",
+        "size": 40,
+        "fragments": 20,
+        "lost_pairs": 707,
+        "best_f1": 0.43137254901960786
+      },
+      {
+        "reference_og": "OG0000015",
+        "size": 45,
+        "fragments": 18,
+        "lost_pairs": 686,
+        "best_f1": 0.704225352112676
+      },
+      {
+        "reference_og": "OG0000018",
+        "size": 42,
+        "fragments": 13,
+        "lost_pairs": 657,
+        "best_f1": 0.6451612903225806
+      },
+      {
+        "reference_og": "OG0000012",
+        "size": 57,
+        "fragments": 2,
+        "lost_pairs": 656,
+        "best_f1": 0.8367346938775511
+      },
+      {
+        "reference_og": "OG0000032",
+        "size": 37,
+        "fragments": 26,
+        "lost_pairs": 653,
+        "best_f1": 0.15
+      },
+      {
+        "reference_og": "OG0000028",
+        "size": 39,
+        "fragments": 16,
+        "lost_pairs": 646,
+        "best_f1": 0.4074074074074074
+      },
+      {
+        "reference_og": "OG0000027",
+        "size": 39,
+        "fragments": 12,
+        "lost_pairs": 640,
+        "best_f1": 0.4528301886792453
+      },
+      {
+        "reference_og": "OG0000029",
+        "size": 38,
+        "fragments": 16,
+        "lost_pairs": 631,
+        "best_f1": 0.3829787234042553
+      },
+      {
+        "reference_og": "OG0000033",
+        "size": 37,
+        "fragments": 19,
+        "lost_pairs": 556,
+        "best_f1": 0.5769230769230769
+      },
+      {
+        "reference_og": "OG0000031",
+        "size": 38,
+        "fragments": 8,
+        "lost_pairs": 551,
+        "best_f1": 0.5384615384615384
+      },
+      {
+        "reference_og": "OG0000044",
+        "size": 34,
+        "fragments": 21,
+        "lost_pairs": 531,
+        "best_f1": 0.34146341463414637
+      },
+      {
+        "reference_og": "OG0000053",
+        "size": 33,
+        "fragments": 32,
+        "lost_pairs": 527,
+        "best_f1": 0.11428571428571428
+      },
+      {
+        "reference_og": "OG0000041",
+        "size": 35,
+        "fragments": 19,
+        "lost_pairs": 523,
+        "best_f1": 0.4090909090909091
+      },
+      {
+        "reference_og": "OG0000030",
+        "size": 38,
+        "fragments": 19,
+        "lost_pairs": 513,
+        "best_f1": 0.6896551724137931
+      },
+      {
+        "reference_og": "OG0000054",
+        "size": 33,
+        "fragments": 17,
+        "lost_pairs": 491,
+        "best_f1": 0.3076923076923077
+      },
+      {
+        "reference_og": "OG0000040",
+        "size": 35,
+        "fragments": 16,
+        "lost_pairs": 485,
+        "best_f1": 0.5660377358490566
+      },
+      {
+        "reference_og": "OG0000047",
+        "size": 34,
+        "fragments": 12,
+        "lost_pairs": 480,
+        "best_f1": 0.45454545454545453
+      },
+      {
+        "reference_og": "OG0000045",
+        "size": 34,
+        "fragments": 13,
+        "lost_pairs": 478,
+        "best_f1": 0.4897959183673469
+      }
+    ],
+    "top_merges": [
+      {
+        "predicted_og": "(0, 35396)",
+        "size": 158,
+        "reference_ogs": 3,
+        "discordant_pairs": 6209
+      },
+      {
+        "predicted_og": "(0, 52030)",
+        "size": 69,
+        "reference_ogs": 4,
+        "discordant_pairs": 1564
+      },
+      {
+        "predicted_og": "(0, 52261)",
+        "size": 48,
+        "reference_ogs": 4,
+        "discordant_pairs": 782
+      },
+      {
+        "predicted_og": "(0, 39836)",
+        "size": 73,
+        "reference_ogs": 4,
+        "discordant_pairs": 771
+      },
+      {
+        "predicted_og": "(0, 52789)",
+        "size": 51,
+        "reference_ogs": 2,
+        "discordant_pairs": 410
+      },
+      {
+        "predicted_og": "(20, 0)",
+        "size": 88,
+        "reference_ogs": 2,
+        "discordant_pairs": 336
+      },
+      {
+        "predicted_og": "(0, 52924)",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 272
+      },
+      {
+        "predicted_og": "(60, 5)",
+        "size": 30,
+        "reference_ogs": 5,
+        "discordant_pairs": 253
+      },
+      {
+        "predicted_og": "(0, 37510)",
+        "size": 36,
+        "reference_ogs": 2,
+        "discordant_pairs": 243
+      },
+      {
+        "predicted_og": "(0, 46732)",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 241
+      },
+      {
+        "predicted_og": "(0, 27354)",
+        "size": 113,
+        "reference_ogs": 3,
+        "discordant_pairs": 223
+      },
+      {
+        "predicted_og": "(45, 3)",
+        "size": 28,
+        "reference_ogs": 2,
+        "discordant_pairs": 196
+      },
+      {
+        "predicted_og": "(85, 0)",
+        "size": 44,
+        "reference_ogs": 2,
+        "discordant_pairs": 160
+      },
+      {
+        "predicted_og": "(173, 0)",
+        "size": 27,
+        "reference_ogs": 3,
+        "discordant_pairs": 152
+      },
+      {
+        "predicted_og": "(0, 5105)",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 140
+      },
+      {
+        "predicted_og": "(0, 25975)",
+        "size": 24,
+        "reference_ogs": 2,
+        "discordant_pairs": 128
+      },
+      {
+        "predicted_og": "(0, 19065)",
+        "size": 33,
+        "reference_ogs": 3,
+        "discordant_pairs": 119
+      },
+      {
+        "predicted_og": "(132, 8)",
+        "size": 21,
+        "reference_ogs": 3,
+        "discordant_pairs": 116
+      },
+      {
+        "predicted_og": "(0, 33818)",
+        "size": 22,
+        "reference_ogs": 3,
+        "discordant_pairs": 115
+      },
+      {
+        "predicted_og": "(355, 0)",
+        "size": 21,
+        "reference_ogs": 2,
+        "discordant_pairs": 104
+      },
+      {
+        "predicted_og": "(2, 339)",
+        "size": 18,
+        "reference_ogs": 4,
+        "discordant_pairs": 101
+      },
+      {
+        "predicted_og": "(0, 3432)",
+        "size": 19,
+        "reference_ogs": 4,
+        "discordant_pairs": 100
+      },
+      {
+        "predicted_og": "(0, 41531)",
+        "size": 20,
+        "reference_ogs": 2,
+        "discordant_pairs": 100
+      },
+      {
+        "predicted_og": "(0, 41748)",
+        "size": 16,
+        "reference_ogs": 6,
+        "discordant_pairs": 100
+      },
+      {
+        "predicted_og": "(146, 5)",
+        "size": 20,
+        "reference_ogs": 2,
+        "discordant_pairs": 100
+      },
+      {
+        "predicted_og": "(0, 23378)",
+        "size": 20,
+        "reference_ogs": 2,
+        "discordant_pairs": 99
+      },
+      {
+        "predicted_og": "(0, 23598)",
+        "size": 18,
+        "reference_ogs": 3,
+        "discordant_pairs": 96
+      },
+      {
+        "predicted_og": "(0, 45089)",
+        "size": 19,
+        "reference_ogs": 4,
+        "discordant_pairs": 95
+      },
+      {
+        "predicted_og": "(0, 8335)",
+        "size": 18,
+        "reference_ogs": 3,
+        "discordant_pairs": 95
+      },
+      {
+        "predicted_og": "(53, 7)",
+        "size": 18,
+        "reference_ogs": 3,
+        "discordant_pairs": 95
+      }
+    ]
+  },
+  "cut_family_comparison": {
+    "unrestricted_minus_eligible_pair_f1": 0.15495911497750126,
+    "eligible_minus_actual_pair_f1": 0.024837432944949223,
+    "eligible_cut_is_not_active_view": true,
+    "gaps_are_not_causal_attribution": true
+  },
+  "oracle_scope": "Complete fixed-tree cuts; not an upper bound for arbitrary active-view OG extraction",
+  "representation_summary": {
+    "exact_any_node": 5723,
+    "exact_eligible_node": 4739,
+    "positive_eligibility_gap": 2061,
+    "positive_selection_gap": 1683,
+    "whole_hierarchy_macro_best_f1": 0.8663253055909457,
+    "eligible_macro_best_f1": 0.833693522465471,
+    "actual_macro_best_f1": 0.7891260328656221
+  },
+  "top_components": [
+    {
+      "component_id": 0,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 25344,
+      "mixed_assigned_lca_requires_contamination": 104253,
+      "within_component_lost_pairs": 129597
+    },
+    {
+      "component_id": 1,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 338,
+      "mixed_assigned_lca_requires_contamination": 711,
+      "within_component_lost_pairs": 1049
+    },
+    {
+      "component_id": 23,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 48,
+      "mixed_assigned_lca_requires_contamination": 891,
+      "within_component_lost_pairs": 939
+    },
+    {
+      "component_id": 7,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 265,
+      "mixed_assigned_lca_requires_contamination": 600,
+      "within_component_lost_pairs": 865
+    },
+    {
+      "component_id": 101,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 707,
+      "mixed_assigned_lca_requires_contamination": 0,
+      "within_component_lost_pairs": 707
+    },
+    {
+      "component_id": 3,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 77,
+      "mixed_assigned_lca_requires_contamination": 541,
+      "within_component_lost_pairs": 618
+    },
+    {
+      "component_id": 16,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 122,
+      "mixed_assigned_lca_requires_contamination": 414,
+      "within_component_lost_pairs": 536
+    },
+    {
+      "component_id": 103,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 513,
+      "mixed_assigned_lca_requires_contamination": 0,
+      "within_component_lost_pairs": 513
+    },
+    {
+      "component_id": 19,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 287,
+      "mixed_assigned_lca_requires_contamination": 220,
+      "within_component_lost_pairs": 507
+    },
+    {
+      "component_id": 4,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 35,
+      "mixed_assigned_lca_requires_contamination": 446,
+      "within_component_lost_pairs": 481
+    },
+    {
+      "component_id": 51,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 0,
+      "mixed_assigned_lca_requires_contamination": 429,
+      "within_component_lost_pairs": 429
+    },
+    {
+      "component_id": 17,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 41,
+      "mixed_assigned_lca_requires_contamination": 387,
+      "within_component_lost_pairs": 428
+    },
+    {
+      "component_id": 88,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 216,
+      "mixed_assigned_lca_requires_contamination": 207,
+      "within_component_lost_pairs": 423
+    },
+    {
+      "component_id": 43,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 43,
+      "mixed_assigned_lca_requires_contamination": 358,
+      "within_component_lost_pairs": 401
+    },
+    {
+      "component_id": 2,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 206,
+      "mixed_assigned_lca_requires_contamination": 165,
+      "within_component_lost_pairs": 371
+    },
+    {
+      "component_id": 18,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 8,
+      "mixed_assigned_lca_requires_contamination": 357,
+      "within_component_lost_pairs": 365
+    },
+    {
+      "component_id": 112,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 365,
+      "mixed_assigned_lca_requires_contamination": 0,
+      "within_component_lost_pairs": 365
+    },
+    {
+      "component_id": 15,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 89,
+      "mixed_assigned_lca_requires_contamination": 251,
+      "within_component_lost_pairs": 340
+    },
+    {
+      "component_id": 159,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 338,
+      "mixed_assigned_lca_requires_contamination": 0,
+      "within_component_lost_pairs": 338
+    },
+    {
+      "component_id": 57,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 5,
+      "mixed_assigned_lca_requires_contamination": 332,
+      "within_component_lost_pairs": 337
+    },
+    {
+      "component_id": 6,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 168,
+      "mixed_assigned_lca_requires_contamination": 162,
+      "within_component_lost_pairs": 330
+    },
+    {
+      "component_id": 11,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 61,
+      "mixed_assigned_lca_requires_contamination": 262,
+      "within_component_lost_pairs": 323
+    },
+    {
+      "component_id": 138,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 323,
+      "mixed_assigned_lca_requires_contamination": 0,
+      "within_component_lost_pairs": 323
+    },
+    {
+      "component_id": 94,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 321,
+      "mixed_assigned_lca_requires_contamination": 0,
+      "within_component_lost_pairs": 321
+    },
+    {
+      "component_id": 95,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 0,
+      "mixed_assigned_lca_requires_contamination": 318,
+      "within_component_lost_pairs": 318
+    },
+    {
+      "component_id": 40,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 35,
+      "mixed_assigned_lca_requires_contamination": 282,
+      "within_component_lost_pairs": 317
+    },
+    {
+      "component_id": 26,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 292,
+      "mixed_assigned_lca_requires_contamination": 23,
+      "within_component_lost_pairs": 315
+    },
+    {
+      "component_id": 61,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 315,
+      "mixed_assigned_lca_requires_contamination": 0,
+      "within_component_lost_pairs": 315
+    },
+    {
+      "component_id": 90,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 312,
+      "mixed_assigned_lca_requires_contamination": 0,
+      "within_component_lost_pairs": 312
+    },
+    {
+      "component_id": 44,
+      "within_structural_leaf": 0,
+      "pure_assigned_lca_tree_available": 115,
+      "mixed_assigned_lca_requires_contamination": 191,
+      "within_component_lost_pairs": 306
+    }
+  ],
+  "immutable_inputs_verified": true
+}
