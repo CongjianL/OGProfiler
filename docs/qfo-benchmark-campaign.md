@@ -759,3 +759,8 @@ nonpositive_direct_with_descendant_optimum三个互斥类，不预先假定90.5%
 去重和20个固定seed随机小图的原流/完整目标/损失覆盖核查。ruff与Slurm语法通过。
 完整本地轻量回归514 passed /8 skipped /5项既有warning，24.88秒。
 本轮在原PR隔离工作树执行，main检出与其后续开发保持不动。
+远端针对性22项测试通过（4.78秒）。提交job1485398：
+RUN_ID=20261013T112225Z_323a8225e625_94e83f7f_88848，source323a8225e625907c34181e080afebaf4cc790a5e，
+dirty=0，SHA256=94e83f7f5ac385da4f9825a04e8e20f7fd2ffc9f0d3a2385d76c76ec449e37b9。
+输出species-positive-boundary；原V2/OF3/trace/raw replay与1412190 context cuts沿用。
+这是只读比较作业，不是生产重跑；结论待结果验证。
