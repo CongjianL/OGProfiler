@@ -730,3 +730,32 @@ polluted pure36移除607TP/0FP（32/4），polluted mixed324移除3189TP/17100FP
 节点结构及完整目标，保留合法节点和DP路径，不继续单独外部项/比例过滤修补。
 紧凑归档bacteria_endpoint_paths_1412208；本轮未追加作业，默认保持不变。
 主检出已在main，结果在独立工作树沿原PR分支归档，不切换或修改main。
+
+### 内部增益已正：固定完整边界目标的纯/混合比较
+
+新增只读 `--positive-boundary`，要求context/exact模式与1412190的逐蛋白完整cut回放。
+目标节点用精确internal-only直接孩子增益>0固定，参考标签仍在全部特征/切分之后加载。
+重建同一精确DP，核对根frontier与既有选择一致。不新增评分或选择策略。
+原LCA边流提供各节点Win，不从score反推observed；原source物种块强度和分母给出
+Ekeep。对完整最优frontier，跨界actual=Win_keep−sum Win_frontier，
+expected=Ekeep−sum Efrontier；二者之差/source总权必须等于best−keep。
+另外验证direct_gain+descendant_optimization_gain=complete_gain，区分直接孩子边界
+与后代最优完整切分。merge/direct/complete分数、实际/期望跨界权及frontier深度分开报告。
+
+参考事后注释包括直接唯一LCA损失、完整局部最优cut损失和实际子树损失；
+active_split的局部完整损失须等于实际LCA子树量，inactive的实际量保持0。
+跨节点汇总只累加直接LCA，不累加嵌套完整损失。
+覆盖表将所有实际切分节点分为internal_positive、context_reversal、
+nonpositive_direct_with_descendant_optimum三个互斥类，不预先假定90.5%剩余TP损失
+全部属于internal_positive。
+
+纯/mixed描述按source原队列与实际DP状态分层；严格共同支持签名为节点蛋白数、
+物种数、最大复制数、排序直接子组大小、source内深度、source蛋白数，另固定source队列
+与DP状态。只报告同时有pure/mixed的单元和各自数量，不放宽签名寻找更多匹配。
+该比较是观察性证据，不把分数均值或配对单元当因果修正/生物真值。
+全部目标记录保存在positive-boundary-targets.json；summary保留覆盖、分层与共同支持。
+无外部项删除、gamma/epsilon/比例门槛，默认保持；资源沿用单作业4 CPU /16G /2h。
+本地22项针对测试通过：手算纯/混合同分而损失不同、深层frontier增益、唯一LCA
+去重和20个固定seed随机小图的原流/完整目标/损失覆盖核查。ruff与Slurm语法通过。
+完整本地轻量回归514 passed /8 skipped /5项既有warning，24.88秒。
+本轮在原PR隔离工作树执行，main检出与其后续开发保持不动。

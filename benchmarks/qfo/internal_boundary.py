@@ -61,6 +61,7 @@ def diagnose(
     block_degeneracy=False,
     context_flow=False,
     endpoint_replay_dir=None,
+    positive_boundary=False,
 ):
     hashes = json.loads((trace_dir / "input-hashes.json").read_text())
     for name in ("summary.json", "groups.json", "input-hashes.json"):
@@ -86,6 +87,8 @@ def diagnose(
         raise ValueError("Degeneracy requires fixed exact conditioned cuts")
     if singleton_flow and tie_replay_dir is None:
         raise ValueError("Singleton flow requires fixed focused tie replay")
+    if positive_boundary and endpoint_replay_dir is None:
+        raise ValueError("Positive boundary requires frozen exact context replay")
     endpoint_replay = {}
     if endpoint_replay_dir is not None:
         if not context_flow:
@@ -271,7 +274,8 @@ def diagnose(
                     species,
                     set(result["selected"]),
                     context_flow=context_flow,
-                    endpoint_trace=endpoint_replay_dir is not None,
+                    endpoint_trace=endpoint_replay_dir is not None and not positive_boundary,
+                    positive_boundary=positive_boundary,
                 )
                 degeneracy_inputs[cid, c] = (subnodes[c], members[c])
             if endpoint_replay_dir is not None and prediction != endpoint_replay[cid, c]:
@@ -355,7 +359,11 @@ def diagnose(
             rs = case["objective"]["block_degeneracy"]["legal_internal_nodes"]
             ns, ms = degeneracy_inputs[case["component_id"], case["source_cluster_id"]]
             annotate_reference(rs, ns, ms, reference)
-            if endpoint_replay_dir is not None:
+            if positive_boundary:
+                from benchmarks.og_extraction.positive_boundary import annotate_positive
+
+                annotate_positive(rs, ns, ms, reference)
+            if endpoint_replay_dir is not None and not positive_boundary:
                 from benchmarks.og_extraction.context_path_trace import annotate_path_losses
 
                 annotate_path_losses(rs, ns)
@@ -544,6 +552,11 @@ def diagnose(
                     ),
                 )
             )
+    positive_comparison = {}
+    if positive_boundary:
+        from benchmarks.og_extraction.positive_boundary import compare_positive
+
+        positive_comparison = compare_positive(cases)
     for path, digest in hashes.items():
         if sha256_file(Path(path)) != digest:
             raise ValueError("Frozen input changed")
@@ -563,6 +576,10 @@ def diagnose(
         ]
         (out / "endpoint-targets.json").write_text(json.dumps(endpoint_targets, indent=2) + "\n")
 
+    if positive_boundary:
+        (out / "positive-boundary-targets.json").write_text(
+            json.dumps(positive_comparison.pop("targets"), indent=2) + "\n"
+        )
     # Independent diagnostic cuts, not a replacement full production partition.
     (out / "cuts-DIAGNOSTIC-ONLY.json").write_text(json.dumps(cut_files) + "\n")
     (out / "input-hashes.json").write_text(json.dumps(hashes, indent=2) + "\n")
@@ -585,6 +602,8 @@ def diagnose(
     (out / "summary.json").write_text(
         json.dumps(
             dict(
+                positive_boundary=positive_boundary,
+                positive_comparison=positive_comparison,
                 diagnostic_only=True,
                 production_changed=False,
                 immutable_inputs_verified=True,
@@ -669,6 +688,7 @@ def main():
     p.add_argument("--block-degeneracy", action="store_true")
     p.add_argument("--context-flow", action="store_true")
     p.add_argument("--endpoint-replay-dir", type=Path)
+    p.add_argument("--positive-boundary", action="store_true")
     a = p.parse_args()
     diagnose(
         a.run,
@@ -683,6 +703,7 @@ def main():
         block_degeneracy=a.block_degeneracy,
         context_flow=a.context_flow,
         endpoint_replay_dir=a.endpoint_replay_dir,
+        positive_boundary=a.positive_boundary,
     )
 
 

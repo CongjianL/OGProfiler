@@ -8,9 +8,17 @@ from benchmarks.og_extraction.tree_cut import topology
 
 
 def profile(
-    nodes, membership, edges, species, selected, *, context_flow=False, endpoint_trace=False
+    nodes,
+    membership,
+    edges,
+    species,
+    selected,
+    *,
+    context_flow=False,
+    endpoint_trace=False,
+    positive_boundary=False,
 ):
-    if endpoint_trace and not context_flow:
+    if (endpoint_trace or positive_boundary) and not context_flow:
         raise ValueError("Endpoint tracing requires context flow")
     scores, total, strengths, weights = exact_context(nodes, membership, edges, species)
     by_id, children, order = topology(nodes)
@@ -302,6 +310,21 @@ def profile(
                     )
                     for ch in children[row["cluster_id"]]
                 ]
+    if positive_boundary:
+        from benchmarks.og_extraction.positive_boundary import attach_positive
+
+        attach_positive(
+            rows,
+            nodes,
+            membership,
+            species,
+            scores,
+            total,
+            strengths,
+            weights,
+            selected,
+            internal_blocks,
+        )
     return dict(
         legal_internal_nodes=rows,
         objective_identity_verified=True,
