@@ -764,3 +764,24 @@ RUN_ID=20261013T112225Z_323a8225e625_94e83f7f_88848，source323a8225e625907c3418
 dirty=0，SHA256=94e83f7f5ac385da4f9825a04e8e20f7fd2ffc9f0d3a2385d76c76ec449e37b9。
 输出species-positive-boundary；原V2/OF3/trace/raw replay与1412190 context cuts沿用。
 这是只读比较作业，不是生产重跑；结论待结果验证。
+
+### job1485398完成：内部正增益是主要权衡，但严格共同支持为零
+
+COMPLETED /0:0，5分25秒；source323a822、dirty=0。1205 source逐蛋白精确回放、
+哈希/覆盖、原LCA流和完整frontier目标核查通过。取回summary后，四组既有摘要与
+1412208完全一致；全部2445实际切分的三类损失逐队列重现47849TP/620135FP。
+internal_positive1292节点移除34053TP/580916FP，占71.17%/93.68%；
+context_reversal404移除4540TP/17100FP，占9.49%/2.76%；直接非正但后代推动749
+移除9256TP/22119FP，占19.34%/3.57%。先前90.5%剩余TP损失并非全是内部正增益。
+
+内部正增益active_split：clean pure114移除4776TP/0FP，polluted pure59移除
+4047TP/0FP，mixed1119移除25230TP/580916FP；更深frontier分别34/9/714。
+纯节点内部正增益合计8823/13623 TP损失（64.77%）。另15个inactive目标实际损失0。
+mixed平均complete gain .109185=direct .065156+descendant .044029；clean pure
+.085134=.075751+.009383；polluted pure .031428=.028776+.002651，均为未匹配描述。
+
+预定严格结构签名的pure/mixed共同支持单元0、匹配节点0/0。原样报告，不放宽匹配；
+现有均值未建立固定结构下的纯度差异证据，不据此拟阈值。下一目标须明确比较总体与
+迁移假设，并通过完整合法DP评估，兼顾内部正增益和后代推动，而非单修外部项。
+归档bacteria_positive_boundary_1485398；大targets/cases留远端。本轮无追加作业，
+生产默认与main检出保持不变。
