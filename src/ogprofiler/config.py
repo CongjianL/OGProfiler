@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from ogprofiler.hierarchy.engine import HierarchyConfig
 
 import yaml
 
@@ -38,9 +41,17 @@ DEFAULT_CONFIG: dict[str, dict[str, Any]] = {
     "hierarchy": {
         "method": "rber",
         "seed": 42,
-        "min_family_size": 2,
-        "max_depth": 20,
-        "resolution_strategy": "adaptive",
+        "min_family_size": None,
+        "admission_policy": "nonempty_children_v1",
+        "topology_policy": "soft_binary_24_v2",
+        "recursion_stop_size": 1,
+        "max_candidate_evaluations": 24,
+        "max_coarse_candidates": 10,
+        "rescue_grid_points": 8,
+        "component_leiden_call_budget": None,
+        "leiden_iterations": 10,
+        "max_depth": 42,
+        "resolution_strategy": "bounded_adaptive_v2",
         "gamma_min": 0.01,
         "gamma_max": 10.0,
         "gamma_growth": 2.0,
@@ -59,6 +70,7 @@ DEFAULT_CONFIG: dict[str, dict[str, Any]] = {
         "network_overlap_threshold": 0.0,
         "phylogenetic_refinement": False,
     },
+    "orthogroups": {"strategy": "v1_compatible", "species_overlap_count": 0, "refinement": False},
     "phylogeny": {
         "alignment_backend": "mafft",
         "alignment_executable": "mafft",
@@ -92,7 +104,7 @@ _ALLOWED_DIAMOND_SENSITIVITY = {
 _ALLOWED_EDGE_METHODS = {"lrb", "rbh", "ar", "arb"}
 _ALLOWED_SYMMETRIZATION = {"forward", "max", "min", "mean", "geometric_mean"}
 _ALLOWED_HIERARCHY_METHODS = {"rber", "rbcv", "cpm", "modularity"}
-_ALLOWED_RESOLUTION_STRATEGIES = {"adaptive", "log_grid"}
+_ALLOWED_RESOLUTION_STRATEGIES = {"adaptive", "log_grid", "bounded_adaptive_v2"}
 _ALLOWED_STABILITY = {"fast", "robust", "publication"}
 _ALLOWED_CHARACTER_POLICIES = {"error", "replace_with_x"}
 _ALLOWED_COMPRESSION = {"none", "gzip", "snappy", "zstd"}
@@ -135,6 +147,7 @@ def parse_override(expression: str) -> tuple[str, Any]:
 
 def load_config(path: str | None = None, overrides: list[str] | None = None) -> dict[str, Any]:
     config = deepcopy(DEFAULT_CONFIG)
+    iterations_explicit = False
     if path is not None:
         try:
             with open(path, encoding="utf-8") as handle:
@@ -144,14 +157,23 @@ def load_config(path: str | None = None, overrides: list[str] | None = None) -> 
         if not isinstance(loaded, dict):
             raise InputError("Configuration root must be a mapping")
         config = deep_merge(config, loaded)
+        iterations_explicit = "leiden_iterations" in loaded.get("hierarchy", {})
     for expression in overrides or []:
         key, value = parse_override(expression)
         _set_dotted(config, key, value)
+        iterations_explicit |= key == "hierarchy.leiden_iterations"
+    # Preserve historical replay defaults, without rewriting explicit run budgets.
+    if not iterations_explicit and config["hierarchy"]["admission_policy"] == "legacy_strict":
+        config["hierarchy"]["leiden_iterations"] = 2
     validate_config(config)
     return config
 
 
 def validate_config(config: dict[str, Any]) -> None:
+    from ogprofiler.orthogroups.models import OrthogroupConfig
+
+    OrthogroupConfig(**config["orthogroups"])
+
     def choice(section: str, key: str, allowed: set[str]) -> None:
         value = config[section][key]
         if value not in allowed:
@@ -166,6 +188,7 @@ def validate_config(config: dict[str, Any]) -> None:
     choice("similarity", "nbs_fallback", _ALLOWED_NBS_FALLBACK)
     choice("edges", "method", _ALLOWED_EDGE_METHODS)
     choice("edges", "symmetrization", _ALLOWED_SYMMETRIZATION)
+    choice("hierarchy", "topology_policy", {"kway_v1", "soft_binary_24_v2"})
     choice("hierarchy", "method", _ALLOWED_HIERARCHY_METHODS)
     choice("hierarchy", "resolution_strategy", _ALLOWED_RESOLUTION_STRATEGIES)
     choice("hierarchy", "stability_mode", _ALLOWED_STABILITY)
@@ -234,11 +257,7 @@ def validate_config(config: dict[str, Any]) -> None:
             raise InputError(f"components.{key} must be a positive integer")
     if not isinstance(config["hierarchy"]["seed"], int):
         raise InputError("hierarchy.seed must be an integer")
-    if (
-        not isinstance(config["hierarchy"]["min_family_size"], int)
-        or config["hierarchy"]["min_family_size"] < 1
-    ):
-        raise InputError("hierarchy.min_family_size must be a positive integer")
+    hierarchy_config(config["hierarchy"])
     if (
         not isinstance(config["hierarchy"]["max_depth"], int)
         or config["hierarchy"]["max_depth"] < 1
@@ -312,3 +331,66 @@ def validate_config(config: dict[str, Any]) -> None:
 
 def dump_config(config: dict[str, Any]) -> str:
     return str(yaml.safe_dump(config, sort_keys=True, allow_unicode=True))
+
+
+def hierarchy_config(options: dict[str, Any]) -> HierarchyConfig:
+    """One validated config seam for production, prototype and publication gates."""
+    from ogprofiler.exceptions import HierarchyError
+    from ogprofiler.hierarchy.engine import HierarchyConfig
+    from ogprofiler.hierarchy.resolution import ResolutionSearchConfig
+
+    policy = options["admission_policy"]
+    legacy = policy == "legacy_strict"
+    if not legacy and options["min_family_size"] is not None:
+        raise InputError(
+            "min_family_size is legacy-only; explicitly migrate to recursion_stop_size"
+        )
+    if legacy and options["resolution_strategy"] == "bounded_adaptive_v2":
+        raise InputError("legacy_strict requires adaptive or log_grid")
+    if not legacy and options["resolution_strategy"] != "bounded_adaptive_v2":
+        raise InputError("Historical searches require explicit admission_policy=legacy_strict")
+    config = HierarchyConfig(
+        method=options["method"],
+        seed=options["seed"],
+        max_depth=options["max_depth"],
+        stability_mode=options["stability_mode"],
+        subtree_workers=options["subtree_workers"],
+        subtree_release_size=options["subtree_release_size"],
+        recursion_stop_size=options["recursion_stop_size"],
+        component_leiden_call_budget=options["component_leiden_call_budget"],
+        leiden_iterations=options["leiden_iterations"],
+        resolution=ResolutionSearchConfig(
+            strategy=options["resolution_strategy"],
+            admission_policy=policy,
+            topology_policy=options.get("topology_policy", "kway_v1"),
+            gamma_min=options["gamma_min"],
+            gamma_max=options["gamma_max"],
+            growth_factor=options["gamma_growth"],
+            local_grid_points=options["local_grid_points"],
+            min_child_size=options["min_family_size"]
+            if options["min_family_size"] is not None
+            else 2,
+            max_child_fraction=options["max_child_fraction"],
+            tiny_fragment_size=options["tiny_fragment_size"],
+            max_tiny_fragment_fraction=options["max_tiny_fragment_fraction"],
+            stability_threshold=options["stability_threshold"],
+            publication_seeds=options["publication_seeds"],
+            min_quality=options["min_split_quality"],
+            max_candidate_evaluations=options["max_candidate_evaluations"],
+            max_coarse_candidates=options["max_coarse_candidates"],
+            rescue_grid_points=options["rescue_grid_points"],
+        ),
+    )
+    try:
+        config.resolution.validate()
+    except HierarchyError as error:
+        raise InputError(str(error)) from error
+    for key in ("recursion_stop_size", "leiden_iterations"):
+        if type(options[key]) is not int or options[key] < 1:
+            raise InputError(f"hierarchy.{key} must be a positive integer")
+    cap = options["component_leiden_call_budget"]
+    if cap is not None and (type(cap) is not int or cap < 1):
+        raise InputError("component_leiden_call_budget must be a positive integer or null")
+    if cap is not None and legacy:
+        raise InputError("component budget requires bounded_adaptive_v2")
+    return config

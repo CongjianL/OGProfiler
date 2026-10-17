@@ -7,6 +7,7 @@ import os
 import shutil
 import uuid
 from dataclasses import asdict
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +17,7 @@ from ogprofiler.hierarchy.loader import ComponentGraphLoader
 from ogprofiler.hierarchy.validation import validate_hierarchy
 from ogprofiler.storage.hierarchy import write_hierarchy_result
 
-HIERARCHY_ALGORITHM_VERSION = "hierarchical-leiden-v1"
+HIERARCHY_ALGORITHM_VERSION = "hierarchical-leiden-v4"
 ARTIFACT_NAMES = ("nodes.parquet", "members.parquet", "candidates.parquet", "metrics.json")
 
 
@@ -30,13 +31,20 @@ def _load_json(path: Path) -> dict[str, Any]:
 def hierarchy_component_identity(
     run_root: Path, component_id: int, config: HierarchyConfig
 ) -> tuple[str, dict[str, str], dict[str, Any]]:
+    config.validate()
     component_root = run_root / "components"
     partition_root = component_root / "edges" / f"component={component_id:08d}"
     input_paths = [component_root / "index.parquet", run_root / "input" / "proteins.parquet"]
+    if (run_root / "run.yaml").is_file():
+        input_paths.append(run_root / "run.yaml")
     if partition_root.is_dir():
         input_paths.extend(sorted(partition_root.glob("*.parquet")))
     inputs = {path.relative_to(run_root).as_posix(): sha256_file(path) for path in input_paths}
-    parameters = {"component_id": component_id, "hierarchy": asdict(config)}
+    parameters = {
+        "component_id": component_id,
+        "hierarchy": asdict(config),
+        "environment": {name: version(name) for name in ("igraph", "leidenalg")},
+    }
     identity = sha256_json(
         {
             "algorithm_version": HIERARCHY_ALGORITHM_VERSION,
@@ -60,6 +68,10 @@ def hierarchy_component_is_verified(
         checksums = {name: sha256_file(output / name) for name in ARTIFACT_NAMES}
         return bool(
             previous["algorithm_version"] == HIERARCHY_ALGORITHM_VERSION
+            and previous.get("schema_version") == 3
+            and previous.get("artifacts_written") is True
+            and previous.get("structural_validation_passed") is True
+            and previous.get("hierarchy_status") in {"RESOLVED", "UNRESOLVED"}
             and previous["parameters"] == parameters
             and previous["input_checksums"] == inputs
             and previous["output_checksums"] == checksums
@@ -73,10 +85,12 @@ def run_hierarchy_component_stage(
     component_id: int,
     config: HierarchyConfig,
     command: list[str],
+    *,
+    force: bool = False,
 ) -> tuple[Path, bool]:
     _, inputs, parameters = hierarchy_component_identity(run_root, component_id, config)
     output = run_root / "hierarchy" / "components" / f"component={component_id:08d}"
-    if hierarchy_component_is_verified(run_root, component_id, config):
+    if not force and hierarchy_component_is_verified(run_root, component_id, config):
         return output, True
     loaded = ComponentGraphLoader(run_root).load(component_id)
     if config.subtree_workers > 1 and len(loaded.component.vertices) >= config.subtree_release_size:
@@ -112,9 +126,19 @@ def run_hierarchy_component_stage(
                 "input_checksums": inputs,
                 "output_checksums": checksums,
                 "metrics": asdict(result.metrics),
+                "schema_version": 3,
+                "fallback_count": sum(n.selection_kind == "FALLBACK_KWAY" for n in result.nodes),
+                "refinement_truncated_count": sum(n.refinement_truncated for n in result.nodes),
+                "artifacts_written": True,
+                "structural_validation_passed": True,
+                "hierarchy_status": "UNRESOLVED"
+                if any(node.split_status == "UNRESOLVED" for node in result.nodes)
+                else "RESOLVED",
             },
         )
         output.mkdir(parents=True, exist_ok=True)
+        # Withdraw the old commit marker before replacing any artifact.
+        (output / "hierarchy-manifest.json").unlink(missing_ok=True)
         for name in (*ARTIFACT_NAMES, "hierarchy-manifest.json"):
             os.replace(staging / name, output / name)
     finally:

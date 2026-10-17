@@ -14,6 +14,7 @@ from ogprofiler.exceptions import HierarchyError
 @dataclass(slots=True)
 class LeidenCallCounter:
     count: int = 0
+    n_iterations: int = 2
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,7 +46,11 @@ def run_leiden(
         raise HierarchyError(f"Unknown Leiden method {method!r}; expected: {allowed}")
     if graph.vcount() == 0:
         raise HierarchyError("Leiden requires at least one vertex")
-    kwargs: dict[str, Any] = {"weights": weights, "seed": seed}
+    kwargs: dict[str, Any] = {
+        "weights": weights,
+        "seed": seed,
+        "n_iterations": counter.n_iterations if counter else 2,
+    }
     if method != "modularity":
         if gamma <= 0:
             raise HierarchyError("Leiden resolution gamma must be positive")

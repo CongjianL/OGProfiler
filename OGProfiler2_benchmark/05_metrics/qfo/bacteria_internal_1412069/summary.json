@@ -1,0 +1,1046 @@
+{
+  "diagnostic_only": true,
+  "production_changed": false,
+  "immutable_inputs_verified": true,
+  "reference_labels_used_for_objective": false,
+  "objective": "sum Win/W - (strength/(2W))^2; induced source graph, resolution1, tie keep parent",
+  "baseline_merge_score": "root zero (or zero-weight case)",
+  "target_nodes": 1205,
+  "coverage_verified": true,
+  "strata": [
+    {
+      "cohort": "clean_tp_gain",
+      "event": "II",
+      "nodes": 2,
+      "split_nodes": 1,
+      "cut_gain_q10_q50_q90": [
+        0.03706380025764985,
+        0.18531900128824924,
+        0.33357420231884866
+      ],
+      "removed_merge_tp": 20,
+      "removed_merge_fp": 0,
+      "retained_new_tp": 8,
+      "retained_new_fp": 0
+    },
+    {
+      "cohort": "clean_tp_gain",
+      "event": "III-1",
+      "nodes": 359,
+      "split_nodes": 160,
+      "cut_gain_q10_q50_q90": [
+        0.0,
+        0.0,
+        0.25530851333949967
+      ],
+      "removed_merge_tp": 8751,
+      "removed_merge_fp": 0,
+      "retained_new_tp": 2632,
+      "retained_new_fp": 0
+    },
+    {
+      "cohort": "clean_tp_gain",
+      "event": "III-2",
+      "nodes": 79,
+      "split_nodes": 74,
+      "cut_gain_q10_q50_q90": [
+        0.02930588272868733,
+        0.21466664355725218,
+        0.3903696454175062
+      ],
+      "removed_merge_tp": 3677,
+      "removed_merge_fp": 0,
+      "retained_new_tp": 509,
+      "retained_new_fp": 0
+    },
+    {
+      "cohort": "polluted",
+      "event": "II",
+      "nodes": 5,
+      "split_nodes": 5,
+      "cut_gain_q10_q50_q90": [
+        0.4509998770256149,
+        0.5016804583264576,
+        0.686032448650149
+      ],
+      "removed_merge_tp": 323,
+      "removed_merge_fp": 26186,
+      "retained_new_tp": 1310,
+      "retained_new_fp": 6954
+    },
+    {
+      "cohort": "polluted",
+      "event": "III-1",
+      "nodes": 513,
+      "split_nodes": 430,
+      "cut_gain_q10_q50_q90": [
+        0.0,
+        0.14214014134712685,
+        0.5324394833231152
+      ],
+      "removed_merge_tp": 28484,
+      "removed_merge_fp": 396010,
+      "retained_new_tp": 15310,
+      "retained_new_fp": 40845
+    },
+    {
+      "cohort": "polluted",
+      "event": "III-2",
+      "nodes": 247,
+      "split_nodes": 243,
+      "cut_gain_q10_q50_q90": [
+        0.048009887269978464,
+        0.34549622419346526,
+        0.6011567298777966
+      ],
+      "removed_merge_tp": 16238,
+      "removed_merge_fp": 207247,
+      "retained_new_tp": 9606,
+      "retained_new_fp": 31241
+    }
+  ],
+  "scope": "Only changed complete-source clades; no full partition strategy or biological inference",
+  "top_polluted": [
+    {
+      "component_id": 0,
+      "source_cluster_id": 22807,
+      "original_event": "III-1",
+      "full_size": 458,
+      "merge_transitions": {
+        "assigned_size": 440,
+        "tp": 1741,
+        "fp": 94839,
+        "new_tp": 671,
+        "new_fp": 94075,
+        "retained_fp": 764
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7748197453679352,
+        "cut_gain": 0.7748197453679352,
+        "selected": [
+          22809,
+          22852,
+          22986,
+          23003,
+          23051,
+          23115,
+          23184,
+          23201,
+          23204,
+          23205,
+          23208,
+          23210,
+          23239,
+          23258,
+          23338,
+          23343,
+          23378,
+          23417,
+          23428,
+          23429,
+          23430,
+          23432,
+          23586,
+          23593
+        ],
+        "split": true,
+        "total_weight": 3000.112612780132,
+        "groups": 24
+      },
+      "cut_pairs": {
+        "tp": 1611,
+        "fp": 8496,
+        "lost": 130,
+        "new_tp": 541,
+        "new_fp": 7732
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 130,
+      "removed_merge_fp": 86343
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 14737,
+      "original_event": "III-2",
+      "full_size": 311,
+      "merge_transitions": {
+        "assigned_size": 299,
+        "tp": 966,
+        "fp": 43585,
+        "new_tp": 535,
+        "new_fp": 43107,
+        "retained_fp": 478
+      },
+      "objective": {
+        "merge_score": 6.661338147750939e-16,
+        "best_cut_score": 0.5281231547368131,
+        "cut_gain": 0.5281231547368125,
+        "selected": [
+          14738,
+          14848,
+          14998,
+          15007,
+          15009,
+          15050,
+          15053,
+          15085,
+          15086,
+          15087,
+          15088,
+          15093,
+          15096,
+          15105,
+          15106,
+          15107,
+          15112,
+          15113,
+          15114,
+          15115,
+          15116,
+          15117,
+          15118,
+          15119,
+          15120,
+          15133,
+          15134,
+          15180,
+          15181,
+          15188,
+          15211
+        ],
+        "split": true,
+        "total_weight": 2960.832042070488,
+        "groups": 31
+      },
+      "cut_pairs": {
+        "tp": 868,
+        "fp": 6394,
+        "lost": 98,
+        "new_tp": 437,
+        "new_fp": 5916
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 98,
+      "removed_merge_fp": 37191
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 32278,
+      "original_event": "III-1",
+      "full_size": 281,
+      "merge_transitions": {
+        "assigned_size": 272,
+        "tp": 1127,
+        "fp": 35729,
+        "new_tp": 580,
+        "new_fp": 35380,
+        "retained_fp": 349
+      },
+      "objective": {
+        "merge_score": -8.881784197001252e-16,
+        "best_cut_score": 0.5707104053700187,
+        "cut_gain": 0.5707104053700196,
+        "selected": [
+          32282,
+          32309,
+          32396,
+          32399,
+          32416,
+          32426,
+          32461,
+          32463,
+          32468,
+          32473,
+          32611,
+          32628,
+          32629,
+          32650,
+          32657,
+          32658,
+          32659,
+          32660,
+          32681,
+          32686,
+          32697,
+          32698,
+          32719,
+          32720,
+          32721,
+          32726,
+          32727,
+          32728
+        ],
+        "split": true,
+        "total_weight": 2539.611483831142,
+        "groups": 28
+      },
+      "cut_pairs": {
+        "tp": 895,
+        "fp": 4410,
+        "lost": 232,
+        "new_tp": 348,
+        "new_fp": 4061
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 232,
+      "removed_merge_fp": 31319
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 31866,
+      "original_event": "III-1",
+      "full_size": 251,
+      "merge_transitions": {
+        "assigned_size": 244,
+        "tp": 910,
+        "fp": 28736,
+        "new_tp": 535,
+        "new_fp": 28570,
+        "retained_fp": 166
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7157377731208817,
+        "cut_gain": 0.7157377731208817,
+        "selected": [
+          31869,
+          31935,
+          31958,
+          32029,
+          32048,
+          32069,
+          32084,
+          32099,
+          32116,
+          32123,
+          32132,
+          32133,
+          32162,
+          32163,
+          32170,
+          32173,
+          32196,
+          32197,
+          32216,
+          32223,
+          32248,
+          32253,
+          32258,
+          32259,
+          32264,
+          32267,
+          32270,
+          32271,
+          32276,
+          32277
+        ],
+        "split": true,
+        "total_weight": 981.8484212176269,
+        "groups": 30
+      },
+      "cut_pairs": {
+        "tp": 676,
+        "fp": 1854,
+        "lost": 234,
+        "new_tp": 301,
+        "new_fp": 1688
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 234,
+      "removed_merge_fp": 26882
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 20942,
+      "original_event": "III-1",
+      "full_size": 215,
+      "merge_transitions": {
+        "assigned_size": 213,
+        "tp": 1450,
+        "fp": 21128,
+        "new_tp": 362,
+        "new_fp": 21016,
+        "retained_fp": 112
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7986599778484248,
+        "cut_gain": 0.7986599778484248,
+        "selected": [
+          20947,
+          20997,
+          21043,
+          21064,
+          21083,
+          21125,
+          21145,
+          21186,
+          21239,
+          21338,
+          21343
+        ],
+        "split": true,
+        "total_weight": 2182.049137543624,
+        "groups": 11
+      },
+      "cut_pairs": {
+        "tp": 1365,
+        "fp": 1491,
+        "lost": 85,
+        "new_tp": 277,
+        "new_fp": 1379
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 85,
+      "removed_merge_fp": 19637
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 5226,
+      "original_event": "II",
+      "full_size": 187,
+      "merge_transitions": {
+        "assigned_size": 182,
+        "tp": 1104,
+        "fp": 15367,
+        "new_tp": 386,
+        "new_fp": 15104,
+        "retained_fp": 263
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7153054635819909,
+        "cut_gain": 0.7153054635819909,
+        "selected": [
+          5228,
+          5287,
+          5332,
+          5333,
+          5340,
+          5373,
+          5408,
+          5409,
+          5477,
+          5516,
+          5517,
+          5554,
+          5563,
+          5564,
+          5575
+        ],
+        "split": true,
+        "total_weight": 2153.0762769306584,
+        "groups": 15
+      },
+      "cut_pairs": {
+        "tp": 949,
+        "fp": 1149,
+        "lost": 155,
+        "new_tp": 231,
+        "new_fp": 886
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 155,
+      "removed_merge_fp": 14218
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 51247,
+      "original_event": "II",
+      "full_size": 182,
+      "merge_transitions": {
+        "assigned_size": 178,
+        "tp": 1040,
+        "fp": 14713,
+        "new_tp": 933,
+        "new_fp": 14668,
+        "retained_fp": 45
+      },
+      "objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.5016804583264571,
+        "cut_gain": 0.5016804583264576,
+        "selected": [
+          51248,
+          51381,
+          51480,
+          51481,
+          51498,
+          51499
+        ],
+        "split": true,
+        "total_weight": 3257.1372859608277,
+        "groups": 6
+      },
+      "cut_pairs": {
+        "tp": 980,
+        "fp": 5766,
+        "lost": 60,
+        "new_tp": 873,
+        "new_fp": 5721
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 60,
+      "removed_merge_fp": 8947
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 48621,
+      "original_event": "III-1",
+      "full_size": 175,
+      "merge_transitions": {
+        "assigned_size": 162,
+        "tp": 470,
+        "fp": 12571,
+        "new_tp": 261,
+        "new_fp": 12156,
+        "retained_fp": 415
+      },
+      "objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.5568481494287704,
+        "cut_gain": 0.5568481494287708,
+        "selected": [
+          48628,
+          48672,
+          48742,
+          48777,
+          48780,
+          48781,
+          48794,
+          48795,
+          48796,
+          48797,
+          48798,
+          48799,
+          48806,
+          48807,
+          48808,
+          48843,
+          48848,
+          48849,
+          48854,
+          48857,
+          48906,
+          48907
+        ],
+        "split": true,
+        "total_weight": 896.5421456285699,
+        "groups": 22
+      },
+      "cut_pairs": {
+        "tp": 383,
+        "fp": 1293,
+        "lost": 87,
+        "new_tp": 174,
+        "new_fp": 878
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 87,
+      "removed_merge_fp": 11278
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 221,
+      "original_event": "III-1",
+      "full_size": 173,
+      "merge_transitions": {
+        "assigned_size": 159,
+        "tp": 391,
+        "fp": 12170,
+        "new_tp": 163,
+        "new_fp": 12000,
+        "retained_fp": 170
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.7974985692970837,
+        "cut_gain": 0.7974985692970837,
+        "selected": [
+          227,
+          256,
+          271,
+          286,
+          309,
+          310,
+          317,
+          318,
+          319,
+          320,
+          329,
+          338,
+          357,
+          416,
+          431,
+          444,
+          473,
+          480,
+          491,
+          494,
+          511,
+          512
+        ],
+        "split": true,
+        "total_weight": 430.7869310173638,
+        "groups": 22
+      },
+      "cut_pairs": {
+        "tp": 315,
+        "fp": 639,
+        "lost": 76,
+        "new_tp": 87,
+        "new_fp": 469
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 76,
+      "removed_merge_fp": 11531
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 7840,
+      "original_event": "III-2",
+      "full_size": 159,
+      "merge_transitions": {
+        "assigned_size": 154,
+        "tp": 931,
+        "fp": 10850,
+        "new_tp": 500,
+        "new_fp": 10727,
+        "retained_fp": 123
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.6779481870979172,
+        "cut_gain": 0.6779481870979172,
+        "selected": [
+          7842,
+          7861,
+          7899,
+          7948,
+          7971,
+          7976,
+          8096,
+          8099,
+          8104
+        ],
+        "split": true,
+        "total_weight": 1000.4369550542467,
+        "groups": 9
+      },
+      "cut_pairs": {
+        "tp": 702,
+        "fp": 2356,
+        "lost": 229,
+        "new_tp": 271,
+        "new_fp": 2233
+      },
+      "reference_cohort": "polluted",
+      "removed_merge_tp": 229,
+      "removed_merge_fp": 8494
+    }
+  ],
+  "top_clean": [
+    {
+      "component_id": 0,
+      "source_cluster_id": 21394,
+      "original_event": "III-1",
+      "full_size": 37,
+      "merge_transitions": {
+        "assigned_size": 36,
+        "tp": 630,
+        "fp": 0,
+        "new_tp": 394,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.13413446734672574,
+        "cut_gain": 0.13413446734672574,
+        "selected": [
+          21396,
+          21446,
+          21457
+        ],
+        "split": true,
+        "total_weight": 428.43529204223285,
+        "groups": 3
+      },
+      "cut_pairs": {
+        "tp": 325,
+        "fp": 0,
+        "lost": 305,
+        "new_tp": 89,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 305,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 10040,
+      "original_event": "III-2",
+      "full_size": 30,
+      "merge_transitions": {
+        "assigned_size": 30,
+        "tp": 435,
+        "fp": 0,
+        "new_tp": 387,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.5019303280490091,
+        "cut_gain": 0.5019303280490091,
+        "selected": [
+          10045,
+          10052,
+          10068,
+          10073,
+          10074,
+          10075
+        ],
+        "split": true,
+        "total_weight": 49.564383476409475,
+        "groups": 6
+      },
+      "cut_pairs": {
+        "tp": 102,
+        "fp": 0,
+        "lost": 333,
+        "new_tp": 54,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 333,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 0,
+      "source_cluster_id": 48967,
+      "original_event": "III-1",
+      "full_size": 29,
+      "merge_transitions": {
+        "assigned_size": 29,
+        "tp": 406,
+        "fp": 0,
+        "new_tp": 336,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.15793367265696096,
+        "cut_gain": 0.1579336726569614,
+        "selected": [
+          48973,
+          48990,
+          48993,
+          48996,
+          48997,
+          49000,
+          49015
+        ],
+        "split": true,
+        "total_weight": 232.39634894829905,
+        "groups": 7
+      },
+      "cut_pairs": {
+        "tp": 80,
+        "fp": 0,
+        "lost": 326,
+        "new_tp": 10,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 326,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 90,
+      "source_cluster_id": 1,
+      "original_event": "III-1",
+      "full_size": 29,
+      "merge_transitions": {
+        "assigned_size": 29,
+        "tp": 406,
+        "fp": 0,
+        "new_tp": 312,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.23817015853219073,
+        "cut_gain": 0.23817015853219117,
+        "selected": [
+          6,
+          10,
+          33,
+          34,
+          41,
+          42,
+          43,
+          44
+        ],
+        "split": true,
+        "total_weight": 170.93421046553954,
+        "groups": 8
+      },
+      "cut_pairs": {
+        "tp": 94,
+        "fp": 0,
+        "lost": 312,
+        "new_tp": 0,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 312,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 59,
+      "source_cluster_id": 1,
+      "original_event": "III-1",
+      "full_size": 32,
+      "merge_transitions": {
+        "assigned_size": 31,
+        "tp": 465,
+        "fp": 0,
+        "new_tp": 286,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.03675919656722277,
+        "cut_gain": 0.03675919656722277,
+        "selected": [
+          6,
+          13,
+          52,
+          55,
+          56,
+          57,
+          58,
+          59
+        ],
+        "split": true,
+        "total_weight": 291.8990663491427,
+        "groups": 8
+      },
+      "cut_pairs": {
+        "tp": 179,
+        "fp": 0,
+        "lost": 286,
+        "new_tp": 0,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 286,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 19,
+      "source_cluster_id": 1,
+      "original_event": "III-1",
+      "full_size": 31,
+      "merge_transitions": {
+        "assigned_size": 31,
+        "tp": 465,
+        "fp": 0,
+        "new_tp": 271,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.017520191185018377,
+        "cut_gain": 0.01752019118501882,
+        "selected": [
+          3,
+          8,
+          54
+        ],
+        "split": true,
+        "total_weight": 748.6621780431103,
+        "groups": 3
+      },
+      "cut_pairs": {
+        "tp": 329,
+        "fp": 0,
+        "lost": 136,
+        "new_tp": 135,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 136,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 7,
+      "source_cluster_id": 3,
+      "original_event": "III-1",
+      "full_size": 27,
+      "merge_transitions": {
+        "assigned_size": 27,
+        "tp": 351,
+        "fp": 0,
+        "new_tp": 245,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 4.440892098500626e-16,
+        "best_cut_score": 0.043971705294766565,
+        "cut_gain": 0.04397170529476612,
+        "selected": [
+          12,
+          14,
+          27,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48
+        ],
+        "split": true,
+        "total_weight": 321.1120001926181,
+        "groups": 14
+      },
+      "cut_pairs": {
+        "tp": 43,
+        "fp": 0,
+        "lost": 308,
+        "new_tp": 0,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 308,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 46,
+      "source_cluster_id": 1,
+      "original_event": "III-2",
+      "full_size": 28,
+      "merge_transitions": {
+        "assigned_size": 27,
+        "tp": 351,
+        "fp": 0,
+        "new_tp": 243,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": -4.440892098500626e-16,
+        "best_cut_score": 0.4479496040520984,
+        "cut_gain": 0.4479496040520988,
+        "selected": [
+          2,
+          29
+        ],
+        "split": true,
+        "total_weight": 140.78266484735272,
+        "groups": 2
+      },
+      "cut_pairs": {
+        "tp": 169,
+        "fp": 0,
+        "lost": 182,
+        "new_tp": 61,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 182,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 112,
+      "source_cluster_id": 2,
+      "original_event": "III-1",
+      "full_size": 32,
+      "merge_transitions": {
+        "assigned_size": 30,
+        "tp": 435,
+        "fp": 0,
+        "new_tp": 239,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 4.440892098500626e-16,
+        "best_cut_score": 0.031166966290229872,
+        "cut_gain": 0.031166966290229428,
+        "selected": [
+          3,
+          12,
+          57,
+          58,
+          59,
+          60
+        ],
+        "split": true,
+        "total_weight": 630.1391140257394,
+        "groups": 6
+      },
+      "cut_pairs": {
+        "tp": 282,
+        "fp": 0,
+        "lost": 153,
+        "new_tp": 86,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 153,
+      "removed_merge_fp": 0
+    },
+    {
+      "component_id": 64,
+      "source_cluster_id": 42,
+      "original_event": "III-2",
+      "full_size": 26,
+      "merge_transitions": {
+        "assigned_size": 25,
+        "tp": 300,
+        "fp": 0,
+        "new_tp": 217,
+        "new_fp": 0,
+        "retained_fp": 0
+      },
+      "objective": {
+        "merge_score": 0.0,
+        "best_cut_score": 0.30064345710175455,
+        "cut_gain": 0.30064345710175455,
+        "selected": [
+          43,
+          58,
+          69,
+          90
+        ],
+        "split": true,
+        "total_weight": 257.02875561230496,
+        "groups": 4
+      },
+      "cut_pairs": {
+        "tp": 91,
+        "fp": 0,
+        "lost": 209,
+        "new_tp": 8,
+        "new_fp": 0
+      },
+      "reference_cohort": "clean_tp_gain",
+      "removed_merge_tp": 209,
+      "removed_merge_fp": 0
+    }
+  ]
+}

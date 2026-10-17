@@ -28,9 +28,13 @@ from ogprofiler.phylogeny.reconciliation import (
     ReconciliationBackend,
     species_tree_aware_root,
 )
-from ogprofiler.phylogeny.selection import RefinementFamily, select_refinement_families
+from ogprofiler.phylogeny.selection import (
+    RefinementFamily,
+    select_refinement_families,
+    terminal_result_paths,
+)
 
-PHYLOGENY_ALGORITHM_VERSION = "selected-family-phylogeny-v1"
+PHYLOGENY_ALGORITHM_VERSION = "selected-terminal-family-phylogeny-v2"
 
 
 def _parquet_rows(path: Path) -> list[dict[str, Any]]:
@@ -65,7 +69,7 @@ def _prepared_sequences(path: Path) -> dict[int, str]:
 
 def _family_members(run_root: Path) -> dict[str, list[int]]:
     result: dict[str, list[int]] = {}
-    for row in _tsv(run_root / "results" / "members.tsv"):
+    for row in _tsv(terminal_result_paths(run_root)[1]):
         result.setdefault(row["family_id"], []).append(int(row["protein_id"]))
     for values in result.values():
         values.sort()
@@ -136,6 +140,11 @@ def _refine_family(
 ) -> tuple[dict[str, Any], bool]:
     output = run_root / "evolution" / "phylogenetic" / f"family={family.family_id}"
     parameters = {
+        "algorithm_version": PHYLOGENY_ALGORITHM_VERSION,
+        "grouping_source": "terminal_family",
+        "component_id": family.component_id,
+        "cluster_id": family.cluster_id,
+        "network_event": family.network_event,
         "family_id": family.family_id,
         "members": members,
         "rooting": rooting,
@@ -278,9 +287,7 @@ def _refine_family(
                     "alignment": list(alignment_run.command),
                     "tree": list(tree_run.command),
                 },
-                "output_checksums": {
-                    path.name: sha256_file(path) for path in outputs
-                },
+                "output_checksums": {path.name: sha256_file(path) for path in outputs},
                 "summary": summary,
                 "status": "DONE",
             },
@@ -321,17 +328,11 @@ def run_phylogenetic_refinement_stage(
     sequences = _prepared_sequences(run_root / "input" / "proteins.faa")
     proteins = _parquet_rows(run_root / "input" / "proteins.parquet")
     species_rows = _parquet_rows(run_root / "input" / "species.parquet")
-    species_by_protein = {
-        int(row["protein_id"]): int(row["species_id"]) for row in proteins
-    }
-    species_name_by_id = {
-        int(row["species_id"]): str(row["species_name"]) for row in species_rows
-    }
+    species_by_protein = {int(row["protein_id"]): int(row["species_id"]) for row in proteins}
+    species_name_by_id = {int(row["species_id"]): str(row["species_name"]) for row in species_rows}
     try:
         species_tree_text = (
-            species_tree_path.read_text(encoding="utf-8")
-            if species_tree_path is not None
-            else None
+            species_tree_path.read_text(encoding="utf-8") if species_tree_path is not None else None
         )
     except OSError as error:
         raise PhylogenyError(f"Failed to read species tree {species_tree_path}: {error}") from error

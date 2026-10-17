@@ -81,12 +81,10 @@ def annotate_component(
                 previous["algorithm_version"] == NETWORK_EVENT_ALGORITHM_VERSION
                 and previous["parameters"] == parameters
                 and previous["input_checksums"] == inputs
-                and previous["output_checksums"]["events.parquet"]
-                == sha256_file(events_path)
+                and previous["output_checksums"]["events.parquet"] == sha256_file(events_path)
             ):
                 counts = Counter(
-                    str(value)
-                    for value in pq.read_table(events_path)["network_event"].to_pylist()
+                    str(value) for value in pq.read_table(events_path)["network_event"].to_pylist()
                 )
                 return events_path, True, counts
         except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
@@ -122,7 +120,34 @@ def run_network_annotation_stage(
     hierarchy_root = run_root / "hierarchy" / "components"
     component_dirs = sorted(hierarchy_root.glob("component=*"))
     if not component_dirs:
-        raise HierarchyError("Network annotation requires component hierarchy outputs")
+        # An edge-free dataset has no non-singleton hierarchy to annotate.
+        # Accept only a resolved scheduler and exactly matching singleton inputs.
+        try:
+            scheduler = _load_json(run_root / "hierarchy/scheduler-manifest.json")
+            index = pq.ParquetFile(run_root / "components/index.parquet").read().to_pylist()
+            singletons = (
+                pq.ParquetFile(run_root / "components/singleton_terminal_families.parquet")
+                .read()
+                .to_pylist()
+            )
+            proteins = pq.ParquetFile(run_root / "input/proteins.parquet").read().to_pylist()
+            pairs = [(int(r["protein_id"]), int(r["component_id"])) for r in index]
+            singleton_pairs = [(int(r["protein_id"]), int(r["component_id"])) for r in singletons]
+            valid = (
+                scheduler["hierarchy_status"] == "RESOLVED"
+                and scheduler["counts"]["failed"] == 0
+                and scheduler["counts"]["unresolved"] == 0
+                and scheduler["counts"]["singleton_components"] == len(pairs)
+                and bool(pairs)
+                and len({p for p, _ in pairs}) == len(pairs)
+                and len({c for _, c in pairs}) == len(pairs)
+                and sorted(pairs) == sorted(singleton_pairs)
+                and sorted(p for p, _ in pairs) == sorted(int(r["protein_id"]) for r in proteins)
+            )
+        except (OSError, KeyError, TypeError, ValueError):
+            valid = False
+        if not valid:
+            raise HierarchyError("Network annotation requires component hierarchy outputs")
     total = Counter[str]()
     reused = 0
     component_ids: list[int] = []
@@ -135,6 +160,7 @@ def run_network_annotation_stage(
         reused += int(was_reused)
         total.update(counts)
     manifest_path = run_root / "evolution" / "network-event-manifest.json"
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
     write_json(
         manifest_path,
         {

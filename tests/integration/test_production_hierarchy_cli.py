@@ -16,9 +16,7 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     proteomes = tmp_path / "proteomes"
     proteomes.mkdir()
     for species in range(3):
-        records = "".join(
-            f">g{species}_{index}\n{'A' * 20}\n" for index in range(5)
-        )
+        records = "".join(f">g{species}_{index}\n{'A' * 20}\n" for index in range(5))
         (proteomes / f"species_{species}.faa").write_text(records, encoding="utf-8")
     run = tmp_path / "run"
     assert main(["prepare", "--proteomes", str(proteomes), "--out", str(run)]) == 0
@@ -83,7 +81,7 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     assert "stability" in candidates.column_names
     assert "tiny_fragment_fraction" in candidates.column_names
     manifest = json.loads((output / "hierarchy-manifest.json").read_text(encoding="utf-8"))
-    assert manifest["algorithm_version"] == "hierarchical-leiden-v1"
+    assert manifest["algorithm_version"] == "hierarchical-leiden-v4"
 
     nodes_path.write_bytes(b"corrupt")
     assert main(command) == 0
@@ -109,14 +107,21 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     assert main(annotation_command) == 0
     assert pq.read_table(events_path).num_rows == 4
 
-    export_command = ["export", "--run", str(run), "--family-fasta", "OG000000000"]
+    export_command = [
+        "export",
+        "--run",
+        str(run),
+        "--strategy",
+        "terminal",
+        "--family-fasta",
+        "OG000000000",
+    ]
     assert main(export_command) == 0
-    results = run / "results"
+    results = run / "results/terminal-families"
     families_before = (results / "families.tsv").read_bytes()
     members_before = (results / "members.tsv").read_bytes()
     assert families_before.decode().splitlines()[0] == (
-        "family_id\tcomponent_id\tcluster_id\tn_genes\tn_species\t"
-        "terminal_reason\tnetwork_event"
+        "family_id\tcomponent_id\tcluster_id\tn_genes\tn_species\tterminal_reason\tnetwork_event"
     )
     assert len(families_before.decode().splitlines()) == 4
     assert len(members_before.decode().splitlines()) == 16
@@ -147,10 +152,9 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     assert (results / "families.tsv").read_bytes() == families_before
     assert (results / "members.tsv").read_bytes() == members_before
 
+    results = run / "results"
     assert main(["export", "graph", "--run", str(run), "--component", "0"]) == 0
-    graphml = (results / "graphs" / "component=00000000.graphml").read_text(
-        encoding="utf-8"
-    )
+    graphml = (results / "graphs" / "component=00000000.graphml").read_text(encoding="utf-8")
     assert graphml.count("<node id=") == 15
     assert graphml.count("<edge id=") == len(edges)
 
@@ -167,9 +171,7 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     ]
     assert main(ortholog_command) == 0
     ortholog_mtime = ortholog_path.stat().st_mtime_ns
-    ortholog_manifest = json.loads(
-        (results / "ortholog-manifest.json").read_text(encoding="utf-8")
-    )
+    ortholog_manifest = json.loads((results / "ortholog-manifest.json").read_text(encoding="utf-8"))
     assert ortholog_manifest["counts"] == {
         "chunks": 38,
         "components": 1,
@@ -187,7 +189,7 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     fake_mafft.write_text(
         "#!/bin/bash\n"
         "if [[ $1 == --version ]]; then echo 'fake-mafft 1' >&2; exit 0; fi\n"
-        "/bin/cat \"${!#}\"\n",
+        '/bin/cat "${!#}"\n',
         encoding="utf-8",
     )
     fake_tree = tmp_path / "fake-fasttree"
@@ -214,9 +216,7 @@ def test_partitioned_component_to_production_hierarchy_and_resume(tmp_path: Path
     ]
     assert main(phylogeny_command) == 0
     phylogeny_root = run / "evolution/phylogenetic"
-    phylogeny_events = (phylogeny_root / "phylogenetic-events.tsv").read_text(
-        encoding="utf-8"
-    )
+    phylogeny_events = (phylogeny_root / "phylogenetic-events.tsv").read_text(encoding="utf-8")
     phylogeny_manifest = json.loads(
         (phylogeny_root / "phylogenetic-manifest.json").read_text(encoding="utf-8")
     )

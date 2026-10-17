@@ -1,0 +1,68 @@
+[
+  {
+    "source_cohort": "clean_tp_gain",
+    "local_reference_cohort": "pure",
+    "dp_state": "active_split",
+    "sign_reversal_nodes": 44,
+    "actual_direct_lca_tp": 744,
+    "actual_direct_lca_fp": 0,
+    "blocked_by_selected_ancestor": 0,
+    "immediate_frontier_nodes": 29,
+    "deeper_frontier_nodes": 15
+  },
+  {
+    "source_cohort": "clean_tp_gain",
+    "local_reference_cohort": "pure",
+    "dp_state": "inactive",
+    "sign_reversal_nodes": 81,
+    "actual_direct_lca_tp": 0,
+    "actual_direct_lca_fp": 0,
+    "blocked_by_selected_ancestor": 81,
+    "immediate_frontier_nodes": 62,
+    "deeper_frontier_nodes": 19
+  },
+  {
+    "source_cohort": "polluted",
+    "local_reference_cohort": "mixed",
+    "dp_state": "active_split",
+    "sign_reversal_nodes": 324,
+    "actual_direct_lca_tp": 3189,
+    "actual_direct_lca_fp": 17100,
+    "blocked_by_selected_ancestor": 0,
+    "immediate_frontier_nodes": 166,
+    "deeper_frontier_nodes": 158
+  },
+  {
+    "source_cohort": "polluted",
+    "local_reference_cohort": "mixed",
+    "dp_state": "inactive",
+    "sign_reversal_nodes": 361,
+    "actual_direct_lca_tp": 0,
+    "actual_direct_lca_fp": 0,
+    "blocked_by_selected_ancestor": 361,
+    "immediate_frontier_nodes": 253,
+    "deeper_frontier_nodes": 108
+  },
+  {
+    "source_cohort": "polluted",
+    "local_reference_cohort": "pure",
+    "dp_state": "active_split",
+    "sign_reversal_nodes": 36,
+    "actual_direct_lca_tp": 607,
+    "actual_direct_lca_fp": 0,
+    "blocked_by_selected_ancestor": 0,
+    "immediate_frontier_nodes": 32,
+    "deeper_frontier_nodes": 4
+  },
+  {
+    "source_cohort": "polluted",
+    "local_reference_cohort": "pure",
+    "dp_state": "inactive",
+    "sign_reversal_nodes": 247,
+    "actual_direct_lca_tp": 0,
+    "actual_direct_lca_fp": 0,
+    "blocked_by_selected_ancestor": 247,
+    "immediate_frontier_nodes": 225,
+    "deeper_frontier_nodes": 22
+  }
+]

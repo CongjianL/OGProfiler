@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import yaml
 
 from ogprofiler.config import load_config
 from ogprofiler.exceptions import InputError
@@ -62,3 +63,24 @@ def test_edge_thresholds_are_validated() -> None:
 def test_component_batch_configuration_is_validated() -> None:
     with pytest.raises(InputError, match="components.edge_batch_size"):
         load_config(overrides=["components.edge_batch_size=0"])
+
+
+def test_default_configuration_exactly_matches_frozen_soft42_preset() -> None:
+    preset = Path(__file__).resolve().parents[2] / "presets/embleya-soft42.yaml"
+    assert load_config() == load_config(str(preset))
+    assert load_config() == yaml.safe_load(preset.read_text(encoding="utf-8"))
+
+
+def test_previous_kway_depth20_is_available_as_explicit_override() -> None:
+    config = load_config(overrides=["hierarchy.topology_policy=kway_v1", "hierarchy.max_depth=20"])
+    assert config["hierarchy"]["topology_policy"] == "kway_v1"
+    assert config["hierarchy"]["max_depth"] == 20
+
+
+def test_partial_configuration_inherits_soft42(tmp_path: Path) -> None:
+    path = tmp_path / "partial.yaml"
+    path.write_text("runtime:\n  workers: 3\n", encoding="utf-8")
+    config = load_config(str(path))
+    assert config["hierarchy"]["topology_policy"] == "soft_binary_24_v2"
+    assert config["hierarchy"]["max_depth"] == 42
+    assert config["runtime"]["workers"] == 3

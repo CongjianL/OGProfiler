@@ -3,7 +3,7 @@
 OGProfiler 2 builds deterministic, hierarchical protein-family assignments from
 sequence-similarity networks. It combines a directional homology search,
 legacy-compatible normalized bit scores, sparse connected components,
-hierarchical Leiden subdivision, stable terminal-family IDs, and optional
+hierarchical Leiden subdivision, stable orthogroup and terminal-family IDs, and optional
 phylogenetic evidence. The implementation lives in `src/ogprofiler`; the frozen
 V1 reference remains under `legacy/` for regression comparison.
 
@@ -47,6 +47,18 @@ Confirm the installation with `ogprofiler --version`.
 
 ## Quick start
 
+V2 now defaults to the validated **soft42** configuration: soft-binary topology,
+maximum depth 42, seed 42, 10 Leiden iterations, and `v1_compatible` OG extraction.
+The full defaults match `presets/embleya-soft42.yaml`; runtime workers remain 1
+and search threads remain 8 unless explicitly overridden. This is the selected
+policy, not a claim of universal benchmark superiority. See
+[ADR0007](docs/adr/0007-soft42-production-default.md).
+
+To replay the previous kway/depth20 policy, explicitly set
+`hierarchy.topology_policy=kway_v1` and `hierarchy.max_depth=20`.
+Sparse configuration files inherit the new defaults for omitted fields; freeze
+these fields when replaying older runs. Existing result files are not rewritten.
+
 Run or resume the complete default workflow:
 
 ```bash
@@ -85,8 +97,16 @@ ogprofiler edges --run run/ --method lrb
 ogprofiler components --run run/
 ogprofiler hierarchy-all --run run/ --set runtime.workers=4
 ogprofiler annotate-network --run run/
+ogprofiler orthogroups --run run/
 ogprofiler export --run run/
 ```
+
+The `orthogroups` stage writes V1-compatible component Parquet artifacts with
+verified resume. Default `export` reads this OG membership; terminal families
+remain separate diagnostics. `export --strategy terminal` writes historical
+terminal results into `results/terminal-families/`. See
+[OG extraction stage](docs/og-extraction-stage.md) and
+[final export](docs/final-result-export.md).
 
 DIAMOND is the production default. MMseqs2 and NCBI BLAST+ are interchangeable
 compatibility backends and emit the same directional Parquet schema:
@@ -115,8 +135,11 @@ The stable exchange tables under `run/results/` are:
 
 | File | Meaning |
 |---|---|
-| `families.tsv` | One row per terminal family with stable dataset-scoped OG ID |
-| `members.tsv` | Protein-to-family membership with species and original IDs |
+| `families.tsv` | One row per selected orthogroup with stable dataset-scoped OG ID |
+| `members.tsv` | Assigned protein-to-OG membership with species and original IDs |
+| `terminal_families.tsv` / `terminal_members.tsv` | TF-ID terminal partition diagnostics |
+| `unassigned.tsv` | Proteins not selected into an OG, with reasons |
+| `statistics.tsv` | OG counts and assigned/unassigned coverage |
 | `hierarchy.tsv` | Parent/child hierarchy nodes, resolution, quality, and stop reason |
 | `events.tsv` | Network-derived event labels and confidence |
 
@@ -128,7 +151,7 @@ opt-ins because they may be large or require external tools:
 ogprofiler export --run run/ --family-fasta OG000000123
 ogprofiler export graph --run run/ --component 0
 ogprofiler orthologs --run run/ --emit-pairwise-orthologs
-ogprofiler annotate --run run/ --phylogenetic-refinement --family OG000000123
+ogprofiler annotate --run run/ --phylogenetic-refinement --family TF000000123
 ```
 
 ## Scientific caveats

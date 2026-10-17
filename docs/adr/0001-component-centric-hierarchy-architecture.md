@@ -5,6 +5,14 @@
 - Owners: OGProfiler maintainers
 - Supersedes: implicit hierarchy behavior in frozen OGProfiler 1
 
+## Proposed amendment (2026-10-02)
+
+ADR 0002 proposes separating singleton admission, recursion size stops and
+unresolved search outcomes, with deterministic bounded fallback. Its status is
+Proposed; this ADR's implemented strict child-size behavior remains in effect
+until the replacement design is confirmed and implemented. See
+`0002-hierarchy-admission-bounded-fallback.md` and the P6 acceptance audit.
+
 ## Context
 
 Frozen OGProfiler 1 constructs a global igraph SSN, repeatedly creates induced
@@ -179,4 +187,3 @@ Phase 2 closes when reference C/E runs establish all of the following:
 - Leiden calls and subgraph constructions are recorded and bounded;
 - every observed V1/V2 structural difference is represented in the final
   regression report.
-
