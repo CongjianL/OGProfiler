@@ -822,3 +822,10 @@ summary含分层actual/null/gain、符号计数及source根可加和通道；全
 本地针对性27项通过，含手算keep与forced split、同/跨物种、零图及随机精确恒等式；
 直接负增益−1/8而后代+7/36形成完整+5/72的固定小图验证后代推动，不只验证直接正例。
 完整本地回归519 passed /8 skipped /5项既有warning，24.24秒；ruff/diff/Slurm语法通过。
+远端短验证27 passed（6.32秒）。提交job1553882，
+RUN_ID=20261020T004942Z_617e3f7508b8_64c81293_91868，
+source617e3f7508b8e2bea4c104c58e00ac63f140b0c7，dirty=0，
+SHA256=64c812930c09721bd58df4e67bdc40c89bf138485aec0e2370d660719c202786。
+第五参数为1485398源run，逐蛋白回放其species-positive-boundary原cut；
+输出species-objective-decomposition。本轮仅第一阶段，待结果确定单个目标公式，
+再执行完整干预。未预提交候选目标，生产默认不变。
