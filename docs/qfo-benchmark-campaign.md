@@ -903,3 +903,26 @@ source302ff9b86602029738769a4af0b72ba19274bddf，dirty=0，
 SHA256=56766154f2f8c0ec45af295536c4182c2ff6720599d3e4643921fff2cfd620bd。
 第五参数为1553882源run，回放species-objective-decomposition原完整cut；输出
 same-attraction-intervention。候选结果及TP恢复/FP新增权衡待输出验证，公共默认不变。
+
+### job1553883完成：TP恢复与新增误合并抵消，默认保持
+
+COMPLETED /0:0，3分24秒；source302ff9b，dirty=0。1205冻结cut逐蛋白回放1553882、
+独立原边/root目标、粗化不变量、唯一LCA与全局联合分区pair转移、哈希/覆盖通过。
+取回summary后四组旧strata与1553882一致；固定全集、P/R/F1公式和队列加总重核通过。
+恢复16085TP，新增35455误合并FP（每恢复1TP新增约2.204FP）；new_split_tp=removed_fp=0。
+234/1205 source改变：clean52/440恢复2783TP/0新增FP；polluted182/765恢复13302TP/
+新增35455FP。局部决策918节点改变、actual状态1304改变，其中700为local不变的祖先覆盖
+状态变化；这些数量有交叉，不求和。唯一LCA转移不叠加嵌套子树。
+
+全参考hybrid（62466指派蛋白/385205参考pairs）：原DP TP239907/FP144118，P62.471714%
+R62.280344%/F1 62.375882%；候选TP255992/FP179573，P58.772399%/R66.456043%/
+F1 62.378498%。P−3.699315pp/R+4.175699pp/F1仅+0.002616pp，近乎持平，不作稳健改进声明。
+目标参考全集29372蛋白/170196pairs：F1 58.067057→58.556819%（+0.489762pp），
+不是全参考效果。frozen production另列P76.561813/R54.276294/F1 63.521119%。
+两hybrid臂均有共同source/outside命名空间分离和局部替换，与生产差异不只来自评分，
+不把这次结果当端到端生产重跑或官方QFO分数。
+21396仍三子split，gain .0001226236115487494，same-null移除项0，47TP损失保持；
+10052仍真tie keep，source10040仍6组。现有结果不支持候选进入生产默认。
+若继续，先固定两臂cut定位新增FP的合并来源和祖先消耗，并列同节点恢复TP，
+不搜索系数/阈值，不以pure/mixed拟过滤。零共同支持限制保留。
+本轮归档bacteria_same_attraction_1553883，大cases/cuts留远端；未追加作业，soft42保持。
