@@ -61,6 +61,8 @@ def test_resolution_search_refines_to_lowest_valid_candidate(monkeypatch: object
     result = search_resolution(
         graph,
         ResolutionSearchConfig(
+            strategy="adaptive",
+            admission_policy="legacy_strict",
             gamma_min=0.1,
             gamma_max=1.0,
             growth_factor=2.0,
@@ -82,8 +84,12 @@ def test_resolution_search_refines_to_lowest_valid_candidate(monkeypatch: object
 def test_dfs_hierarchy_preserves_all_invariants_and_k_way_split(tmp_path: Path) -> None:
     component = planted_component()
     config = HierarchyConfig(
+        leiden_iterations=2,
+        stability_mode="fast",
         max_depth=3,
         resolution=ResolutionSearchConfig(
+            strategy="adaptive",
+            admission_policy="legacy_strict",
             gamma_min=0.1,
             gamma_max=2.0,
             growth_factor=2.0,
@@ -117,8 +123,12 @@ def test_parallel_subtree_scheduler_matches_frozen_dfs_topology() -> None:
     component = planted_component()
     graph, _ = component.as_edge_table().to_igraph()
     config = HierarchyConfig(
+        leiden_iterations=2,
+        stability_mode="fast",
         max_depth=3,
         resolution=ResolutionSearchConfig(
+            strategy="adaptive",
+            admission_policy="legacy_strict",
             gamma_min=0.1,
             gamma_max=2.0,
             growth_factor=2.0,
@@ -128,9 +138,7 @@ def test_parallel_subtree_scheduler_matches_frozen_dfs_topology() -> None:
         ),
     )
     serial = infer_component_hierarchy(component, config, root_graph=graph)
-    parallel = infer_component_hierarchy_parallel(
-        component, config, None, graph, workers=2
-    )
+    parallel = infer_component_hierarchy_parallel(component, config, None, graph, workers=2)
     validate_hierarchy(component, parallel)
     assert parallel.nodes == serial.nodes
     assert parallel.terminal_membership == serial.terminal_membership
@@ -139,7 +147,15 @@ def test_parallel_subtree_scheduler_matches_frozen_dfs_topology() -> None:
 
 def test_singleton_component_bypasses_leiden() -> None:
     component = extract_components(EdgeTable.canonicalize([7], []))[0]
-    result = infer_component_hierarchy(component, HierarchyConfig())
+    result = infer_component_hierarchy(
+        component,
+        HierarchyConfig(
+            leiden_iterations=2,
+            resolution=ResolutionSearchConfig(
+                strategy="adaptive", admission_policy="legacy_strict"
+            ),
+        ),
+    )
     validate_hierarchy(component, result)
     assert result.nodes[0].terminal_reason == "SINGLETON"
     assert result.metrics.leiden_calls == 0
@@ -150,7 +166,12 @@ def test_species_and_depth_terminal_rules_bypass_extra_search() -> None:
     component = planted_component()
     one_species = infer_component_hierarchy(
         component,
-        HierarchyConfig(),
+        HierarchyConfig(
+            leiden_iterations=2,
+            resolution=ResolutionSearchConfig(
+                strategy="adaptive", admission_policy="legacy_strict"
+            ),
+        ),
         species_by_protein={protein_id: 0 for protein_id in component.vertices},
     )
     assert one_species.nodes[0].terminal_reason == "ONE_SPECIES"
@@ -159,8 +180,11 @@ def test_species_and_depth_terminal_rules_bypass_extra_search() -> None:
     depth_limited = infer_component_hierarchy(
         component,
         HierarchyConfig(
+            leiden_iterations=2,
             max_depth=1,
             resolution=ResolutionSearchConfig(
+                strategy="adaptive",
+                admission_policy="legacy_strict",
                 gamma_min=0.1,
                 gamma_max=1.0,
                 min_child_size=2,
@@ -194,6 +218,8 @@ def test_robust_search_classifies_unstable_and_low_quality(monkeypatch: object) 
     unstable = search_resolution(
         graph,
         ResolutionSearchConfig(
+            strategy="adaptive",
+            admission_policy="legacy_strict",
             gamma_min=0.1,
             gamma_max=0.1,
             min_child_size=2,
@@ -227,6 +253,8 @@ def test_robust_search_classifies_unstable_and_low_quality(monkeypatch: object) 
     low_quality = search_resolution(
         graph,
         ResolutionSearchConfig(
+            strategy="adaptive",
+            admission_policy="legacy_strict",
             gamma_min=0.1,
             gamma_max=0.1,
             min_child_size=2,
@@ -263,7 +291,9 @@ def test_no_split_and_constraint_failure_have_distinct_terminal_reasons(
     monkeypatch.setattr(resolution_module, "run_leiden", fake_run)  # type: ignore[attr-defined]
     no_split = search_resolution(
         graph,
-        ResolutionSearchConfig(gamma_min=0.1, gamma_max=0.1),
+        ResolutionSearchConfig(
+            strategy="adaptive", admission_policy="legacy_strict", gamma_min=0.1, gamma_max=0.1
+        ),
         method="rber",
         weights=None,
         seed=1,
@@ -271,7 +301,13 @@ def test_no_split_and_constraint_failure_have_distinct_terminal_reasons(
     )
     constrained = search_resolution(
         graph,
-        ResolutionSearchConfig(gamma_min=0.2, gamma_max=0.2, min_child_size=2),
+        ResolutionSearchConfig(
+            strategy="adaptive",
+            admission_policy="legacy_strict",
+            gamma_min=0.2,
+            gamma_max=0.2,
+            min_child_size=2,
+        ),
         method="rber",
         weights=None,
         seed=1,

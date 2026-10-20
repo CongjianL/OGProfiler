@@ -14,6 +14,13 @@ from ogprofiler.benchmark.metrics import (
 )
 
 
+def test_matrix_config_hash_matches_effective_cli_defaults():
+    from ogprofiler.config import load_config
+    from ogprofiler.core.manifest import sha256_json
+
+    for run in generate_ofat_matrix():
+        assert run.config_sha256 == sha256_json(load_config(overrides=list(run.overrides)))
+
 def _write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")

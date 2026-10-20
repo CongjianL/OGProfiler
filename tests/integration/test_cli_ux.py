@@ -53,9 +53,10 @@ def test_run_dry_run_expands_standard_pipeline(tmp_path: Path, capsys: object) -
         "components",
         "hierarchy-all",
         "annotate-network",
+        "orthogroups",
         "export",
     ]
-    assert commands[-1] == ("export", "--run", str(tmp_path / "run"))
+    assert commands[-1] == ("export", "--run", str(tmp_path / "run"), "--set", "runtime.workers=2")
     assert (
         main(
             [

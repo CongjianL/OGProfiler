@@ -1,0 +1,865 @@
+{
+  "algorithm": "mutual-sibling-affinity-v1",
+  "production_changed": false,
+  "eligibility_reference_labels_used": false,
+  "baseline_replay_verified": true,
+  "immutable_inputs_verified": true,
+  "failures": [],
+  "score_emitted": true,
+  "candidates": 7522,
+  "admitted": 5473,
+  "admitted_selected": 0,
+  "admitted_by_event": {
+    "III-2": 1263,
+    "III-1": 4177,
+    "II": 33
+  },
+  "actual": {
+    "proteins": 62466,
+    "reference_groups": 9828,
+    "predicted_groups": 18941,
+    "missing_predictions": 0,
+    "excluded_predictions": 20041,
+    "true_positive_pairs": 209075,
+    "reference_pairs": 385205,
+    "predicted_pairs": 273080,
+    "discordant_pairs": 64005,
+    "lost_pairs": 176130,
+    "pair_precision": 0.7656181338801816,
+    "pair_recall": 0.5427629444062253,
+    "pair_f1": 0.6352111927204782,
+    "bcubed_precision": 0.8726439567764697,
+    "bcubed_recall": 0.6644429564527639,
+    "macro_best_f1": 0.7891260328656221,
+    "exact_reference_groups": 4382,
+    "split_reference_groups": 4373,
+    "merged_predicted_groups": 1884,
+    "component_pair_recall_ceiling": 0.9999402915330798,
+    "reference_pairs_across_components": 23,
+    "cross_component_predicted_pairs": 0,
+    "top_splits": [
+      {
+        "reference_og": "OG0000000",
+        "size": 149,
+        "fragments": 61,
+        "lost_pairs": 10009,
+        "best_f1": 0.4148936170212766
+      },
+      {
+        "reference_og": "OG0000001",
+        "size": 135,
+        "fragments": 72,
+        "lost_pairs": 8880,
+        "best_f1": 0.16326530612244897
+      },
+      {
+        "reference_og": "OG0000003",
+        "size": 103,
+        "fragments": 26,
+        "lost_pairs": 4309,
+        "best_f1": 0.5072463768115942
+      },
+      {
+        "reference_og": "OG0000007",
+        "size": 70,
+        "fragments": 33,
+        "lost_pairs": 2334,
+        "best_f1": 0.18181818181818182
+      },
+      {
+        "reference_og": "OG0000009",
+        "size": 64,
+        "fragments": 34,
+        "lost_pairs": 1956,
+        "best_f1": 0.17142857142857143
+      },
+      {
+        "reference_og": "OG0000011",
+        "size": 60,
+        "fragments": 25,
+        "lost_pairs": 1668,
+        "best_f1": 0.2857142857142857
+      },
+      {
+        "reference_og": "OG0000013",
+        "size": 53,
+        "fragments": 21,
+        "lost_pairs": 1212,
+        "best_f1": 0.463768115942029
+      },
+      {
+        "reference_og": "OG0000014",
+        "size": 51,
+        "fragments": 17,
+        "lost_pairs": 1077,
+        "best_f1": 0.5217391304347826
+      },
+      {
+        "reference_og": "OG0000016",
+        "size": 45,
+        "fragments": 16,
+        "lost_pairs": 893,
+        "best_f1": 0.35714285714285715
+      },
+      {
+        "reference_og": "OG0000017",
+        "size": 43,
+        "fragments": 18,
+        "lost_pairs": 836,
+        "best_f1": 0.3137254901960784
+      },
+      {
+        "reference_og": "OG0000019",
+        "size": 42,
+        "fragments": 10,
+        "lost_pairs": 716,
+        "best_f1": 0.4074074074074074
+      },
+      {
+        "reference_og": "OG0000024",
+        "size": 40,
+        "fragments": 20,
+        "lost_pairs": 707,
+        "best_f1": 0.43137254901960786
+      },
+      {
+        "reference_og": "OG0000020",
+        "size": 41,
+        "fragments": 14,
+        "lost_pairs": 689,
+        "best_f1": 0.4528301886792453
+      },
+      {
+        "reference_og": "OG0000015",
+        "size": 45,
+        "fragments": 18,
+        "lost_pairs": 686,
+        "best_f1": 0.704225352112676
+      },
+      {
+        "reference_og": "OG0000018",
+        "size": 42,
+        "fragments": 13,
+        "lost_pairs": 657,
+        "best_f1": 0.6451612903225806
+      },
+      {
+        "reference_og": "OG0000012",
+        "size": 57,
+        "fragments": 2,
+        "lost_pairs": 656,
+        "best_f1": 0.8118811881188119
+      },
+      {
+        "reference_og": "OG0000028",
+        "size": 39,
+        "fragments": 16,
+        "lost_pairs": 646,
+        "best_f1": 0.4074074074074074
+      },
+      {
+        "reference_og": "OG0000027",
+        "size": 39,
+        "fragments": 12,
+        "lost_pairs": 640,
+        "best_f1": 0.4528301886792453
+      },
+      {
+        "reference_og": "OG0000029",
+        "size": 38,
+        "fragments": 15,
+        "lost_pairs": 629,
+        "best_f1": 0.3829787234042553
+      },
+      {
+        "reference_og": "OG0000032",
+        "size": 37,
+        "fragments": 17,
+        "lost_pairs": 600,
+        "best_f1": 0.3384615384615385
+      },
+      {
+        "reference_og": "OG0000033",
+        "size": 37,
+        "fragments": 18,
+        "lost_pairs": 555,
+        "best_f1": 0.5769230769230769
+      },
+      {
+        "reference_og": "OG0000031",
+        "size": 38,
+        "fragments": 8,
+        "lost_pairs": 551,
+        "best_f1": 0.5384615384615384
+      },
+      {
+        "reference_og": "OG0000044",
+        "size": 34,
+        "fragments": 21,
+        "lost_pairs": 531,
+        "best_f1": 0.34146341463414637
+      },
+      {
+        "reference_og": "OG0000053",
+        "size": 33,
+        "fragments": 32,
+        "lost_pairs": 527,
+        "best_f1": 0.11428571428571428
+      },
+      {
+        "reference_og": "OG0000041",
+        "size": 35,
+        "fragments": 18,
+        "lost_pairs": 522,
+        "best_f1": 0.4090909090909091
+      },
+      {
+        "reference_og": "OG0000030",
+        "size": 38,
+        "fragments": 19,
+        "lost_pairs": 513,
+        "best_f1": 0.6896551724137931
+      },
+      {
+        "reference_og": "OG0000054",
+        "size": 33,
+        "fragments": 16,
+        "lost_pairs": 489,
+        "best_f1": 0.3076923076923077
+      },
+      {
+        "reference_og": "OG0000040",
+        "size": 35,
+        "fragments": 14,
+        "lost_pairs": 480,
+        "best_f1": 0.5660377358490566
+      },
+      {
+        "reference_og": "OG0000047",
+        "size": 34,
+        "fragments": 12,
+        "lost_pairs": 480,
+        "best_f1": 0.45454545454545453
+      },
+      {
+        "reference_og": "OG0000045",
+        "size": 34,
+        "fragments": 13,
+        "lost_pairs": 478,
+        "best_f1": 0.4897959183673469
+      }
+    ],
+    "top_merges": [
+      {
+        "predicted_og": "OG000023334",
+        "size": 158,
+        "reference_ogs": 3,
+        "discordant_pairs": 6209
+      },
+      {
+        "predicted_og": "OG000018242",
+        "size": 69,
+        "reference_ogs": 4,
+        "discordant_pairs": 1564
+      },
+      {
+        "predicted_og": "OG000005296",
+        "size": 64,
+        "reference_ogs": 3,
+        "discordant_pairs": 1073
+      },
+      {
+        "predicted_og": "OG000011679",
+        "size": 48,
+        "reference_ogs": 4,
+        "discordant_pairs": 782
+      },
+      {
+        "predicted_og": "OG000000773",
+        "size": 73,
+        "reference_ogs": 4,
+        "discordant_pairs": 771
+      },
+      {
+        "predicted_og": "OG000007705",
+        "size": 39,
+        "reference_ogs": 3,
+        "discordant_pairs": 482
+      },
+      {
+        "predicted_og": "OG000001666",
+        "size": 32,
+        "reference_ogs": 7,
+        "discordant_pairs": 404
+      },
+      {
+        "predicted_og": "OG000002455",
+        "size": 31,
+        "reference_ogs": 7,
+        "discordant_pairs": 341
+      },
+      {
+        "predicted_og": "OG000018146",
+        "size": 88,
+        "reference_ogs": 2,
+        "discordant_pairs": 336
+      },
+      {
+        "predicted_og": "OG000000858",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 335
+      },
+      {
+        "predicted_og": "OG000001166",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 315
+      },
+      {
+        "predicted_og": "OG000003218",
+        "size": 28,
+        "reference_ogs": 8,
+        "discordant_pairs": 304
+      },
+      {
+        "predicted_og": "OG000000229",
+        "size": 27,
+        "reference_ogs": 6,
+        "discordant_pairs": 296
+      },
+      {
+        "predicted_og": "OG000001742",
+        "size": 30,
+        "reference_ogs": 4,
+        "discordant_pairs": 280
+      },
+      {
+        "predicted_og": "OG000011664",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 272
+      },
+      {
+        "predicted_og": "OG000000318",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 266
+      },
+      {
+        "predicted_og": "OG000004139",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 257
+      },
+      {
+        "predicted_og": "OG000002288",
+        "size": 24,
+        "reference_ogs": 10,
+        "discordant_pairs": 254
+      },
+      {
+        "predicted_og": "OG000000160",
+        "size": 30,
+        "reference_ogs": 5,
+        "discordant_pairs": 253
+      },
+      {
+        "predicted_og": "OG000003677",
+        "size": 33,
+        "reference_ogs": 2,
+        "discordant_pairs": 252
+      },
+      {
+        "predicted_og": "OG000000971",
+        "size": 26,
+        "reference_ogs": 4,
+        "discordant_pairs": 243
+      },
+      {
+        "predicted_og": "OG000025452",
+        "size": 36,
+        "reference_ogs": 2,
+        "discordant_pairs": 243
+      },
+      {
+        "predicted_og": "OG000011660",
+        "size": 29,
+        "reference_ogs": 6,
+        "discordant_pairs": 241
+      },
+      {
+        "predicted_og": "OG000000303",
+        "size": 26,
+        "reference_ogs": 5,
+        "discordant_pairs": 236
+      },
+      {
+        "predicted_og": "OG000003683",
+        "size": 25,
+        "reference_ogs": 5,
+        "discordant_pairs": 233
+      },
+      {
+        "predicted_og": "OG000003147",
+        "size": 25,
+        "reference_ogs": 4,
+        "discordant_pairs": 225
+      },
+      {
+        "predicted_og": "OG000018145",
+        "size": 113,
+        "reference_ogs": 3,
+        "discordant_pairs": 223
+      },
+      {
+        "predicted_og": "OG000002289",
+        "size": 28,
+        "reference_ogs": 7,
+        "discordant_pairs": 219
+      },
+      {
+        "predicted_og": "OG000000037",
+        "size": 24,
+        "reference_ogs": 5,
+        "discordant_pairs": 212
+      },
+      {
+        "predicted_og": "OG000000487",
+        "size": 23,
+        "reference_ogs": 6,
+        "discordant_pairs": 208
+      }
+    ]
+  },
+  "experimental": {
+    "proteins": 62466,
+    "reference_groups": 9828,
+    "predicted_groups": 11988,
+    "missing_predictions": 0,
+    "excluded_predictions": 20041,
+    "true_positive_pairs": 287756,
+    "reference_pairs": 385205,
+    "predicted_pairs": 1052009,
+    "discordant_pairs": 764253,
+    "lost_pairs": 97449,
+    "pair_precision": 0.27352997930626066,
+    "pair_recall": 0.7470204176996664,
+    "pair_f1": 0.4004358432355933,
+    "bcubed_precision": 0.6718985934204164,
+    "bcubed_recall": 0.8249130109697252,
+    "macro_best_f1": 0.6789389875997542,
+    "exact_reference_groups": 4138,
+    "split_reference_groups": 2539,
+    "merged_predicted_groups": 1471,
+    "component_pair_recall_ceiling": 0.9999402915330798,
+    "reference_pairs_across_components": 23,
+    "cross_component_predicted_pairs": 0,
+    "top_splits": [
+      {
+        "reference_og": "OG0000000",
+        "size": 149,
+        "fragments": 60,
+        "lost_pairs": 10007,
+        "best_f1": 0.4148936170212766
+      },
+      {
+        "reference_og": "OG0000001",
+        "size": 135,
+        "fragments": 72,
+        "lost_pairs": 8880,
+        "best_f1": 0.16326530612244897
+      },
+      {
+        "reference_og": "OG0000009",
+        "size": 64,
+        "fragments": 22,
+        "lost_pairs": 1753,
+        "best_f1": 0.49411764705882355
+      },
+      {
+        "reference_og": "OG0000011",
+        "size": 60,
+        "fragments": 18,
+        "lost_pairs": 1452,
+        "best_f1": 0.5581395348837209
+      },
+      {
+        "reference_og": "OG0000016",
+        "size": 45,
+        "fragments": 10,
+        "lost_pairs": 758,
+        "best_f1": 0.5277777777777778
+      },
+      {
+        "reference_og": "OG0000012",
+        "size": 57,
+        "fragments": 2,
+        "lost_pairs": 656,
+        "best_f1": 0.8118811881188119
+      },
+      {
+        "reference_og": "OG0000024",
+        "size": 40,
+        "fragments": 17,
+        "lost_pairs": 645,
+        "best_f1": 0.5714285714285714
+      },
+      {
+        "reference_og": "OG0000032",
+        "size": 37,
+        "fragments": 14,
+        "lost_pairs": 537,
+        "best_f1": 0.43243243243243246
+      },
+      {
+        "reference_og": "OG0000053",
+        "size": 33,
+        "fragments": 32,
+        "lost_pairs": 527,
+        "best_f1": 0.11428571428571428
+      },
+      {
+        "reference_og": "OG0000044",
+        "size": 34,
+        "fragments": 19,
+        "lost_pairs": 516,
+        "best_f1": 0.4186046511627907
+      },
+      {
+        "reference_og": "OG0000030",
+        "size": 38,
+        "fragments": 19,
+        "lost_pairs": 513,
+        "best_f1": 0.6896551724137931
+      },
+      {
+        "reference_og": "OG0000041",
+        "size": 35,
+        "fragments": 17,
+        "lost_pairs": 504,
+        "best_f1": 0.4090909090909091
+      },
+      {
+        "reference_og": "OG0000003",
+        "size": 103,
+        "fragments": 6,
+        "lost_pairs": 500,
+        "best_f1": 0.8909090909090909
+      },
+      {
+        "reference_og": "OG0000040",
+        "size": 35,
+        "fragments": 14,
+        "lost_pairs": 480,
+        "best_f1": 0.5454545454545454
+      },
+      {
+        "reference_og": "OG0000045",
+        "size": 34,
+        "fragments": 12,
+        "lost_pairs": 442,
+        "best_f1": 0.46875
+      },
+      {
+        "reference_og": "OG0000039",
+        "size": 35,
+        "fragments": 16,
+        "lost_pairs": 440,
+        "best_f1": 0.6545454545454545
+      },
+      {
+        "reference_og": "OG0000062",
+        "size": 31,
+        "fragments": 20,
+        "lost_pairs": 433,
+        "best_f1": 0.32653061224489793
+      },
+      {
+        "reference_og": "OG0000060",
+        "size": 31,
+        "fragments": 19,
+        "lost_pairs": 424,
+        "best_f1": 0.3157894736842105
+      },
+      {
+        "reference_og": "OG0000025",
+        "size": 39,
+        "fragments": 9,
+        "lost_pairs": 383,
+        "best_f1": 0.8059701492537313
+      },
+      {
+        "reference_og": "OG0000097",
+        "size": 28,
+        "fragments": 20,
+        "lost_pairs": 370,
+        "best_f1": 0.13333333333333333
+      },
+      {
+        "reference_og": "OG0000055",
+        "size": 33,
+        "fragments": 10,
+        "lost_pairs": 366,
+        "best_f1": 0.6923076923076923
+      },
+      {
+        "reference_og": "OG0000081",
+        "size": 29,
+        "fragments": 14,
+        "lost_pairs": 366,
+        "best_f1": 0.3888888888888889
+      },
+      {
+        "reference_og": "OG0000071",
+        "size": 30,
+        "fragments": 15,
+        "lost_pairs": 365,
+        "best_f1": 0.48
+      },
+      {
+        "reference_og": "OG0000079",
+        "size": 29,
+        "fragments": 15,
+        "lost_pairs": 365,
+        "best_f1": 0.36363636363636365
+      },
+      {
+        "reference_og": "OG0000095",
+        "size": 28,
+        "fragments": 13,
+        "lost_pairs": 334,
+        "best_f1": 0.4444444444444444
+      },
+      {
+        "reference_og": "OG0000069",
+        "size": 30,
+        "fragments": 6,
+        "lost_pairs": 326,
+        "best_f1": 0.4878048780487805
+      },
+      {
+        "reference_og": "OG0000021",
+        "size": 41,
+        "fragments": 8,
+        "lost_pairs": 321,
+        "best_f1": 0.8767123287671232
+      },
+      {
+        "reference_og": "OG0000104",
+        "size": 27,
+        "fragments": 13,
+        "lost_pairs": 320,
+        "best_f1": 0.36363636363636365
+      },
+      {
+        "reference_og": "OG0000105",
+        "size": 27,
+        "fragments": 12,
+        "lost_pairs": 319,
+        "best_f1": 0.36363636363636365
+      },
+      {
+        "reference_og": "OG0000094",
+        "size": 28,
+        "fragments": 14,
+        "lost_pairs": 317,
+        "best_f1": 0.5365853658536586
+      }
+    ],
+    "top_merges": [
+      {
+        "predicted_og": "0:0",
+        "size": 440,
+        "reference_ogs": 73,
+        "discordant_pairs": 94839
+      },
+      {
+        "predicted_og": "0:1",
+        "size": 299,
+        "reference_ogs": 59,
+        "discordant_pairs": 43585
+      },
+      {
+        "predicted_og": "0:81",
+        "size": 272,
+        "reference_ogs": 45,
+        "discordant_pairs": 35729
+      },
+      {
+        "predicted_og": "0:55",
+        "size": 244,
+        "reference_ogs": 41,
+        "discordant_pairs": 28736
+      },
+      {
+        "predicted_og": "0:2",
+        "size": 213,
+        "reference_ogs": 22,
+        "discordant_pairs": 21128
+      },
+      {
+        "predicted_og": "0:3",
+        "size": 182,
+        "reference_ogs": 24,
+        "discordant_pairs": 15367
+      },
+      {
+        "predicted_og": "0:56",
+        "size": 178,
+        "reference_ogs": 24,
+        "discordant_pairs": 14713
+      },
+      {
+        "predicted_og": "0:24",
+        "size": 162,
+        "reference_ogs": 29,
+        "discordant_pairs": 12571
+      },
+      {
+        "predicted_og": "0:185",
+        "size": 159,
+        "reference_ogs": 36,
+        "discordant_pairs": 12170
+      },
+      {
+        "predicted_og": "0:4",
+        "size": 154,
+        "reference_ogs": 20,
+        "discordant_pairs": 10850
+      },
+      {
+        "predicted_og": "0:211",
+        "size": 151,
+        "reference_ogs": 24,
+        "discordant_pairs": 10719
+      },
+      {
+        "predicted_og": "0:157",
+        "size": 149,
+        "reference_ogs": 25,
+        "discordant_pairs": 10389
+      },
+      {
+        "predicted_og": "0:82",
+        "size": 146,
+        "reference_ogs": 21,
+        "discordant_pairs": 9972
+      },
+      {
+        "predicted_og": "0:254",
+        "size": 146,
+        "reference_ogs": 15,
+        "discordant_pairs": 9560
+      },
+      {
+        "predicted_og": "0:282",
+        "size": 140,
+        "reference_ogs": 19,
+        "discordant_pairs": 9141
+      },
+      {
+        "predicted_og": "0:212",
+        "size": 149,
+        "reference_ogs": 8,
+        "discordant_pairs": 7791
+      },
+      {
+        "predicted_og": "0:283",
+        "size": 132,
+        "reference_ogs": 11,
+        "discordant_pairs": 7334
+      },
+      {
+        "predicted_og": "0:25",
+        "size": 129,
+        "reference_ogs": 8,
+        "discordant_pairs": 6780
+      },
+      {
+        "predicted_og": "0:57",
+        "size": 116,
+        "reference_ogs": 17,
+        "discordant_pairs": 6250
+      },
+      {
+        "predicted_og": "0:5",
+        "size": 118,
+        "reference_ogs": 15,
+        "discordant_pairs": 6221
+      },
+      {
+        "predicted_og": "0:2052",
+        "size": 158,
+        "reference_ogs": 3,
+        "discordant_pairs": 6209
+      },
+      {
+        "predicted_og": "0:117",
+        "size": 114,
+        "reference_ogs": 19,
+        "discordant_pairs": 6067
+      },
+      {
+        "predicted_og": "0:28",
+        "size": 114,
+        "reference_ogs": 16,
+        "discordant_pairs": 5929
+      },
+      {
+        "predicted_og": "0:26",
+        "size": 122,
+        "reference_ogs": 10,
+        "discordant_pairs": 5877
+      },
+      {
+        "predicted_og": "0:27",
+        "size": 109,
+        "reference_ogs": 20,
+        "discordant_pairs": 5434
+      },
+      {
+        "predicted_og": "0:6",
+        "size": 106,
+        "reference_ogs": 16,
+        "discordant_pairs": 5084
+      },
+      {
+        "predicted_og": "0:83",
+        "size": 106,
+        "reference_ogs": 11,
+        "discordant_pairs": 4945
+      },
+      {
+        "predicted_og": "12:0",
+        "size": 102,
+        "reference_ogs": 17,
+        "discordant_pairs": 4766
+      },
+      {
+        "predicted_og": "0:58",
+        "size": 109,
+        "reference_ogs": 8,
+        "discordant_pairs": 4634
+      },
+      {
+        "predicted_og": "0:158",
+        "size": 100,
+        "reference_ogs": 18,
+        "discordant_pairs": 4523
+      }
+    ]
+  },
+  "delta": {
+    "true_positive_pairs": 78681,
+    "discordant_pairs": 700248,
+    "pair_f1": -0.23477534948488493,
+    "pair_recall": 0.20425747329344113
+  },
+  "pair_transitions": {
+    "new_tp": 78681,
+    "removed_tp": 0,
+    "new_fp": 700248,
+    "removed_fp": 0
+  }
+}

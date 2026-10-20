@@ -1,0 +1,142 @@
+{
+  "coverage": [
+    {
+      "source_cohort": "clean_tp_gain",
+      "local_reference_cohort": "pure",
+      "category": "context_reversal",
+      "nodes": 44,
+      "actual_direct_lca_tp": 744,
+      "actual_direct_lca_fp": 0
+    },
+    {
+      "source_cohort": "clean_tp_gain",
+      "local_reference_cohort": "pure",
+      "category": "internal_positive",
+      "nodes": 114,
+      "actual_direct_lca_tp": 4776,
+      "actual_direct_lca_fp": 0
+    },
+    {
+      "source_cohort": "clean_tp_gain",
+      "local_reference_cohort": "pure",
+      "category": "nonpositive_direct_with_descendant_optimum",
+      "nodes": 121,
+      "actual_direct_lca_tp": 2041,
+      "actual_direct_lca_fp": 0
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "mixed",
+      "category": "context_reversal",
+      "nodes": 324,
+      "actual_direct_lca_tp": 3189,
+      "actual_direct_lca_fp": 17100
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "mixed",
+      "category": "internal_positive",
+      "nodes": 1119,
+      "actual_direct_lca_tp": 25230,
+      "actual_direct_lca_fp": 580916
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "mixed",
+      "category": "nonpositive_direct_with_descendant_optimum",
+      "nodes": 586,
+      "actual_direct_lca_tp": 5807,
+      "actual_direct_lca_fp": 22119
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "pure",
+      "category": "context_reversal",
+      "nodes": 36,
+      "actual_direct_lca_tp": 607,
+      "actual_direct_lca_fp": 0
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "pure",
+      "category": "internal_positive",
+      "nodes": 59,
+      "actual_direct_lca_tp": 4047,
+      "actual_direct_lca_fp": 0
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "pure",
+      "category": "nonpositive_direct_with_descendant_optimum",
+      "nodes": 42,
+      "actual_direct_lca_tp": 1408,
+      "actual_direct_lca_fp": 0
+    }
+  ],
+  "matched_pure_nodes": 0,
+  "matched_mixed_nodes": 0,
+  "strata": [
+    {
+      "source_cohort": "clean_tp_gain",
+      "local_reference_cohort": "pure",
+      "dp_state": "active_split",
+      "nodes": 114,
+      "deeper_frontier_nodes": 34,
+      "actual_direct_lca_tp": 4776,
+      "actual_direct_lca_fp": 0,
+      "mean_direct_gain": 0.07575113616975002,
+      "mean_complete_gain": 0.08513417865825174,
+      "mean_descendant_gain": 0.009383042488501709
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "mixed",
+      "dp_state": "active_split",
+      "nodes": 1119,
+      "deeper_frontier_nodes": 714,
+      "actual_direct_lca_tp": 25230,
+      "actual_direct_lca_fp": 580916,
+      "mean_direct_gain": 0.06515582162667795,
+      "mean_complete_gain": 0.10918485679510183,
+      "mean_descendant_gain": 0.04402903516842388
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "mixed",
+      "dp_state": "inactive",
+      "nodes": 11,
+      "deeper_frontier_nodes": 1,
+      "actual_direct_lca_tp": 0,
+      "actual_direct_lca_fp": 0,
+      "mean_direct_gain": 0.001967133326742694,
+      "mean_complete_gain": 0.002000693374817769,
+      "mean_descendant_gain": 3.356004807507512e-05
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "pure",
+      "dp_state": "active_split",
+      "nodes": 59,
+      "deeper_frontier_nodes": 9,
+      "actual_direct_lca_tp": 4047,
+      "actual_direct_lca_fp": 0,
+      "mean_direct_gain": 0.02877634272575419,
+      "mean_complete_gain": 0.031427523590420274,
+      "mean_descendant_gain": 0.0026511808646660813
+    },
+    {
+      "source_cohort": "polluted",
+      "local_reference_cohort": "pure",
+      "dp_state": "inactive",
+      "nodes": 4,
+      "deeper_frontier_nodes": 0,
+      "actual_direct_lca_tp": 0,
+      "actual_direct_lca_fp": 0,
+      "mean_direct_gain": 0.00445194583495759,
+      "mean_complete_gain": 0.00445194583495759,
+      "mean_descendant_gain": 0.0
+    }
+  ],
+  "matched_cells": [],
+  "scope": "Unique direct LCA losses additive; nested complete/subtree losses not additive. Exact structural common support is observational, not a causal correction."
+}

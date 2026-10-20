@@ -15,6 +15,7 @@ WORKSPACE_DIRECTORIES = (
     "components",
     "hierarchy",
     "evolution",
+    "orthogroups",
     "results",
 )
 
@@ -42,13 +43,15 @@ class Workspace:
     def initialize_database(self) -> None:
         try:
             with sqlite3.connect(self.database_path) as database:
+                database.execute("BEGIN IMMEDIATE")
                 database.execute(
                     """
                     CREATE TABLE IF NOT EXISTS tasks (
                         stage TEXT NOT NULL,
                         task_id TEXT NOT NULL,
                         status TEXT NOT NULL CHECK (
-                            status IN ('PENDING', 'RUNNING', 'DONE', 'FAILED', 'INVALID')
+                            status IN ('PENDING', 'RUNNING', 'DONE', 'FAILED',
+                                       'INVALID', 'UNRESOLVED')
                         ),
                         started_at TEXT,
                         completed_at TEXT,
@@ -78,6 +81,22 @@ class Workspace:
                     database.execute("ALTER TABLE tasks ADD COLUMN completed_at TEXT")
                     if "completed" in columns:
                         database.execute("UPDATE tasks SET completed_at=completed")
+                schema = database.execute(
+                    "SELECT sql FROM sqlite_master WHERE name='tasks'"
+                ).fetchone()[0]
+                if "UNRESOLVED" not in schema:
+                    # SQLite CHECK constraints require a transactional table rebuild.
+                    database.execute("ALTER TABLE tasks RENAME TO tasks_pre_v2")
+                    database.execute(schema.replace("'INVALID'", "'INVALID', 'UNRESOLVED'"))
+                    names = (
+                        "stage,task_id,status,started_at,completed_at,input_hash,"
+                        "output_path,error,attempts,algorithm_version"
+                    )
+                    database.execute(
+                        f"INSERT INTO tasks ({names}) SELECT {names} FROM tasks_pre_v2"
+                    )
+                    database.execute("DROP TABLE tasks_pre_v2")
+                database.execute("PRAGMA user_version=2")
                 database.execute(
                     """
                     CREATE TABLE IF NOT EXISTS task_events (

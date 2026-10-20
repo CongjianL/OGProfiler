@@ -13,6 +13,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from ogprofiler.core.manifest import sha256_file, sha256_json, write_json
+from ogprofiler.evolution.stage import NETWORK_EVENT_ALGORITHM_VERSION
 from ogprofiler.exceptions import HierarchyError
 from ogprofiler.orthology.engine import (
     ORTHOLOGY_SUPPORTING_EVENTS,
@@ -20,7 +21,7 @@ from ogprofiler.orthology.engine import (
     generate_component_candidates,
 )
 
-ORTHOLOGY_ALGORITHM_VERSION = "hierarchy-cross-child-v1"
+ORTHOLOGY_ALGORITHM_VERSION = "hierarchy-cross-child-v2"
 OUTPUT_NAME = "ortholog_pairs.tsv.zst"
 HEADER = (
     "protein_a_id\tprotein_b_id\tspecies_a_id\tspecies_b_id\tcomponent_id\t"
@@ -37,17 +38,17 @@ def _rows(path: Path) -> list[dict[str, Any]]:
 
 def _component_paths(run_root: Path) -> list[tuple[int, Path, Path, Path]]:
     paths: list[tuple[int, Path, Path, Path]] = []
+    index_path = run_root / "components/index.parquet"
+    current = (
+        {int(row["component_id"]) for row in _rows(index_path)} if index_path.is_file() else None
+    )
     for directory in sorted((run_root / "hierarchy" / "components").glob("component=*")):
         component_id = int(directory.name.split("=", 1)[1])
+        if current is not None and component_id not in current:
+            continue
         nodes = directory / "nodes.parquet"
         members = directory / "members.parquet"
-        events = (
-            run_root
-            / "evolution"
-            / "components"
-            / directory.name
-            / "events.parquet"
-        )
+        events = run_root / "evolution" / "components" / directory.name / "events.parquet"
         for path in (nodes, members, events):
             if not path.is_file():
                 raise HierarchyError(f"Missing orthology input: {path}")
@@ -147,6 +148,8 @@ def run_orthology_stage(
     if not proteins_path.is_file():
         raise HierarchyError(f"Missing orthology input: {proteins_path}")
     all_inputs = [proteins_path]
+    if (run_root / "components/index.parquet").is_file():
+        all_inputs.append(run_root / "components/index.parquet")
     singleton_path = run_root / "components" / "singleton_terminal_families.parquet"
     if singleton_path.is_file():
         all_inputs.append(singleton_path)
@@ -156,6 +159,9 @@ def run_orthology_stage(
         all_inputs.extend((nodes, members, events))
     inputs = {path.relative_to(run_root).as_posix(): sha256_file(path) for path in all_inputs}
     parameters = {
+        "grouping_dependency": "none",
+        "event_source": "network_event",
+        "event_algorithm_version": NETWORK_EVENT_ALGORITHM_VERSION,
         "chunk_size": chunk_size,
         "events": sorted(ORTHOLOGY_SUPPORTING_EVENTS),
         "same_species_filter": True,

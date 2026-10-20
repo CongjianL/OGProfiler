@@ -1,0 +1,97 @@
+{
+  "algorithm": "same_attraction_cross_null_v1",
+  "production_changed": false,
+  "full_reference_universe": {
+    "baseline": {
+      "assigned_proteins": 62466,
+      "reference_pairs": 385205,
+      "predicted_pairs": 384025,
+      "tp": 239907,
+      "fp": 144118,
+      "fn": 145298,
+      "precision": 0.6247171408111452,
+      "recall": 0.622803442322919,
+      "pair_f1": 0.6237588237588237
+    },
+    "candidate": {
+      "assigned_proteins": 62466,
+      "reference_pairs": 385205,
+      "predicted_pairs": 435565,
+      "tp": 255992,
+      "fp": 179573,
+      "fn": 129213,
+      "precision": 0.5877239906787736,
+      "recall": 0.6645604288625537,
+      "pair_f1": 0.6237849823945807
+    },
+    "frozen_production": {
+      "assigned_proteins": 62466,
+      "reference_pairs": 385205,
+      "predicted_pairs": 273080,
+      "tp": 209075,
+      "fp": 64005,
+      "fn": 176130,
+      "precision": 0.7656181338801816,
+      "recall": 0.5427629444062253,
+      "pair_f1": 0.6352111927204782
+    }
+  },
+  "target_reference_universe": {
+    "baseline": {
+      "assigned_proteins": 29372,
+      "reference_pairs": 170196,
+      "predicted_pairs": 236086,
+      "tp": 117958,
+      "fp": 118128,
+      "fn": 52238,
+      "precision": 0.4996399617088688,
+      "recall": 0.6930715175444782,
+      "pair_f1": 0.5806705687182794
+    },
+    "candidate": {
+      "assigned_proteins": 29372,
+      "reference_pairs": 170196,
+      "predicted_pairs": 287626,
+      "tp": 134043,
+      "fp": 153583,
+      "fn": 36153,
+      "precision": 0.4660322780277166,
+      "recall": 0.7875802016498625,
+      "pair_f1": 0.585568190257349
+    }
+  },
+  "pair_transitions": {
+    "recovered_tp": 16085,
+    "new_split_tp": 0,
+    "new_merge_fp": 35455,
+    "removed_fp": 0
+  },
+  "node_changes": {
+    "local_decision_changes": 918,
+    "active_state_changes": 1304,
+    "ancestor_only_state_changes": 700
+  },
+  "cohorts": [
+    {
+      "cohort": "clean_tp_gain",
+      "recovered_tp": 2783,
+      "new_merge_fp": 0,
+      "new_split_tp": 0,
+      "removed_fp": 0,
+      "sources": 440,
+      "changed_sources": 52
+    },
+    {
+      "cohort": "polluted",
+      "recovered_tp": 13302,
+      "new_merge_fp": 35455,
+      "new_split_tp": 0,
+      "removed_fp": 0,
+      "sources": 765,
+      "changed_sources": 182
+    }
+  ],
+  "total_proteins": 82507,
+  "target_proteins": 30399,
+  "scope": "Full hybrid: 1205 diagnostic source clades replaced by their complete cuts; outside proteins retain frozen production groups; source/outside namespaces are separated identically in both arms. Frozen production is a separate comparator. Target-universe recall includes cross-source reference pairs as unrecovered. Not a new end-to-end production run or official QFO ground truth."
+}

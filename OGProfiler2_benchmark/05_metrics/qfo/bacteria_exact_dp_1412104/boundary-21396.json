@@ -1,0 +1,48 @@
+{
+  "cluster_id": 21396,
+  "local_gain": 0.0001226236115487494,
+  "nonzero_blocks": [
+    {
+      "species_a": 1,
+      "species_b": 11,
+      "source_block_weight": 2.0765012144076054,
+      "expected": 0.5885919586270754,
+      "observed": 0.5360556758019136,
+      "gain": 0.0001226236115487494,
+      "endpoint_strengths": [
+        {
+          "group": 21397,
+          "from_s": 1.8104164021539222,
+          "from_t": 1.4014013227884394
+        },
+        {
+          "group": 21444,
+          "from_s": 0.0,
+          "from_t": 0.5360556758019136
+        },
+        {
+          "group": 21445,
+          "from_s": 0.0,
+          "from_t": 0.1390442158172523
+        }
+      ]
+    }
+  ],
+  "block_count": 255,
+  "zero_blocks": 254,
+  "group_sizes": {
+    "21444": 1,
+    "21445": 1,
+    "21397": 24
+  },
+  "keep_pairs": {
+    "tp": 300,
+    "fp": 0,
+    "lost": 0
+  },
+  "cut_pairs": {
+    "tp": 253,
+    "fp": 0,
+    "lost": 47
+  }
+}

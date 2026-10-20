@@ -1,0 +1,24 @@
+{
+  "clean_tp_gain": {
+    "nodes": 440,
+    "split_nodes": 109,
+    "unconditional_split_nodes": 235,
+    "removed_merge_tp": 7873,
+    "removed_merge_fp": 0,
+    "retained_new_tp": 6143,
+    "retained_new_fp": 0,
+    "conditioned_minus_unconditional_tp": 4575,
+    "conditioned_minus_unconditional_fp": 0
+  },
+  "polluted": {
+    "nodes": 765,
+    "split_nodes": 557,
+    "unconditional_split_nodes": 678,
+    "removed_merge_tp": 41027,
+    "removed_merge_fp": 620867,
+    "retained_new_tp": 27776,
+    "retained_new_fp": 84498,
+    "conditioned_minus_unconditional_tp": 4018,
+    "conditioned_minus_unconditional_fp": 8576
+  }
+}

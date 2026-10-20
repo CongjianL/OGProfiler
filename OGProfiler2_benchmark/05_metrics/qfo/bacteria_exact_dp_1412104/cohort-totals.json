@@ -1,0 +1,22 @@
+{
+  "clean_tp_gain": {
+    "nodes": 440,
+    "split_nodes": 109,
+    "exact_minus_raw_tp": 312,
+    "exact_minus_raw_fp": 0,
+    "removed_merge_tp": 7561,
+    "removed_merge_fp": 0,
+    "retained_new_tp": 6244,
+    "retained_new_fp": 0
+  },
+  "polluted": {
+    "nodes": 765,
+    "split_nodes": 557,
+    "exact_minus_raw_tp": 739,
+    "exact_minus_raw_fp": 732,
+    "removed_merge_tp": 40288,
+    "removed_merge_fp": 620135,
+    "retained_new_tp": 27965,
+    "retained_new_fp": 84953
+  }
+}

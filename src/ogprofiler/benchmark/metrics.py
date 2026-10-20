@@ -15,6 +15,7 @@ import pyarrow as pa
 
 from ogprofiler.core.manifest import sha256_file, write_json
 from ogprofiler.exceptions import InputError
+from ogprofiler.output.results import terminal_table_paths
 
 
 def _tsv(path: Path) -> list[dict[str, str]]:
@@ -95,9 +96,7 @@ def family_metrics(
     prediction_by_member = {
         member: family_id for family_id, values in predicted.items() for member in values
     }
-    truth_by_member = {
-        member: family_id for family_id, values in true.items() for member in values
-    }
+    truth_by_member = {member: family_id for family_id, values in true.items() for member in values}
     shared = set(prediction_by_member) & set(truth_by_member)
     contingency = Counter(
         (prediction_by_member[member], truth_by_member[member]) for member in shared
@@ -165,8 +164,9 @@ def family_metrics(
 def evolution_metrics(run_root: Path) -> dict[str, Any]:
     hierarchy = _tsv(run_root / "results" / "hierarchy.tsv")
     events = _tsv(run_root / "results" / "events.tsv")
-    families = _tsv(run_root / "results" / "families.tsv")
-    members = _tsv(run_root / "results" / "members.tsv")
+    terminal_families, terminal_members = terminal_table_paths(run_root)
+    families = _tsv(terminal_families)
+    members = _tsv(terminal_members)
     species_by_family: dict[str, set[int]] = defaultdict(set)
     for row in members:
         species_by_family[row["family_id"]].add(int(row["species_id"]))
@@ -174,9 +174,7 @@ def evolution_metrics(run_root: Path) -> dict[str, Any]:
         (int(row["component_id"]), int(row["cluster_id"])): species_by_family[row["family_id"]]
         for row in families
     }
-    nodes = {
-        (int(row["component_id"]), int(row["cluster_id"])): row for row in hierarchy
-    }
+    nodes = {(int(row["component_id"]), int(row["cluster_id"])): row for row in hierarchy}
     children: dict[tuple[int, int], list[tuple[int, int]]] = defaultdict(list)
     for key, row in nodes.items():
         if row["parent_id"]:
@@ -230,9 +228,7 @@ def evolution_metrics(run_root: Path) -> dict[str, Any]:
                 ),
                 "reconciliation_consistency": _ratio(len(resolved), len(phylo)),
                 "mean_reconciliation_confidence": (
-                    mean(float(row["event_confidence"]) for row in resolved)
-                    if resolved
-                    else None
+                    mean(float(row["event_confidence"]) for row in resolved) if resolved else None
                 ),
                 "refined_families": len(phylo),
             }
@@ -249,9 +245,7 @@ def evolution_metrics(run_root: Path) -> dict[str, Any]:
     return result
 
 
-def orthology_metrics(
-    run_root: Path, truth: list[dict[str, str]]
-) -> dict[str, Any] | None:
+def orthology_metrics(run_root: Path, truth: list[dict[str, str]]) -> dict[str, Any] | None:
     path = run_root / "results" / "ortholog_pairs.tsv.zst"
     if not path.is_file():
         return None
@@ -262,8 +256,7 @@ def orthology_metrics(
     scorable = {
         family_id: rows
         for family_id, rows in by_family.items()
-        if len(rows) == species_count
-        and len({row["species"] for row in rows}) == species_count
+        if len(rows) == species_count and len({row["species"] for row in rows}) == species_count
     }
     true_pairs: set[tuple[str, str]] = {
         _canonical_pair(left["protein_id"], right["protein_id"])
@@ -275,7 +268,7 @@ def orthology_metrics(
     evaluated_proteins = {row["protein_id"] for rows in scorable.values() for row in rows}
     original_by_integer = {
         int(row["protein_id"]): row["original_id"]
-        for row in _tsv(run_root / "results" / "members.tsv")
+        for row in _tsv(terminal_table_paths(run_root)[1])
     }
     predicted: set[tuple[str, str]] = set()
     ignored = 0
@@ -321,14 +314,18 @@ def evaluate_run(
         "events.tsv": sha256_file(run_root / "results" / "events.tsv"),
         "ground_truth.tsv": sha256_file(ground_truth_path),
     }
+    inputs.update(
+        {
+            path.relative_to(run_root).as_posix(): sha256_file(path)
+            for path in terminal_table_paths(run_root)
+        }
+    )
     result = {
         "schema_version": "scientific-benchmark-v1",
         "method": method,
         "dataset": dataset,
         "input_checksums": inputs,
-        "family": family_metrics(
-            families, members, truth, large_family_size=large_family_size
-        ),
+        "family": family_metrics(families, members, truth, large_family_size=large_family_size),
         "evolution": evolution_metrics(run_root),
         "orthology": orthology_metrics(run_root, truth),
     }
@@ -391,9 +388,7 @@ def evaluate_legacy_membership(
             "normalized_hierarchy.json": sha256_file(normalized_hierarchy_path),
             "ground_truth.tsv": sha256_file(ground_truth_path),
         },
-        "family": family_metrics(
-            families, members, truth, large_family_size=large_family_size
-        ),
+        "family": family_metrics(families, members, truth, large_family_size=large_family_size),
         "evolution": {
             "species_overlap_consistency": None,
             "evaluated_network_nodes": 0,

@@ -11,7 +11,11 @@ printf '%q ' "$@" > "$OUT/command.txt"; printf '\n' >> "$OUT/command.txt"
 start=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 host=$(hostname)
 source_root="$(cd "$(dirname "$0")/../.." && pwd -P)"
-git_commit=$(git -C "$source_root" rev-parse HEAD 2>/dev/null || awk -F= '$1 == "git_commit" {print $2}' "$source_root/.dev-deploy-meta" 2>/dev/null || printf UNKNOWN)
+git_commit=${DEV_GIT_COMMIT:-${BENCHMARK_GIT_COMMIT:-}}
+if [[ -z "$git_commit" ]]; then
+  git_commit=$(git -C "$source_root" rev-parse HEAD 2>/dev/null || awk -F= '$1 == "git_commit" {print $2}' "$source_root/.dev-deploy-meta" 2>/dev/null || true)
+fi
+git_commit=${git_commit:-UNKNOWN}
 cpu=$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || printf UNKNOWN)
 threads=${BENCHMARK_THREADS:-UNKNOWN}; seed=${BENCHMARK_SEED:-UNKNOWN}
 set +e
