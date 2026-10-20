@@ -63,6 +63,7 @@ def diagnose(
     endpoint_replay_dir=None,
     positive_boundary=False,
     objective_decomposition=False,
+    same_attraction_intervention=False,
 ):
     hashes = json.loads((trace_dir / "input-hashes.json").read_text())
     for name in ("summary.json", "groups.json", "input-hashes.json"):
@@ -88,6 +89,10 @@ def diagnose(
         raise ValueError("Degeneracy requires fixed exact conditioned cuts")
     if singleton_flow and tie_replay_dir is None:
         raise ValueError("Singleton flow requires fixed focused tie replay")
+    if same_attraction_intervention and (
+        endpoint_replay_dir is None or positive_boundary or objective_decomposition
+    ):
+        raise ValueError("Intervention requires fixed replay and no competing experiment")
     if objective_decomposition and (endpoint_replay_dir is None or positive_boundary):
         raise ValueError("Decomposition requires fixed replay and no matching experiment")
     if positive_boundary and endpoint_replay_dir is None:
@@ -121,7 +126,12 @@ def diagnose(
     species = {r["protein_id"]: r["species_id"] for r in proteins}
     names = {r["species_name"]: r["species_id"] for r in read(run / "input/species.parquet")}
     keys = {(r["species_id"], r["original_id"]): r["protein_id"] for r in proteins}
-    with (run / "results/members.tsv").open() as h:
+    members_path = run / "results/members.tsv"
+    members_digest = sha256_file(members_path)
+    if str(members_path) in hashes and hashes[str(members_path)] != members_digest:
+        raise ValueError("Frozen production members identity mismatch")
+    hashes[str(members_path)] = members_digest
+    with members_path.open() as h:
         actual = {int(r["protein_id"]): r["family_id"] for r in csv.DictReader(h, delimiter="\t")}
     replay_cuts = {}
     if raw_replay_dir is not None and not exact_conditioned:
@@ -278,13 +288,21 @@ def diagnose(
                     set(result["selected"]),
                     context_flow=context_flow,
                     endpoint_trace=endpoint_replay_dir is not None
-                    and not (positive_boundary or objective_decomposition),
+                    and not (
+                        positive_boundary or objective_decomposition or same_attraction_intervention
+                    ),
                     positive_boundary=positive_boundary,
                     objective_decomposition=objective_decomposition,
                 )
                 degeneracy_inputs[cid, c] = (subnodes[c], members[c])
             if endpoint_replay_dir is not None and prediction != endpoint_replay[cid, c]:
                 raise ValueError("Fixed exact context partition changed")
+            if same_attraction_intervention:
+                from benchmarks.og_extraction.same_attraction import intervene
+
+                result["same_attraction_intervention"] = intervene(
+                    subnodes[c], members[c], edge_groups[c], species, result["selected"]
+                )
             if len(prediction) != r["source_full_size"]:
                 raise ValueError("Target source coverage mismatch")
             cases.append(
@@ -305,6 +323,11 @@ def diagnose(
                     prediction=prediction,
                     unconditional_prediction=baseline_prediction,
                     raw_conditioned_prediction=raw_prediction,
+                    candidate_prediction=result["same_attraction_intervention"][
+                        "candidate_prediction"
+                    ]
+                    if same_attraction_intervention
+                    else None,
                 )
             )
     # Reference labels are first loaded only after all cuts have been fixed.
@@ -363,6 +386,12 @@ def diagnose(
 
             rs = case["objective"]["block_degeneracy"]["legal_internal_nodes"]
             ns, ms = degeneracy_inputs[case["component_id"], case["source_cluster_id"]]
+            if same_attraction_intervention:
+                from benchmarks.qfo.intervention_metrics import annotate_intervention
+
+                annotate_intervention(
+                    case["objective"]["same_attraction_intervention"], ns, ms, reference
+                )
             annotate_reference(rs, ns, ms, reference)
             if positive_boundary:
                 from benchmarks.og_extraction.positive_boundary import annotate_positive
@@ -373,7 +402,7 @@ def diagnose(
 
                 annotate_losses(rs, ns, ms, reference)
             if endpoint_replay_dir is not None and not (
-                positive_boundary or objective_decomposition
+                positive_boundary or objective_decomposition or same_attraction_intervention
             ):
                 from benchmarks.og_extraction.context_path_trace import annotate_path_losses
 
@@ -573,6 +602,11 @@ def diagnose(
         from benchmarks.og_extraction.complete_objective_audit import summarize
 
         decomposition_summary = summarize(cases)
+    intervention_summary = {}
+    if same_attraction_intervention:
+        from benchmarks.qfo.intervention_metrics import summarize as summarize_intervention
+
+        intervention_summary = summarize_intervention(cases, reference, actual)
     for path, digest in hashes.items():
         if sha256_file(Path(path)) != digest:
             raise ValueError("Frozen input changed")
@@ -604,6 +638,16 @@ def diagnose(
         if not block_degeneracy:
             return case
         result = dict(case, objective=dict(case["objective"]))
+        if same_attraction_intervention:
+            detail = case["objective"]["same_attraction_intervention"]
+            result["objective"]["same_attraction_intervention"] = {
+                k: v
+                for k, v in detail.items()
+                if k not in ("baseline_prediction", "candidate_prediction", "node_transitions")
+            }
+            result["objective"]["same_attraction_intervention"]["focal_transitions"] = [
+                r for r in detail["node_transitions"] if r["cluster_id"] in (21396, 10052)
+            ]
         profile = case["objective"]["block_degeneracy"]
         rs = profile["legal_internal_nodes"]
         result["objective"]["block_degeneracy"] = dict(
@@ -620,6 +664,8 @@ def diagnose(
             dict(
                 positive_boundary=positive_boundary,
                 positive_comparison=positive_comparison,
+                same_attraction_intervention=same_attraction_intervention,
+                intervention_summary=intervention_summary,
                 objective_decomposition=objective_decomposition,
                 decomposition_summary=decomposition_summary,
                 diagnostic_only=True,
@@ -708,6 +754,7 @@ def main():
     p.add_argument("--endpoint-replay-dir", type=Path)
     p.add_argument("--positive-boundary", action="store_true")
     p.add_argument("--objective-decomposition", action="store_true")
+    p.add_argument("--same-attraction-intervention", action="store_true")
     a = p.parse_args()
     diagnose(
         a.run,
@@ -724,6 +771,7 @@ def main():
         endpoint_replay_dir=a.endpoint_replay_dir,
         positive_boundary=a.positive_boundary,
         objective_decomposition=a.objective_decomposition,
+        same_attraction_intervention=a.same_attraction_intervention,
     )
 
 

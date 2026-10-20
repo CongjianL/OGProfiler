@@ -855,3 +855,45 @@ same-only偏好合并。重优化后变化不保证只是原cut粗化。
 下一步先实现并验上述恒等式/极限，再单候选完整DP对照，报告固定参考全集TP/FP/P/R/F1、
 合并/切分转移与祖先传播，使用唯一LCA计数。本轮仅归档证据与假设，未实现或提交候选，
 soft42/主main保持。紧凑归档bacteria_objective_decomposition_1553882，大cases留远端。
+
+### 单一目标干预：same_attraction_cross_null_v1
+
+用户明确选定“保留全部实际边吸引，仅移除同物种null期望，跨物种项不变”。
+本轮新增实验opt-in `--same-attraction-intervention`；原图/树/全部合法节点/source分母不变，
+不加系数、gamma、epsilon、增益门槛或参考标签。公共soft42与main检出不变。
+
+S*(v)=(A_same+A_cross−E_cross)/W=S(v)+E_same(v)/W，完整cut求sum S*。
+用原精确context构造candidate分数，标准optimal_cut与独立DP逐项一致；原完整cut
+逐蛋白回放1553882。仅将根基准减一次：S*(root)=W_same/W，一般不为0。
+直接由原边重算任意已选分区的cross null deficit减全部跨组actual，验证其恰等于
+候选总分−root；同时验证候选优于可行旧cut（在新目标下）、旧cut优于候选（在旧目标下）。
+零图score0/tie keep；cross-only精确复现旧cut；same-only偏好完整merge，父子同分保留父。
+独立穷举30个seed42随机小图的全部合法cut，验证candidate最优性。
+
+**补充推导，收紧前轮未作粗化保证的保守表述**：Esame是固定分母下的平方和，
+对互不相交后代超可加，所以任意固定refinement相对keep的gain*=gain−Esame_boundary/W。
+若旧局部keep最优，则其所有细化gain<=0，新目标下也<=0；精确平分keep保证旧local keep
+仍keep。因此新完整cut只会粗化旧cut（在本轮相同合法集合与tie规则下）。运行断言所有
+旧local keep不变为split、每个旧组选中节点都落在一个candidate祖先组；new_split_tp与
+removed_fp应为0，实际关注recovered_tp及new_merge_fp权衡。不是据数据添加过滤规则。
+
+参考标签全部在两臂cut固定后加载。每个内部节点记录两臂local keep/split、direct及
+optimized margin、actual active/inactive/keep、selected ancestor；变化节点保存root path，
+区分局部变更与祖先消耗导致的状态变化。独立唯一LCA计数给recovered_tp/new_merge_fp/
+new_split_tp/removed_fp，与两臂完整分区差和联合分区pair转移精确核对，不累计嵌套子树。
+
+指标明确两套固定参考全集：
+1. 所有target蛋白的参考指派全集（跨source参考对计入recall分母，不仅求局部平均）；
+2. 全部生产members蛋白中的冻结参考指派全集，1205source内以各臂完整cut替换，source外
+保留冻结生产分组。两臂均把每个source及outside命名空间分开，所以可能共同拆开原生产
+跨source/outside分组；这是full hybrid对照，不等同于重跑生产。另报告未替换的frozen
+production独立指标，避免暗中混用基线。P/R/F1由TP/FP及固定参考pair总量直接计算，
+分母0时报告0。两臂source内group IDs带component/source前缀避免跨源串组。
+摘要说明作用域，完整source cuts/predictions与节点转移留远端cases与cuts-DIAGNOSTIC-ONLY。
+生产members另记SHA256并验证冻结身份，原数据/原结果不覆盖。
+
+本地7个新增测试通过：极限/非零root/精确tie、穷举随机图、祖先路径、LCA去重、
+带outside与缺失参考的全集评估，及parquet+Orthogroups+冻结回放适配端到端小例。
+旧匹配共同支持0的限制仍成立，本轮不匹配或用pure/mixed调公式。单作业4CPU/16G/2h，
+仅原目标与该候选的完整合法DP比较，不运行参数矩阵或自动试第二候选。
+完整本地回归526 passed /8 skipped /5项既有warning，25.17秒；ruff/diff/Slurm语法通过。
