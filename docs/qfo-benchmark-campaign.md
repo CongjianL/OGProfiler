@@ -829,3 +829,29 @@ SHA256=64c812930c09721bd58df4e67bdc40c89bf138485aec0e2370d660719c202786。
 第五参数为1485398源run，逐蛋白回放其species-positive-boundary原cut；
 输出species-objective-decomposition。本轮仅第一阶段，待结果确定单个目标公式，
 再执行完整干预。未预提交候选目标，生产默认不变。
+
+### job1553882完成：同物种null项的单一干预假设（尚未实现/运行）
+
+COMPLETED /0:0，4分33秒；source617e3f7、dirty=0。1205 source/24462内部节点
+精确回放、原流/null通道、直接+后代/forced/optimal以及LCA/root望远镜恒等式通过。
+取回摘要后四组旧strata与1485398完全一致，2445实际切分损失47849TP/620135FP未变。
+
+内部正增益active_split：173个pure的直接same gain5.570780、cross4.762654，
+same占53.91%；1119mixed分别10.004028/62.905336，same占13.72%。
+纯节点跨物种直接增益106/173仍正，不支持“删同物种项修复全部错误”。
+后代推动的clean pure直接same/cross为−.145072/−.020072，后代+1.609412/+2.661345；
+polluted pure−.020656/−.048599、后代+.671049/+.459994；mixed−.438330/−.318891、
+后代+4.353235/+17.303808。需要完整重优化，不用直接边界门槛。
+这些是逐node/source归一化增益之和；嵌套complete/descendant不作独立样本或损失归因。
+原始权重跨source汇总与归一化量可异号，不混用。无新的匹配，零共同支持限制保留。
+
+据此提出仅待证的same_attraction_cross_null_v1：
+S*(v)=(A_same+A_cross−E_cross)/W，完整合法cut求sum S*，保留全部实际边的吸引，
+仅去同物种null期望，跨物种null和source分母不变。node可加和，无可调系数。
+固定边界gain*=gain−E_same_boundary/W。此项也支持混合分割，且真实旁系同源可能
+受损，描述性差异不是改进证明。root基准通常变W_same/W：完整cut减一次root即可，
+不可每组选中分数都减root，否则引入组数惩罚。零图tie keep；cross-only精确复现旧cut，
+same-only偏好合并。重优化后变化不保证只是原cut粗化。
+下一步先实现并验上述恒等式/极限，再单候选完整DP对照，报告固定参考全集TP/FP/P/R/F1、
+合并/切分转移与祖先传播，使用唯一LCA计数。本轮仅归档证据与假设，未实现或提交候选，
+soft42/主main保持。紧凑归档bacteria_objective_decomposition_1553882，大cases留远端。
