@@ -62,6 +62,7 @@ def diagnose(
     context_flow=False,
     endpoint_replay_dir=None,
     positive_boundary=False,
+    objective_decomposition=False,
 ):
     hashes = json.loads((trace_dir / "input-hashes.json").read_text())
     for name in ("summary.json", "groups.json", "input-hashes.json"):
@@ -87,6 +88,8 @@ def diagnose(
         raise ValueError("Degeneracy requires fixed exact conditioned cuts")
     if singleton_flow and tie_replay_dir is None:
         raise ValueError("Singleton flow requires fixed focused tie replay")
+    if objective_decomposition and (endpoint_replay_dir is None or positive_boundary):
+        raise ValueError("Decomposition requires fixed replay and no matching experiment")
     if positive_boundary and endpoint_replay_dir is None:
         raise ValueError("Positive boundary requires frozen exact context replay")
     endpoint_replay = {}
@@ -274,8 +277,10 @@ def diagnose(
                     species,
                     set(result["selected"]),
                     context_flow=context_flow,
-                    endpoint_trace=endpoint_replay_dir is not None and not positive_boundary,
+                    endpoint_trace=endpoint_replay_dir is not None
+                    and not (positive_boundary or objective_decomposition),
                     positive_boundary=positive_boundary,
+                    objective_decomposition=objective_decomposition,
                 )
                 degeneracy_inputs[cid, c] = (subnodes[c], members[c])
             if endpoint_replay_dir is not None and prediction != endpoint_replay[cid, c]:
@@ -363,7 +368,13 @@ def diagnose(
                 from benchmarks.og_extraction.positive_boundary import annotate_positive
 
                 annotate_positive(rs, ns, ms, reference)
-            if endpoint_replay_dir is not None and not positive_boundary:
+            if objective_decomposition:
+                from benchmarks.og_extraction.complete_objective_audit import annotate_losses
+
+                annotate_losses(rs, ns, ms, reference)
+            if endpoint_replay_dir is not None and not (
+                positive_boundary or objective_decomposition
+            ):
                 from benchmarks.og_extraction.context_path_trace import annotate_path_losses
 
                 annotate_path_losses(rs, ns)
@@ -557,6 +568,11 @@ def diagnose(
         from benchmarks.og_extraction.positive_boundary import compare_positive
 
         positive_comparison = compare_positive(cases)
+    decomposition_summary = {}
+    if objective_decomposition:
+        from benchmarks.og_extraction.complete_objective_audit import summarize
+
+        decomposition_summary = summarize(cases)
     for path, digest in hashes.items():
         if sha256_file(Path(path)) != digest:
             raise ValueError("Frozen input changed")
@@ -604,6 +620,8 @@ def diagnose(
             dict(
                 positive_boundary=positive_boundary,
                 positive_comparison=positive_comparison,
+                objective_decomposition=objective_decomposition,
+                decomposition_summary=decomposition_summary,
                 diagnostic_only=True,
                 production_changed=False,
                 immutable_inputs_verified=True,
@@ -689,6 +707,7 @@ def main():
     p.add_argument("--context-flow", action="store_true")
     p.add_argument("--endpoint-replay-dir", type=Path)
     p.add_argument("--positive-boundary", action="store_true")
+    p.add_argument("--objective-decomposition", action="store_true")
     a = p.parse_args()
     diagnose(
         a.run,
@@ -704,6 +723,7 @@ def main():
         context_flow=a.context_flow,
         endpoint_replay_dir=a.endpoint_replay_dir,
         positive_boundary=a.positive_boundary,
+        objective_decomposition=a.objective_decomposition,
     )
 
 

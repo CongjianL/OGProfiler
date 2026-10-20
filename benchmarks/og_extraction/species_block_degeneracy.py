@@ -17,8 +17,9 @@ def profile(
     context_flow=False,
     endpoint_trace=False,
     positive_boundary=False,
+    objective_decomposition=False,
 ):
-    if (endpoint_trace or positive_boundary) and not context_flow:
+    if (endpoint_trace or positive_boundary or objective_decomposition) and not context_flow:
         raise ValueError("Endpoint tracing requires context flow")
     scores, total, strengths, weights = exact_context(nodes, membership, edges, species)
     by_id, children, order = topology(nodes)
@@ -324,6 +325,12 @@ def profile(
             weights,
             selected,
             internal_blocks,
+        )
+    if objective_decomposition:
+        from benchmarks.og_extraction.complete_objective_audit import attach_decomposition
+
+        attach_decomposition(
+            rows, nodes, scores, total, strengths, weights, internal_blocks, selected
         )
     return dict(
         legal_internal_nodes=rows,

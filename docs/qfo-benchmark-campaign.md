@@ -785,3 +785,40 @@ mixed平均complete gain .109185=direct .065156+descendant .044029；clean pure
 迁移假设，并通过完整合法DP评估，兼顾内部正增益和后代推动，而非单修外部项。
 归档bacteria_positive_boundary_1485398；大targets/cases留远端。本轮无追加作业，
 生产默认与main检出保持不变。
+
+### 完整目标干预前置：冻结DP的同/跨物种、actual/null、直接/后代分解
+
+用户确认三阶段：先分解证据，再明确一个可加和目标，最后对同一冻结数据重算完整合法DP。
+本轮只执行第一阶段；不提前根据pure/mixed标签拟目标，不宣称已有新目标验证或干预收益。
+新增opt-in `--objective-decomposition`，与positive-boundary匹配模式互斥；
+使用1485398的species-positive-boundary完整cut逐蛋白回放，原graph/tree/合法节点/source
+分母固定。不重做结构匹配，零共同支持的历史限制继续成立。公共soft42保持。
+
+对每个内部节点c，把原LCA内部边流按q=same/cross拆为Aq(c)，null拆为Eq(c)：
+same块 k_ss²/(4W_ss)，cross块 k_st*k_ts/W_st，源总权W不变。
+保留分数Sq(c)=(Aq(c)−Eq(c))/W；两通道之和严格等于原精确score(c)。
+对原完整最优frontier F(c)，
+actual_q=Aq(c)−sum_F Aq(v)，expected_q=Eq(c)−sum_F Eq(v)，
+gain_q=(expected_q−actual_q)/W，两通道之和精确等于best(c)−keep(c)。
+
+直接阶段使用全部直接孩子；后代阶段是各孩子内部的最优frontier进一步分割量。
+forced_split=direct+descendant按actual、expected和gain逐通道分解；
+optimal阶段若局部keep则边界为0，否则等于forced_split。明确局部拒绝的强制split
+与实际最优keep之间的区别：不强行让全部节点均切分。不去掉任何项或改分辨率。
+每个source实际active_split的直接LCA边界按通道累加，须精确重现源根完整cut边界，
+避免嵌套complete/descendant累加。原边流独立提供actual，非从score反推。
+所有精确符号/身份比较使用有理数，报告同时保留原权重、source归一化分量与精确增益。
+
+覆盖全部合法内部节点，优先按internal_positive和直接非正/后代推动类别报告，
+保留context_reversal/local_keep、active_keep/inactive作为分母和路径对照。
+pure/mixed仅在特征与完整cuts固定之后注释；直接唯一LCA TP/FP按source原队列/
+局部标签/DP状态/机制分层，嵌套局部完整及实际子树损失留节点记录而不跨节点累加。
+summary含分层actual/null/gain、符号计数及source根可加和通道；全部节点cases留远端。
+同/跨通道不是参考TP/FP通道，不能把标签损失拆给某个物种通道作为因果归因。
+
+结果读取后先确定偏差由哪些实际/期望与直接/后代项驱动，再写单个完整目标公式、
+可加和性和预期行为，最后开展干预。无gamma/epsilon/增益门槛搜索或事后匹配放宽。
+本轮单作业4 CPU /16G /2h；不自动预提交任何候选目标、参数矩阵或生产运行。
+本地针对性27项通过，含手算keep与forced split、同/跨物种、零图及随机精确恒等式；
+直接负增益−1/8而后代+7/36形成完整+5/72的固定小图验证后代推动，不只验证直接正例。
+完整本地回归519 passed /8 skipped /5项既有warning，24.24秒；ruff/diff/Slurm语法通过。
