@@ -897,3 +897,9 @@ production独立指标，避免暗中混用基线。P/R/F1由TP/FP及固定参�
 旧匹配共同支持0的限制仍成立，本轮不匹配或用pure/mixed调公式。单作业4CPU/16G/2h，
 仅原目标与该候选的完整合法DP比较，不运行参数矩阵或自动试第二候选。
 完整本地回归526 passed /8 skipped /5项既有warning，25.17秒；ruff/diff/Slurm语法通过。
+远端短验证34 passed（0.63秒）。提交job1553883：
+RUN_ID=20261020T061804Z_302ff9b86602_56766154_15420，
+source302ff9b86602029738769a4af0b72ba19274bddf，dirty=0，
+SHA256=56766154f2f8c0ec45af295536c4182c2ff6720599d3e4643921fff2cfd620bd。
+第五参数为1553882源run，回放species-objective-decomposition原完整cut；输出
+same-attraction-intervention。候选结果及TP恢复/FP新增权衡待输出验证，公共默认不变。
